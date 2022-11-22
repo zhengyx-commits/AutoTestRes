@@ -1,0 +1,2 @@
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="1b8e", ATTR{idProduct}=="c003", MODE:="0666"
+KERNEL=="ttyS0", SUBSYSTEM=="tty", MODE:="0666"

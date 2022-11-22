@@ -1,0 +1,173 @@
+# This is a config file of AutoTestRes/scripts/python/lib
+
+#for lib/playback/MultMediaPlayer.py
+conf_multiplayer:
+  is_loopplay: true
+  is_amumediaplayer: true
+  is_ts_mode: true
+  is_prefer_tunerhal: false
+  check_play_time: 120
+
+#for lib/playback/DRM.py
+conf_drm:
+  skip_video:
+    "1": "Google Play (WebM,VP9)"
+    "2": "UHD"
+    "3": "Apple AAC 10s"
+    "4": "Dizzy (MP4)"
+    "5": "Apple TS 10s"
+    "6": "Screens (FMP4,AAC Audio)"
+    "7": "Google Play (MP3 Audio)"
+    "8": "Google Play (Ogg/Vorbis Audio)"
+    "9": "Big Buck Bunny (FLV Video)"
+    "10": "Apple AAC media playlist"
+    "11": "Audio -> Video -> Audio"
+    "12": "Clear -> Enc -> Clear -> Enc -> Enc"
+    "13": "Apple master playlist advanced (TS)"
+    "14": "Apple master playlist advanced (fMP4)"
+    "15": "Apple TS 10s"
+
+  skip_item:
+      "11": "IMA sample ad tags"
+      "12": "360"
+
+  during_10_video:
+      "1": "WV: 30s license duration (fails at ~30s)"
+      "2": "Cats -> Dogs"
+      "4": "Apple 4x3 basic stream"
+      "5": "Apple 16x9 basic stream"
+      "6": "Apple master playlist advanced (TS)"
+      "7": "Apple master playlist advanced (fMP4)"
+      "8": "Apple TS media playlist"
+
+  during_10: 8.0
+
+  default_during: 15.0
+
+# for lib/multimedia/Camera_Recorder.py
+conf_Camera_Recorder:
+  log_path: Camera
+  path: /storage/emulated/0/DCIM/Camera/
+  name: VID_*.3gp
+  img_name: IMG_*.jpg
+  reference_fps: 10.00,
+  reference_width: 1280
+  reference_height: 720
+
+# for lib/tools/Seek.py
+conf_seek:
+  seek_press_event:
+    seek_type: press_seek
+    seek_enable: False
+    event: event4
+
+# for lib/system/TvSetting.py
+conf_tvsetting:
+  project: tv_ref
+
+# for lib/system/ADB.py and lib/system.WIFI.py
+conf_wifi:
+  wifi:
+    interface: wlan0
+    ping_count: 10
+    ping_pass_percentage: 60
+
+# for lib/system/Bluetooth.py and lib/system.WIFI.py
+conf_wifi_and_bluetooth:
+  powerRelay:
+    powerRelay1_port: USB0
+    powerRelay2_port: USB1
+
+# for lib/IPTV/Bestv_Iptv.py
+conf_betsv_iptv:
+  iptv_sn:
+    \u7518\u8083:
+      sn: 004501000001004005D800692D6D0606
+      label:
+        - \u7cbe\u9009
+        - \u770b\u7535\u89c6
+        - \u4e50\u9f84\u4e13\u533a
+        - \u91d1\u5361\u4f1a\u5458\u770b\u5947\u5f02
+        - \u5efa\u515a\u767e\u5e74
+        - \u5965\u8fd0
+        - \u63a8\u8350
+        - \u7535\u5f71
+        - \u7535\u89c6\u5267
+        - \u5c11\u513f\u52a8\u6f2b
+        - \u4e91\u6e38\u620f
+        - 4K
+        - \u7efc\u827a
+        - \u7231\u5bb6\u6559\u80b2
+        - \u751f\u6d3b
+        - \u535a\u96c5\u8bfe\u5802
+        - \u4f53\u80b2
+        - u7eaa\u5b9e
+      func: start_zhibo_gansu
+    \u9ed1\u9f99\u6c5f:
+      sn: 0099030003FF25500001F09CD75302A4
+      label:
+        - \u63a8\u8350
+        - \u770b\u7535\u89c6
+        - \u7535\u5f71
+        - \u7535\u89c6\u5267
+        - \u70ed\u8840\u519b\u65c5
+        - \u5c11\u513f
+        - \u7efc\u827a
+        - \u751f\u6d3b
+        - \u6e38\u620f
+        - \u4f53\u80b2
+        - \u7eaa\u5b9e
+      func: start_zhibo_heilongjiang
+    \u4e0a\u6d771:
+      sn: 009903FF004746500000288CB8F36360
+      label:
+        - \u52a8\u753b\u603b\u52a8\u5458
+        - \u7cbe\u9009
+        - \u770b\u7535\u89c6
+        - \u91d1\u5361\u4f1a\u5458\u770b\u5947\u827a
+        - \u4e24\u56fd\u5168\u4f1a
+        - \u63a8\u8350
+        - \u7535\u5f71
+        - \u7535\u89c6\u5267
+        - \u5c11\u513f\u52a8\u6f2b
+        - 4K
+        - \u7efc\u827a
+        - \u7231\u5bb6\u6559\u80b2
+        - \u751f\u6d3b
+        - \u4e91\u6e38\u620f
+        - \u535a\u96c5\u8bfe\u5802
+        - \u4f53\u80b2
+        - \u7eaa\u5b9e
+      func: start_zhibo_shanghai1
+    \u4e0a\u6d772:
+      sn: 00AA0501020C0300EB7C00027238FCA4
+      label:
+        - \u63a8\u8350
+        - \u770b\u7535\u89c6
+      func: start_zhibo_shanghai2
+
+# for MM: media check keywords time
+conf_checktime:
+  time: 200
+  dc_time: 120
+  avsync_stuck_time: 30
+  abnormal_time: 1
+
+# for MM: media check avsync/stuck reference
+conf_reference:
+  avDiff: 200
+  audioDiff: 0
+  DiffCount: 40
+  lostFrameCount: 200
+  durationDiff: 4
+
+# for MM: start play and switch channel kpi time
+conf_kpitime:
+  start_play_time: 2
+  switch_channel_time: 3
+
+# for DVBCheck: Time of check keywords and run cmd
+conf_dvb_check_time:
+  check_time: 100
+  cmd_time: 5
+  check_play_time: 60

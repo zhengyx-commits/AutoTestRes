@@ -1,0 +1,252 @@
+# This is a config file instead of part of config_ott_hybrid.json
+
+#for test_Amp.py
+conf_localplay:
+  uuid: 0400-B076
+  video_path: video
+  saved_path: /data/amp_test_result/amlMpUnitTest.json
+  path: /h264/
+
+
+#for test_OTT-Sanity_Func_Local_Video.py, should debug again 20220324
+conf_local_playback:
+  sz_uuid: 849A-3D5A
+  sh_uuid: 635F-6668
+  video_path:
+    h264:
+      path: /h264/
+    h265:
+      path: /h265/
+    vp9:
+      path: /vp9/
+  seek_path:
+    path: /seek/
+    repeat_time: 3
+  subtitle_path:
+    Dvb:
+      path: /subtitle/dvb/
+    CC:
+      path: /subtitle/cc/
+    Teletext:
+      path: /subtitle/teletext/
+    Scte27:
+      path: /subtitle/scte27/
+    Scte35:
+      path: /subtitle/scte35/
+  probe_path:
+    Probe:
+      path: /probe/
+  track_path:
+    path: /track/
+
+#for cpu
+conf_cpu_thermal:
+  reference_thermal: 90500
+  thermal_enable: enabled
+  run_time: 240
+
+#for bt
+conf_bt:
+  repeat_count: 20
+
+#for wifi
+conf_wifi:
+  repeat_count: 20
+  test_time: 15
+  AP1:
+    - ssid: AUT_VPN_Router_3
+      pwd: ""
+      security: none
+      hidden: false
+  AP2:
+    - ssid: AUT_VPN_Router_1
+      pwd: 12345678
+      security: wep
+      hidden: false
+  AP3:
+    - ssid: AUT_VPN_Router_1
+      pwd: 12345678
+      security: wpa
+      hidden: false
+  AP4:
+    - ssid: AUT_VPN_5G_Router_1
+      pwd: 12345678
+      security: wpa2
+      hidden: false
+  AP5:
+    - ssid: AUT_VPN_5G_Router_1
+      pwd: 12345678
+      security: wpa/wpa2
+      hidden: false
+  incorrectPsk:
+    - ssid: AUT_VPN_5G_Router_3@#测试
+      pwd: 4ottonly
+      security: wpa
+      hidden: false
+  hiddenSSID:
+    - ssid: AUT_VPN_Router_2
+      pwd: 12345678
+      security: wpaPSK
+      hidden: true
+  specialSSID:
+    - ssid: AUT_VPN_5G_Router_3@#测试
+      pwd: 12345678
+      security: wpa/wpa2
+      hidden: false
+
+
+#for cases under document "MULTI"
+conf_multi_player:
+  repeat_count: 2
+  is_loopplay: true
+  is_amumediaplayer: true
+  is_ts_mode: true
+  is_prefer_tunerhal: false
+
+#for init.py under document "ONLINE_PLAYBACK"
+conf_oobe:
+  wifi:
+#    ssid: Sunshine
+#    pwd: Home1357
+    ssid: AutoTest2_5G
+    pwd: Mrtest456
+  account:
+    acc: xxx
+    pwd: xxx
+
+conf_online:
+  check_seek_enable: False
+
+#for DVB
+conf_dvb:
+  uuid: 2EFF-1E31
+  DVB-T:
+    channel_count: 6
+    frequency_point: 474
+  DVB-S:
+    channel_count: 1
+    frequency_point: 1
+  DVT-C:
+    channel_count: 1
+    frequency_point: 1
+
+#for OTA
+conf_ota:
+  ota_url: http://firmware.amlogic.com/shanghai/image/android/Android-S_Google_Partner/autobuild/2021-12-15/ohm-userdebug-android32-kernel64-GTV-29/ohm-ota-20211215.zip
+
+#for USB
+conf_usb:
+  fs:
+    exFAT: 2EFF-1E31
+    NTFS: B4020FD9020FA00A
+    FAT32: 3439-BD20
+  keyboard: event8
+  mouse: mouse2
+
+#for Multiplayer
+conf_multiplayer:
+  speed: 1.5
+  seek_time:
+  offline_network_time: 10
+  play_time_after_restore_network: 15
+
+#for Videoplayer Seek
+conf_videoplayer:
+  seek_checktime:
+  seek_duration: 0.025
+  # The unit of stress time is hour
+
+conf_suspend_time:
+  suspend_time: 3
+  play_time_after_wakeup: 15
+
+# for startplay kpi
+conf_startplay_kpi:
+  repeat_time: 5
+
+# play single stream: True; otherwise: False
+conf_play_single_stream: True
+
+# for stream url
+conf_stream_name:
+  # used for udp and rtp, rtsp cases
+  pid_changed: "video_pid_change_201_to_202"
+  h264_1080P: "PhilipsColorsofMiami"
+  h264_1080P_1: "1080PH264_AC3"
+  h264_4K: "H264_Butterfly_4k"
+  h264_4K_1: "Lovely_Swiss"
+  h265_4K: "2015Hisense"
+  h265_1080P: "SAMSUNG"
+  mpeg2_1080I_30FPS: "MPEG2-1080I-30fps"
+  # used in compatibility test
+  h264_4K_2: "worldcup2014"
+  h265_1080_1: "chengshizhiguang"
+  h265_1080P_2: "aodaliya"
+  h265_1080P_3: "UD2D-Paris"
+  hlsV3_TS_H264_1080P: "1080-HLSV3"
+  hlsV3_TS_H265_1080P: "Chinese_Partners-1080P-H265-HLS"
+  hlsV3_TS_H265_4K: "4K-HLS-V3-H265-EAC3-TS"
+
+conf_udp_url:
+  udp:
+    file: "udp://239.1.2.1:1234"
+  udp1:
+    file: "udp://239.1.2.2:1235"
+
+conf_rtsp_url:
+  rtsp_TS_H264_1080:
+    file: /video/http_TS_H264_1080/1080PH264_AC3.ts
+  rtsp_TS_H265_1080:
+    file: /video/http_TS_H265_1080/H265_TEN_BA2_SAMSUNG_1080p_50P_20M_3min_cbr.ts
+  rtsp_TS_MPEG2_1080:
+    file: /video/http_TS_1080i/MPEG2-1080I-30fps.ts
+  rtsp_TS_H264_4K:
+    file: /video/http_TS_H264_4K/H264_Butterfly_4k_High@L5.1_AAC_30M_30fps_3min.ts
+  rtsp_TS_H265_4K:
+    file: /video/http_TS_H265_4K/H265_UHD_2015Hisense_28M_29.97fps_3min25s_logo.ts
+
+conf_rtp_url:
+  rtp:
+    file: "rtp://239.1.1.1:5004"
+
+conf_http_url:
+  http_TS_H264_1080:
+    file: /res/video/http_TS_H264_1080/H264_1080P_PhilipsColorsofMiami_25M_25fps_5.5min.ts
+    dir: video/http_TS_H264_1080/
+  http_TS_H265_1080:
+    file: /res/video/http_TS_H265_1080/[1080PH265_1764Kbps_8bit]1_aodaliya_24fps_1920x1080_h265shijun.ts
+    dir: video/http_TS_H265_1080/
+  http_TS_H265_1080_1:
+    file: /res/video/http_TS_H265_1080/[1080PH265_1623Kbps_8bit]chengshizhiguang_1.5M_1920x1080_h265shijun.ts
+  http_TS_1080i:
+    file: /res/video/http_TS_1080i/MPEG2-1080I-30fps.ts
+    dir: video/http_TS_1080i/
+  http_TS_MPEG2_1080:
+    file: /res/video/http_TS_MPEG2_1080/MPEG2_1080P_butterfly_10M_25fps_Mp&HL_mpeg1layer2.ts
+    dir: video/http_TS_MPEG2_1080/
+  http_TS_H264_4K:
+    file: /res/video/http_TS_H264_4K/H264_UHD_PQ_Lovely_Swiss_HP_20M_60fps_3min40_logo.ts
+    dir: video/http_TS_H264_4K/
+  http_TS_H265_4K:
+    file: /res/video/http_TS_H265_4K/H265_UHD_2015Hisense_28M_29.97fps_3min25s_logo.ts
+    dir: video/http_TS_H265_4K/
+  http_TS_H265_4K_P60:
+    file: /res/video/http_TS_H265_4K_P60/[4KH265_21.1Mbps_59.940fps_8bit]worldcup2014_8bit_19m_60p.ts
+    dir: video/http_TS_H265_4K_P60/
+
+conf_hls_url:
+  hlsV3_TS_H264_1080:
+    file: /res/HLS_V3/H264/1080-HLSV3/index.m3u8
+    dir: video/hlsV3_TS_H264_1080/
+  hlsV3_TS_H265_1080:
+    file: /res/HLS_V3/H265/Chinese_Partners-1080P-H265-HLS/Chinese_Partners-1080P.m3u8
+    dir: video/hlsV3_TS_H265_1080/
+  hlsV3_TS_MPEG2_1080:
+    file: /res/HLS_V3/H265/...
+    dir: video/hlsV3_TS_MPEG2_1080/
+  hlsV3_TS_H264_4K:
+    file: /res/HLS_V3/H265/...
+    dir: video/hlsV3_TS_H264_4K/
+  hlsV3_TS_H265_4K:
+    file: /res/HLS_V3/H265/4K-HLS-V3-H265-EAC3-TS/index.m3u8
+    dir: video/hlsV3_TS_H265_4K/

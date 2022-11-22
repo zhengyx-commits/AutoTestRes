@@ -1,0 +1,7 @@
+__pycache__/
+.idea/
+results/
+res/signed/
+AATS.egg-info/
+.tox/
+res/videoconfig/urilist.txt

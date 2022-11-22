@@ -1,0 +1,562 @@
+{
+    "testcases": [
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTP_TS_H264_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTP_TS_H264_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTP_TS_H265_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTP_TS_H265_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTP_TS_MPEG2_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTP_TS_MPEG2_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTP_TS_H264_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTP_TS_H264_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTP_TS_H265_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTP_TS_H265_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HTTP_TS_H264_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HTTP_TS_H264_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HTTP_TS_H265_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HTTP_TS_H265_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HTTP_TS_MPEG2_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HTTP_TS_MPEG2_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HTTP_TS_H264_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HTTP_TS_H264_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HTTP_TS_H265_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HTTP_TS_H265_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HLSV3_TS_H264_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HLSV3_TS_H264_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HLSV3_TS_H265_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HLSV3_TS_H265_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HLSV3_TS_MPEG2_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HLSV3_TS_MPEG2_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HLSV3_TS_H264_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HLSV3_TS_H264_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_HLSV3_TS_H265_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_HLSV3_TS_H265_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTSP_UDP_TS_H264_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTSP_UDP_TS_H264_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTSP_UDP_TS_H265_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTSP_UDP_TS_H265_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTSP_UDP_TS_MPEG2_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTSP_UDP_TS_MPEG2_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTSP_UDP_TS_H264_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTSP_UDP_TS_H264_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_RTSP_UDP_TS_H265_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_RTSP_UDP_TS_H265_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_UDPV2_TS_H264_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_UDPV2_TS_H264_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_UDPV2_TS_H265_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_UDPV2_TS_H265_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_UDPV2_TS_MPEG2_1080",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_UDPV2_TS_MPEG2_1080.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_UDPV2_TS_H264_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_UDPV2_TS_H264_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_UDPV2_TS_H265_4k",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_UDPV2_TS_H265_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_SWITCH_CHANNEL",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_Switch_Channel.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#Multi",
+            "name": "AATS_OTT_FUNC_MULTI_SWITCH_PLAYER",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_Switch_Player.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#PAUSE",
+            "name": "AATS_OTT_FUNC_PAUSE_RESUME",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_Pause_Resume.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "xiaojun.huang"
+        },
+        {
+            "group": "SYSTEM#STOPPLAY",
+            "name": "AATS_OTT_FUNC_STOPPLAY",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_StopPlay.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "xiaojun.huang"
+        },
+        {
+            "group": "SYSTEM#SEEK",
+            "name": "AATS_OTT_FUNC_SEEK",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_Seek.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "xiaojun.huang"
+        },
+        {
+            "group": "SYSTEM#SWITCH_AUDIOTRACK",
+            "name": "AATS_OTT_FUNC_SWITCH_AUDIOTRACK",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_SwitchAudioTrack.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "xiaojun.huang"
+        },
+        {
+            "group": "SYSTEM#PROBECHECK",
+            "name": "AATS_OTT_FUNC_PROBEINFOCHECK",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_ProbeInfo.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#Multi_PIP_HTTP_TS_H265_4KP30",
+            "name": "AATS_OTT_FUNC_Multi_PIP_HTTP_TS_H265_4KP30",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_PIP_HTTP_TS_H265_4KP30.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#Multi_PIP_HTTP_TS_H265_4KP60_1080P",
+            "name": "AATS_OTT_FUNC_MULTI_PIP_HTTP_TS_H265_4KP60_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_PIP_HTTP_TS_H265_4KP60_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#Multi_PIP_UDP_TS_1080P",
+            "name": "AATS_OTT_FUNC_MULTI_PIP_UDP_TS_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_PIP_UDP_TS_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#Multi_Four_Screen_HLSV3_1080P",
+            "name": "AATS_OTT_FUNC_MULTI_Four_Screen_HLSV3_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_Four_Screen_HLSV3_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#Multi_Four_Screen_HTTP_TS_H265_1080P",
+            "name": "AATS_OTT_FUNC_MULTI_Four_Screen_HTTP_TS_H265_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_Four_Screen_HTTP_TS_H265_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#Multi_Four_Screen_UDP_TS_1080P",
+            "name": "AATS_OTT_FUNC_MULTI_Four_Screen_UDP_TS_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_Four_Screen_UDP_TS_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#Multi_PIP_Switch_Window_HTTP_TS_H265_1080P",
+            "name": "AATS_OTT_FUNC_MULTI_PIP_Switch_Window_HTTP_TS_H265_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_PIP_Switch_Window_HTTP_TS_H265_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#Multi_Four_Screen_Switch_Window_HTTP_TS_H265_1080P",
+            "name": "AATS_OTT_FUNC_MULTI_Four_Screen_Switch_Window_HTTP_TS_H265_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_Four_Screen_Switch_Window_HTTP_TS_H265_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#Multi_Four_Screen_Switch_Window_UDP_TS_1080P",
+            "name": "AATS_OTT_FUNC_MULTI_Four_Screen_Switch_Window_UDP_TS_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_Four_Screen_Switch_Window_UDP_TS_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#Multi_PIP_Switch_Window_UDP_TS_1080P",
+            "name": "AATS_OTT_FUNC_MULTI_PIP_Switch_Window_UDP_TS_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_PIP_Switch_Window_UDP_TS_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#SUBTITLE",
+            "name": "AATS_OTT_FUNC_SUBTITLECHECK_DVB",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_SubtitleCheck_DVB.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#SUBTITLE",
+            "name": "AATS_OTT_FUNC_SUBTITLECHECK_SCTE35",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_SubtitleCheck_Scte35.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#SUBTITLE",
+            "name": "AATS_OTT_FUNC_SUBTITLECHECK_CC",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_SubtitleCheck_CC.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#SUBTITLE",
+            "name": "AATS_OTT_FUNC_SUBTITLECHECK_SCTE27",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_SubtitleCheck_Scte27.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#SUBTITLE",
+            "name": "AATS_OTT_FUNC_SUBTITLECHECK_TELETEXT",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_SubtitleCheck_Teletext.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#SUBTITLE",
+            "name": "AATS_OTT_FUNC_SEEK_SUBTITLECHECK_DVB",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_Seek_SubtitleCheck_DVB.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#SUBTITLE",
+            "name": "AATS_OTT_FUNC_SEEK_SUBTITLECHECK_CC",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_Seek_SubtitleCheck_CC.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#SUBTITLE",
+            "name": "AATS_OTT_FUNC_SEEK_SUBTITLECHECK_SCTE27",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_Seek_SubtitleCheck_Scte27.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#SUBTITLE",
+            "name": "AATS_OTT_FUNC_SEEK_SUBTITLECHECK_TELETEXT",
+            "path": "tests/OTT_Hybrid/LOCAL_PLAYBACK/test_OTT_Sanity_LocalPlay_Seek_SubtitleCheck_Teletext.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "hongdan.liu"
+        },
+        {
+            "group": "SYSTEM#NETWORK",
+            "name": "AATS_OTT_SANITY_UDPV2_OFFLINE_RESTORE_NETWORK",
+            "path": "tests/OTT_Hybrid/NETWORK/test_OTT_Sanity_UDPV2_Offline_Restore_Network.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#NETWORK",
+            "name": "AATS_OTT_SANITY_RTSP_OFFLINE_RESTORE_NETWORK",
+            "path": "tests/OTT_Hybrid/NETWORK/test_OTT_Sanity_RTSP_Offline_Restore_Network.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#NETWORK",
+            "name": "AATS_OTT_SANITY_HTTP_OFFLINE_RESTORE_NETWORK",
+            "path": "tests/OTT_Hybrid/NETWORK/test_OTT_Sanity_HTTP_Offline_Restore_Network.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#NETWORK",
+            "name": "AATS_OTT_SANITY_HLSV3_OFFLINE_RESTORE_NETWORK",
+            "path": "tests/OTT_Hybrid/NETWORK/test_OTT_Sanity_HLSV3_Offline_Restore_Network.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#NETWORK",
+            "name": "AATS_OTT_SANITY_HLSV5_OFFLINE_RESTORE_NETWORK",
+            "path": "tests/OTT_Hybrid/NETWORK/test_OTT_Sanity_HLSV5_Offline_Restore_Network.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#NETWORK",
+            "name": "AATS_OTT_SANITY_RTP_OFFLINE_RESTORE_NETWORK",
+            "path": "tests/OTT_Hybrid/NETWORK/test_OTT_Sanity_RTP_Offline_Restore_Network.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#MULTI",
+            "name": "AATS_OTT_SANITY_MULTI_PIP_UDPV2_TS_H265_4KP60_1080P",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_PIP_UDPV2_TS_H265_4KP60_1080P.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#MULTI",
+            "name": "AATS_OTT_SANITY_MULTI_PIP_HTTP_TS_1080I",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_PIP_HTTP_TS_1080i.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#MULTI",
+            "name": "AATS_OTT_SANITY_MULTI_DYNAMIC_PMT",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_Dynamic_PMT.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#MULTI",
+            "name": "AATS_OTT_SANITY_MULTI_PIP_SMALL_WINDOW_SWITCH_CHANNEL_HTTP_TS_H265_4K",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_PIP_Small_Window_Switch_Channel_HTTP_TS_H265_4K.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#MULTI",
+            "name": "AATS_OTT_SANITY_MULTI_SUSPEND",
+            "path": "tests/OTT_Hybrid/MULTI/test_OTT_Sanity_Multi_Suspend.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        }
+    ]
+}

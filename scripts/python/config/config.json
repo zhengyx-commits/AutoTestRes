@@ -1,0 +1,150 @@
+{
+    "devices": {
+        "wifi": {
+            "device_id": "210924552105100083",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ah212_connector",
+            "baudrate": 921600,
+            "build_version": "R"
+        },
+        "bt": {
+            "device_id": "ohmd9f741c2a10c13",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ah212_connector",
+            "baudrate": 921600,
+            "build_version": "R"
+        },
+        "iptv_cmcc": {
+            "device_id": "0099030003FF25500001F09CD75302A4",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/p291_shmobile_connector",
+            "baudrate": 115200,
+            "build_version": "P"
+        },
+        "iptv_cmcc_l3a": {
+            "device_id": "192.168.1.101:5555",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/u211_shmobile_connector",
+            "baudrate": 115200,
+            "build_version": "P"
+        },
+        "iptv_ctcc": {
+            "device_id": "0010039901A03310000100692D6D0606",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/p291_telecom_connector",
+            "baudrate": 115200,
+            "build_version": "P"
+        },
+        "ott": {
+            "device_id": "1234567890",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ah212_connector",
+            "baudrate": 921600,
+            "build_version": "R",
+            "ethernet": {
+                "staticIPV4": {
+                    "ipaddr": "192.168.1.128",
+                    "gateway": "192.168.1.1"
+                }
+            }
+        },
+        "ott_hybrid": {
+            "device_id": "ohm8096a104c1010814",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_ah212_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "ott_hybrid_kpi": {
+            "device_id": "ohm53433256312145c4",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_ah212_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "ott_hybrid_yuv": {
+              "device_id": "ohm56101904501018",
+              "ipaddr": "10.18.32.170",
+              "serial_port": "/dev/ott_hybrid_yuv_connector",
+              "baudrate": 921600,
+              "build_version": "S"
+         },
+	 "ott_hybrid_t": {
+            "device_id": "ohm5610190440170a",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_Android_T_hybrid_AutoTest_connector",
+            "baudrate": 921600,
+            "build_version": "T"
+        },
+        "dvb": {
+            "device_id": "ohm5610190450261a",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "dvb_trunk": {
+            "device_id": "ohm5610190450261a",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "dvb_stress": {
+            "device_id": "ohm5610190450261a",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "tv_amazon": {
+            "device_id": "G3J21B0014820002",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ttyUSB0",
+            "baudrate": 460800
+        },
+        "tv_haier": {
+            "device_id": "1234567890",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ttyUSB1",
+            "baudrate": 115200,
+            "build_version": "P"
+        },
+        "tv_soundbar": {
+            "device_id": "t9829019620184212c06",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ttyUSB1",
+            "baudrate": 921600
+        },
+        "wifi_cmcc": {
+            "device_id": "0010039901A033100001288CB8F36360",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ttyUSB2",
+            "baudrate": 115200,
+            "build_version": "R"
+        },
+        "wifi_ctcc": {
+            "device_id": "0099030003FF25600001F09CD75467CA",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ttyUSB2",
+            "baudrate": 115200,
+            "build_version": "R"
+        },
+        "wifi_stress": {
+            "device_id": "0010039901A033100001288CB8F36360",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ttyUSB2",
+            "baudrate": 115200,
+            "build_version": "R"
+        },
+        "iptv_kt": {
+            "device_id": "1234567890",
+            "ipaddr": "192.168.50.50",
+            "serial_port": "/dev/ttyUSB0",
+            "baudrate": 961200,
+            "build_version": "R"
+        }
+    }
+
+
+}

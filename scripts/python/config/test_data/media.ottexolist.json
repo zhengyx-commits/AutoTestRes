@@ -1,0 +1,324 @@
+[
+    {
+        "name": "Clear DASH",
+        "samples": [
+            {
+                "name": "HD (MP4, H264)",
+                "uri": "https://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=51AF5F39AB0CEC3E5497CD9C900EBFEAECCCB5C7.8506521BFC350652163895D4C26DEE124209AA9E&key=ik0",
+                "extension": "mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "UHD (MP4, H264)",
+                "uri": "https://www.youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=A2716F75795F5D2AF0E88962FFCD10DB79384F29.84308FF04844498CE6FBCE4731507882B8307798&key=ik0",
+                "extension": "mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "HD (MP4, H265)",
+                "uri": "https://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=51AF5F39AB0CEC3E5497CD9C900EBFEAECCCB5C7.8506521BFC350652163895D4C26DEE124209AA9E&key=ik0",
+                "extension": "mpd",
+                "vdec": "h265",
+                "TVP": 0
+            },
+            {
+                "name": "UHD (MP4, H265)",
+                "uri": "https://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=51AF5F39AB0CEC3E5497CD9C900EBFEAECCCB5C7.8506521BFC350652163895D4C26DEE124209AA9E&key=ik0",
+                "extension": "mpd",
+                "vdec": "h265",
+                "TVP": 0
+            },
+            {
+                "name": "HD (WebM, VP9)",
+                "uri": "https://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?as=fmp4_audio_clear,webm2_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=249B04F79E984D7F86B4D8DB48AE6FAF41C17AB3.7B9F0EC0505E1566E59B8E488E9419F253DDF413&key=ik0",
+                "extension": "mpd",
+                "vdec": "vp9",
+                "TVP": 0
+            },
+            {
+                "name": "UHD (WebM, VP9)",
+                "uri": "https://www.youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?as=fmp4_audio_clear,webm2_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=B1C2A74783AC1CC4865EB312D7DD2D48230CC9FD.BD153B9882175F1F94BFE5141A5482313EA38E8D&key=ik0",
+                "extension": "mpd",
+                "vdec": "VP9",
+                "TVP": 0
+            }
+        ]
+    },
+    {
+        "name": "Widevine DASH (MP4, H264)",
+        "samples": [
+            {
+                "name": "HD (cenc)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "UHD (cenc)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears_sd.mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "HD (cbcs)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears_hd.mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "UHD (cbcs)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears_uhd.mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "Secure -&gt; Clear -&gt; Secure (cenc)",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            }
+        ]
+    },
+    {
+        "name": "Widevine DASH (WebM, VP9)",
+        "samples": [
+            {
+                "name": "HD (cenc, full-sample)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/vp9/tears/tears.mpd",
+                "vdec": "vp9",
+                "TVP": 0
+            },
+            {
+                "name": "UHD (cenc, full-sample)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/vp9/tears/tears_sd.mpd",
+                "vdec": "vp9",
+                "TVP": 0
+            },
+            {
+                "name": "HD (cenc, sub-sample)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/vp9/tears/tears_hd.mpd",
+                "vdec": "vp9",
+                "TVP": 0
+            },
+            {
+                "name": "UHD (cenc, sub-sample)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/vp9/tears/tears_uhd.mpd",
+                "vdec": "vp9",
+                "TVP": 0
+            }
+        ]
+    },
+    {
+        "name": "Widevine DASH (MP4, H265)",
+        "samples": [
+            {
+                "name": "HD (cenc)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears.mpd",
+                "vdec": "h265",
+                "TVP": 0
+            },
+            {
+                "name": "UHD (cenc)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd",
+                "vdec": "h265",
+                "TVP": 0
+            }
+        ]
+    },
+    {
+        "name": "Widevine DASH (policy tests)",
+        "samples": [
+            {
+                "name": "SW secure crypto (L3)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "SW secure decode",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears_sd.mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "HW secure crypto",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears_hd.mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "HW secure decode",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears_uhd.mpd",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "HW secure all (L1)",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            },
+            {
+                "name": "30s license (fails at ~30s)",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            },
+            {
+                "name": "HDCP not required",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            },
+            {
+                "name": "HDCP 1.0 required",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            },
+            {
+                "name": "HDCP 1.0 required",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            },
+            {
+                "name": "HDCP 2.0 required",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            },
+            {
+                "name": "HDCP 2.1 required",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            },
+            {
+                "name": "HDCP 2.2 required",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            },
+            {
+                "name": "HDCP no digital output",
+                "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
+                "drm_scheme": "widevine",
+                "drm_license_url": "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                "vdec": "h264",
+                "TVP": 95
+            }
+        ]
+    },
+    {
+        "name": "60fps DASH",
+        "samples": [
+            {
+                "name": "HD (MP4, H264, Clear)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears.mpd",
+                "vdec": "h265",
+                "TVP": 0
+            },
+            {
+                "name": "4K (MP4, H264, Clear)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd",
+                "vdec": "h265",
+                "TVP": 0
+            },
+            {
+                "name": "HD (MP4, H264, Widevine cenc)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd",
+                "drm_scheme": "Widevine",
+                "vdec": "h264",
+                "TVP": 88
+            },
+            {
+                "name": "4K (MP4, H264, Widevine cenc)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd",
+                "drm_scheme": "Widevine",
+                "vdec": "h264",
+                "TVP": 88
+            }
+        ]
+    },
+    {
+        "name": "HLS",
+        "samples": [
+            {
+                "name": "Apple 4x3 basic stream (TS)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears.mpd",
+                "vdec": "h265",
+                "TVP": 0
+            },
+            {
+                "name": "Apple 16x9 basic stream (TS)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd",
+                "vdec": "h265",
+                "TVP": 0
+            },
+            {
+                "name": "Apple master playlist advanced (TS)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd",
+                "vdec": "h265",
+                "TVP": 88
+            },
+            {
+                "name": "Apple master playlist advanced (FMP4)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd",
+                "vdec": "h265",
+                "TVP": 88
+            },
+            {
+                "name": "Apple media playlist (TS)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd",
+                "vdec": "h265",
+                "TVP": 88
+            },
+            {
+                "name": "Apple media playlist (AAC)",
+                "uri": "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd",
+                "vdec": "h265",
+                "TVP": 88
+            }
+        ]
+    },
+    {
+        "name": "SmoothStreaming",
+        "samples": [
+            {
+                "name": "Super speed (MP4, H264, Clear)",
+                "uri": "https://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/Manifest",
+                "vdec": "h264",
+                "TVP": 0
+            },
+            {
+                "name": "Super speed (MP4, H264, PlayReady)",
+                "uri": "https://playready.directtaps.net/smoothstreaming/SSWSS720H264PR/SuperSpeedway_720.ism/Manifest",
+                "drm_scheme": "playready",
+                "vdec": "h264",
+                "TVP": 83
+            }
+        ]
+    }
+]
+

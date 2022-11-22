@@ -1,0 +1,53 @@
+# This is a config file instead of part of config_dvb.json
+
+# for stress test
+conf_stress:
+  stress_time: 60
+  stress_switch_time: 0.1
+  switch_count: 5
+  plug_count: 5
+  timeshift_pause_resume_count: 5
+  timeshift_seek_count: 5
+  timeshift_playback_count: 5
+  timeshift_ff_count: 5
+  pvr_rf_hotplug_count: 5
+  timeshift_rf_hotplug_count: 5
+  pvr_use_three_hours_recording_goto_count: 5
+  pvr_playback_every_two_hours_count: 5
+
+# for suspend
+conf_suspend_time:
+  suspend_time: 3
+  play_time_after_wakeup: 15
+
+# for start kpi
+conf_start_kpi:
+  time: 10
+
+# for switch channel kpi
+conf_switch_channel_kpi:
+  same_fre_sd_to_sd_time: 10
+  cross_fre_sd_to_sd_time: 10
+  same_fre_sd_to_hd_time: 10
+  cross_fre_sd_to_hd_time: 10
+  same_fre_hd_to_jd_time: 10
+  cross_fre_hd_to_jd_time: 10
+
+# for repeat standby
+conf_standby:
+  repeat_time: 3
+
+# for subtitle test
+conf_channel_name:
+  # Target program name
+  dvb: SVT1
+  scte27: SONY
+conf_channel_dif_id:
+  # The value of the difference between the first program and the target program
+  dvb: 3
+  scte27: 2
+
+# for check whether it's need to scan after streaming changed.
+conf_dvb_check_time:
+  # 0: every case need to scan again; 10: check whether the first frame appears in ten seconds.
+  check_is_need_search_time: 0

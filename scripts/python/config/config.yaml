@@ -1,0 +1,373 @@
+# This is a config file instead of part of config.json
+broadlink:
+  ipaddr: 192.168.2.102
+  host: 192.168.2.101
+  host_port: 80
+  broadcast_addr: 192.168.2.255
+
+drm:
+  usid:
+  mac:
+  mac_bt:
+  mac_wifi:
+  hdcp:
+  hdcp22_fw_private:
+  widevinekeybox:
+  PlayReadykeybox25:
+  prpubkeybox:
+  prprivkeybox:
+  attestationdevidbox:
+  attestationkeybox:
+
+drm_support: true
+
+
+kpi_config:
+  kpi_debug:
+    flag: disable
+    name: vod_s_kpi
+    repeat_count: 100
+    reference_time: 2
+    reference_percentage: 1.1
+  vod_p_kpi_config_id:
+    "1": interceptKeyTi keyCode=19 down=true
+    "16": interceptKeyTi keyCode=19 down=false
+    "2": Create new client
+    "3": setDataSource:159
+    "4": prepareAsync:317
+    "5": player_start:enter
+    "17": Open baseUrl
+    "18": tcp connect
+    "31": tcp connect
+    "19": process_line:HTTP
+    "20": hParse is null
+    "22": async download Start fetch
+    "23": tcp connect
+    "33": tcp connect
+    "24": process_line:HTTP
+    "25": tcp connect
+    "34": tcp connect
+    "26": process_line:HTTP
+    "27": hParse is null
+    "28": start fetch segment file
+    "29": tcp connect
+    "35": tcp connect
+    "30": process_line:HTTP
+    "6": FindStream info cost_time
+    "7": wait START/SEEK cmd cost_time
+    "8": 2_1_1 video codec init cost,open_time
+    "9": 2_1_1 video codec init cost,open_endtime
+    "10": 2_1_2 audio codec init cost,open_time
+    "11": 2_1_2 audio codec init cost,open_endtime
+    "12": first check in vpts
+    "13": 3_2 First I frame coming
+    "14": 3_3 First I frame decoded
+    "15": first_picture_time
+  vod_p_kpi_config_result:
+    "17,18": tcp connect1
+    "18,19": HTTP response
+    "19,20": hPase null
+    "22,23": tcp connect2
+    "23,24": HTTP response2
+    "24,25": tcp connect3
+    "25,26": HTTP response3
+    "26,27": hPase
+    "27,28": segment
+    "28,29": tcp connect
+    "29,30": HTTP response4
+    "1,16": key
+    "16,2": key2create
+    "2,3": createPlayer
+    "3,4": setDataSource
+    "5,6": parser_param
+    "6,7": waitStart
+    "8,9": video init
+    "10,11": audio init
+    "11,12": first check in
+    "12,13": 1st I frame
+    "13,14": decode
+    "14,15": display
+    "2,15": total
+  replay_exit_switch_config_id:
+    "1": interceptKeyTi keyCode=4 down=false
+    "2": "stop enter:"
+    "3": "stream_es_release: p_para->acodec"
+    "4": "stream_es_release: p_para->vcodec"
+    "5": "stream_es_release: p_para->scodec"
+    "6": "destructor pid ="
+    "7": Create new client
+    "8": setDataSource:158
+    "9": prepareAsync:292
+    "10": player_start:enter
+    "11": FindStream info cost_time
+    "12": wait START/SEEK cmd cost_time
+    "13": 2_1_1 video codec init cost,open_time
+    "14": 2_1_1 video codec init cost,open_endtime
+    "15": 2_1_2 audio codec init cost,open_time
+    "16": 2_1_2 audio codec init cost,open_endtime
+    "17": first check in vpts
+    "18": First I frame coming
+    "19": First I frame decoded
+    "20": 4_1 First DI scan coming
+    "21": 4_2 First DI scan decoded
+    "22": 5_1,first_picture_queued
+  replay_exit_switch_config_result:
+    "1,2": key2stop
+    "3,4": stopAudio
+    "4,5": stopVideo
+    "1,6": stopAll
+    "6,7": stop2create
+    "7,8": createPlayer
+    "8,9": setDataSource
+    "10,11": parser_param
+    "11,12": waitStart
+    "13,14": video init
+    "15,16": audio init
+    "16,17": first check in
+    "17,18": 1st I frame
+    "18,19": decode
+    "20,21": di
+    "21,22": display
+    "1,22": total
+  vod_s_kpi:
+    "hlsv3_1080": 730
+    "http_4k_h264": 945
+    "http_1080i_h264": 799
+    "rtsp_1080p_h264": 1200
+  live_s_kpi:
+    "udp_4k_h264": 1654
+  vod_s_kpi_config_id:
+    "1": interceptKeyTq keycode=23
+    "2": 1_1 creat AmPlayer
+    "3": 1_2 setDataSource
+    "4": 1_3 prepare
+    "5": probe ok
+    "6": 3_2_3 first TS
+    "7": First I frame coming
+    "8": First I frame decoded
+    "9": vc receive first frame
+    "10": vc get first frame
+    "11": first swap picture
+  vod_s_kpi_config_result:
+    "1,2": key2create
+    "2,3": player_init
+    "3,4": parser_param
+    "4,5": wait_data
+    "5,6": wait_i
+    "6,7": decoder
+    "7,8": first_I
+    "8,9": aa
+    "1,5": di
+    "5,10": vc
+    "5,11": vf
+    "1,11": total
+  vod_s_seek:
+    "http_4k_h264": 1047
+    "hls_4k": 368
+  vod_s_seek_config_id:
+    "1": "seekTo enter:"
+    "2": AmPlayer seekTo
+    "3": Call start
+    "4": "ff_seek_frame pos:"
+    "5": loop_seek end
+    "6": 3_2_3 first TS
+    "7": demux first write
+    "8": decoder write 0
+    "9": First I frame coming
+    "10": First I frame decoded
+    "12": vc get first frame
+  vod_s_seek_config_result:
+    "1,2": key2stop
+    "2,3": stop
+    "3,4": reinit
+    "4,5": seek
+    "5,6": wait_data
+    "6,7": demux_ww
+    "7,8": decoder_ww
+    "9,10": decoder
+    "10,12": vpp
+    "1,12": total
+    "1,4": stop2start
+    "5,8": 1st data
+    "8,9": 1st I
+    "2,9": mw
+    "9,12": pipeline
+  vod_s_switch_exit:
+    "udp_1080p": 2292
+  vod_s_switch_exit_config_id:
+    "1": interceptKeyTq keycode=
+    "2": AmPlayer stop
+    "3": StopVideoDecoding in
+    "4": StopVideoDecoding end response
+    "5": StopAudioDecoding in
+    "6": StopAudioDecoding response
+    "7": 7_3 del AmPlayer end
+    "8": 1_1 creat AmPlayer
+    "9": 1_2 setDataSource
+    "10": 1_3 prepare
+    "11": probe ok
+    "12": 3_2_3 first TS
+    "13": demux first write
+    "14": decoder write 0
+    "15": First I frame coming
+    "16": First I frame decoded
+    "18": vc receive first frame
+    "19": vc get first frame
+    "20": first swap picture
+  vod_s_switch_exit_config_result:
+    "1,2": key2stop
+    "2,3": player_stop
+    "3,4": video_stop
+    "5,6": audio_stop
+    "1,7": stop_all
+    "7,8": stoped2create
+    "8,9": player_init
+    "10,11": parser_param
+    "11,12": wait_data
+    "12,13": demux_ww
+    "13,14": decoder_ww
+    "14,15": wait_i
+    "15,16": decoder
+    "16,20": vpp
+    "1,20": total
+  channel_switch_kpi_config_id:
+    "1": interceptKeyTi keyCode=20 down=false
+    "2": "] stop"
+    "3": 1_3_1 audio codec close cost,close_time
+    "4": 1_3_1 audio codec close cost,close_endtime
+    "5": "stream_es_release: p_para->scodec"
+    "6": destructor pid =
+    "7": Create new client
+    "8": "[ player_start:enter ]p="
+    "9": parse ok , prepare parameters
+    "10": Init cost_time
+    "11": wait START/SEEK cmd cost_time
+    "12": player_decoder_init, enter--2
+    "13": decoder init cost_time
+    "14": First I frame coming
+    "15": First I frame decoded
+    "16": First DI scan coming
+    "17": First DI scan decoded
+    "18": "di->first_pic cost,first_picture_time"
+    "19": normalReportHandler media_evt:MEDIA_GET_FIRST_PCR
+  channel_switch_kpi_config_result:
+    "1,2": key2mps
+    "2,3": player_exit
+    "3,4": audioRelease
+    "4,5": videoRelease
+    "5,6": destructorPlayer
+    "6,7": apk_wait
+    "7,8": MediaPlayer_amplayer
+    "8,9": amplayer_parseok
+    "9,10": find_streamInfo
+    "10,11": wait_start_cmd
+    "11,12": start_decoder_init
+    "12,13": decoder_init
+    "13,14": wait_first_I_frame
+    "14,15": first_I_frm_decoded
+    "15,16": DI_get_1st_frm
+    "16,17": DI_output_1st_frm
+    "17,18": amvideo_output_1st
+    "1,18": total
+  vod_seek_config_id:
+    "1": interceptKeyTi keyCode=22 down=false
+    "2": "] seekTo("
+    "3": "stream_es_release: p_para->acodec"
+    "4": "stream_es_release: p_para->vcodec"
+    "5": video stream_type=
+    "6": "[ player_dec_reset ], end"
+    "7": first check in vpts
+    "8": 3_2 First I frame coming
+    "9": 3_3 First I frame decoded
+    "10": 4_1 First DI scan coming
+    "11": 4_2 First DI scan decoded
+    "12": 5_1 di->first_pic cost,first_picture_time
+  vod_seek_config_result:
+    "1,2": KeySeek
+    "3,4": releseAudio
+    "4,5": releseVideo
+    "5,6": InitCodec
+    "6,7": startFindStream
+    "7,8": wait_I
+    "8,9": decode
+    "10,11": DI
+    "11,12": display
+    "1,12": total
+  live_start_kpi_config_id:
+    "1": interceptKeyTi keyCode=23 down=true
+    "2": "[ setKeyMode ]"
+    "3": webview inited done
+    "4": onPageStarted
+    "5": onPageFinished
+    "6": surfaceCreated
+    "7": Create new client
+    "8": "[ player_start:enter ]p="
+    "9": parse ok , prepare parameters
+    "10": Init cost_time
+    "11": wait START/SEEK cmd cost_time
+    "12": player_decoder_init, enter--2
+    "13": decoder init cost_time
+    "14": First I frame coming
+    "15": First I frame decoded
+    "16": First DI scan coming
+    "17": First DI scan decoded
+    "18": di->first_pic cost,first_picture_time
+    "19": normalReportHandler media_evt:MEDIA_GET_FIRST_PCR
+  live_start_kpi_config_result:
+    "1,2": press_setkey
+    "2,3": key_webinitdone
+    "3,4": init_onPageStart
+    "4,5": PageStart_PageFinish
+    "5,6": PageFinish_surfaceCreated
+    "6,7": surfaceCreated_Client
+    "7,8": MediaPlayer_amplayer
+    "8,9": amplayer_parseok
+    "9,10": find_streamInfo
+    "10,11": wait_start_cmd
+    "11,12": start_decoder_init
+    "12,13": decoder_init
+    "13,14": wait_first_I_frame
+    "14,15": first_I_frm_decoded
+    "15,16": DI_get_1st_frm
+    "16,17": DI_output_1st_frm
+    "17,18": amvideo_output_1st
+    "1,18": total
+  replay_start_kpi_config_id:
+    "1": interceptKeyTi keyCode=23 down=false
+    "2": "] stop"
+    "3": "stream_es_release: p_para->acodec"
+    "4": "stream_es_release: p_para->vcodec="
+    "5": "stream_es_release: p_para->scodec"
+    "6": destructor pid =
+    "7": Create new client
+    "8": "[ player_start:enter ]p="
+    "9": parse ok , prepare parameters
+    "10": Init cost_time
+    "11": wait START/SEEK cmd cost_time
+    "12": player_decoder_init, enter--2
+    "13": decoder init cost_time
+    "14": First I frame coming
+    "15": First I frame decoded
+    "16": First DI scan coming
+    "17": First DI scan decoded
+    "18": di->first_pic cost,first_picture_time
+    "19": normalReportHandler media_evt:MEDIA_GET_FIRST_PCR
+  replay_start_kpi_config_result:
+    "1,2": key2mps
+    "2,3": player_exit
+    "3,4": audioRelease
+    "4,5": videoRelease
+    "5,6": destructorPlayer
+    "6,7": apk_wait
+    "7,8": MediaPlayer_amplayer
+    "8,9": amplayer_parseok
+    "9,10": find_streamInfo
+    "10,11": wait_start_cmd
+    "11,12": start_decoder_init
+    "12,13": decoder_init
+    "13,14": wait_first_I_frame
+    "14,15": first_I_frm_decoded
+    "15,16": DI_get_1st_frm
+    "16,17": DI_output_1st_frm
+    "17,18": amvideo_output_1st
+    "1,18": total

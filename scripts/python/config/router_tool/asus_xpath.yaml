@@ -1,0 +1,36 @@
+# This is yaml for ASUS router xpath info
+
+asus:
+  address: http://router.asus.com/Main_Login.asp
+  account: admin
+  passwd: 12345678
+  username_element: login_username
+  password_element: login_passwd
+  signin_element: //*[@id="login_filed"]/div[8]
+  signin_done_element: helpname
+
+  band_element: //*[@id="wl_unit_field"]/td/select
+  wireless_mode_element: //*[@id="WLgeneral"]/tbody/tr[6]/td/select
+  ssid_element: wl_ssid
+
+  #  //*[@id="WLgeneral"]/tbody/tr[11]/td/select/option[4]
+  channel_regu_element: //*[@id="WLgeneral"]/tbody/tr[11]/td/select/option[{}]
+  bandwidth_element: //*[@id="wl_bw_field"]/td/select
+  authentication_method_regu_element: //*[@id="WLgeneral"]/tbody/tr[13]/td/div[1]/select/option[{}]
+
+  wep_encrypt_regu_element: //*[@id="WLgeneral"]/tbody/tr[16]/td/select/option[{}]
+  wpa_encrypt_regu_element: //*[@id="WLgeneral"]/tbody/tr[14]/td/select/option[{}]
+  passwd_index_regu_element: //*[@id="WLgeneral"]/tbody/tr[17]/td/select/option[{}]
+
+  wep_passwd_element: wl_key1
+  wpa_passwd_element:
+    asus_86u: //*[@id="wpa_psk_key_field"]/td/div/div[1]/input
+    asus_88u: //*[@id="WLgeneral"]/tbody/tr[15]/td/input
+  protect_frame_regu_element: //*[@id="WLgeneral"]/tbody/tr[26]/td/select/option[{}]
+
+  apply_element: applyButton
+  setting_load_element: //*[@id="loadingBlock"]/tbody/tr/td[2]
+
+  wait_reboot_element:
+    asus_86u: /html/body/form/div/div/div[1]/div[2]
+    asus_88u: /html/body/form/div/div/div[2]
