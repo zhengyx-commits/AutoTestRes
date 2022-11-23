@@ -157,7 +157,7 @@ class PlayerCheck(ADB, Check, CheckAndroidVersion):
         start_time = time.time()
         if not self.check_player_path():
             logging.info("Not IPTV path!!!")
-            return flag_check_logcat_output_keywords, self.checked_log_dict
+            return flag_check_logcat_output_keywords, checked_log_dict
         print('adb -s ' + f'{self.serialnumber}' + ' ' + f'{log}')
         logfilter = 'adb -s ' + self.serialnumber + ' ' + log
 
@@ -170,7 +170,7 @@ class PlayerCheck(ADB, Check, CheckAndroidVersion):
             # if check abnormal in thread, should exit
             if self.exitcode == 1:
                 flag_check_logcat_output_keywords = False
-                return flag_check_logcat_output_keywords
+                return flag_check_logcat_output_keywords, checked_log_dict
             if p:
                 line = p.stdout.readline().decode('utf-8', 'backslashreplace_backport') \
                     .encode('unicode_escape') \
