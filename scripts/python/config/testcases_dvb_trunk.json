@@ -2,15 +2,6 @@
     "testcases": [
         {
             "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_008_SWITCH_CHANNEL_TIME_SF_SD_TO_SD",
-            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_008_Switch_Channel_Time_Same_Frequency_SD_To_SD.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "kejun.chen"
-        },
-        {
-            "group": "SYSTEM#DVB",
             "name": "AATS_DVB_FUNC_009_SWITCH_CHANNEL_TIME_CF_SD_TO_SD",
             "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_009_Switch_Channel_Time_Cross_Frequency_SD_To_SD.py",
             "resource": [
@@ -20,26 +11,8 @@
         },
         {
             "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_010_SWITCH_CHANNEL_TIME_SF_SD_TO_HD",
-            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_010_Switch_Channel_Time_Same_Frequency_SD_To_HD.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "kejun.chen"
-        },
-        {
-            "group": "SYSTEM#DVB",
             "name": "AATS_DVB_FUNC_011_SWITCH_CHANNEL_TIME_CF_SD_TO_HD",
             "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_011_Switch_Channel_Time_Cross_Frequency_SD_To_HD.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "kejun.chen"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_012_SWITCH_CHANNEL_TIME_SF_HD_TO_HD",
-            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_012_Switch_Channel_Time_Same_Frequency_HD_To_HD.py",
             "resource": [
                 "media_sys"
             ],
@@ -103,42 +76,6 @@
             "group": "SYSTEM#DVB",
             "name": "AATS_DVB_FUNC_021_SWITCH_CHANNEL_CRASH_FIVE_SECOND",
             "path": "tests/DVB/stress/test_DVB_Sanity_Func_021_Switch_Channel_Crash_Five_Second.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "kejun.chen"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_038_SWITCH_CHANNEL_BLACK_SCREEN_MODE",
-            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_038_Switch_Channel_Black_Screen_Mode.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "kejun.chen"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_039_SWITCH_CHANNEL_STATIC_FRAME_MODE",
-            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_039_Switch_Channel_Static_Frame_Mode.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "kejun.chen"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_040_SWITCH_TO_PLAYER_BLACK_SCREEN_MODE",
-            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_040_Switch_To_Player_Black_Screen_Mode.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "kejun.chen"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_041_SWITCH_TO_PLAYER_STATIC_FRAME_MODE",
-            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_041_Switch_To_Player_Static_Frame_Mode.py",
             "resource": [
                 "media_sys"
             ],
@@ -281,15 +218,6 @@
         },
         {
             "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_29_DVB_C_RECORDING_PLAYBACK",
-            "path": "tests/DVB/PVR/test_DVB_Func29_DVB-C_recording_playback.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "chao.li"
-        },
-        {
-            "group": "SYSTEM#DVB",
             "name": "AATS_DVB_FUNC_30_DVB_C_RECORDING_PLAYBACK_WITH_HOTPLUG",
             "path": "tests/DVB/PVR/test_DVB_Func30_DVB-C_recording_playback_with_hotplug.py",
             "resource": [
@@ -361,42 +289,6 @@
             "author": "yongbo.shao"
         },
         {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_115_STANDBY",
-            "path": "tests/DVB/playback/test_DVB_Sanity_Func_115_Standby.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "yongbo.shao"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_136_HD_START_KPI",
-            "path": "tests/DVB/playback/test_DVB_Sanity_Func_136_HD_Start_KPI.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "yongbo.shao"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_160_STANDBY_REBOOT",
-            "path": "tests/DVB/playback/test_DVB_Sanity_Func_160_Standby_Reboot.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "yongbo.shao"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_137_UHD_START_KPI",
-            "path": "tests/DVB/playback/test_DVB_Sanity_Func_137_UHD_Start_KPI.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "yongbo.shao"
-        },
-        {
             "group": "SYSTEM#MULTI",
             "name": "AATS_DVB_FUNC_156_CAS_STRESS_PLAYBACK",
             "path": "tests/DVB/stress/test_DVB_Sanity_Func_156_CAS_Stress_Playback.py",
@@ -409,24 +301,6 @@
             "group": "SYSTEM#MULTI",
             "name": "AATS_DVB_FUNC_159_STRESS_PLAYBACK",
             "path": "tests/DVB/stress/test_DVB_Sanity_Func_159_Stress_Playback.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "yongbo.shao"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_154_CAS_REPEAT_STANDBY",
-            "path": "tests/DVB/playback/test_DVB_Sanity_Func_154_Repeat_Standby.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "yongbo.shao"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_155_CAS_REPEAT_REBOOT",
-            "path": "tests/DVB/playback/test_DVB_Sanity_Func_155_CAS_repeat_Reboot.py",
             "resource": [
                 "media_sys"
             ],
@@ -503,15 +377,6 @@
                 "media_sys"
             ],
             "author": "jianhua.huang"
-        },
-        {
-            "group": "SYSTEM#DVB",
-            "name": "AATS_DVB_FUNC_QUICK_SCAN",
-            "path": "tests/DVB/playback/test_DVB_Sanity_Func_Quick_Scan.py",
-            "resource": [
-                "media_sys"
-            ],
-            "author": "kejun.chen"
         },
         {
             "group": "SYSTEM#DVB",
