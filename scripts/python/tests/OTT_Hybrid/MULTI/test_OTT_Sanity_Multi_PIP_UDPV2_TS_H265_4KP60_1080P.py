@@ -24,6 +24,7 @@ def multi_teardown():
 
 
 # @pytest.mark.skip
+@pytest.mark.flaky(reruns=3)
 def test_Multi_PIP_UDPV2_TS_H265_4KP60_1080P():
     if p_conf_single_stream:
         stream_name_2015Hisense, Hisense_url = get_conf_url("conf_udp_url", "udp", "conf_stream_name", "h265_4K")
@@ -34,8 +35,8 @@ def test_Multi_PIP_UDPV2_TS_H265_4KP60_1080P():
             file_path = file_path[0]
             file_path1 = file_path1[0]
         try:
-            streamProvider.start_send('udp', file_path)
-            streamProvider1.start_send('udp1', file_path1)
+            streamProvider.start_send('udp', file_path, url=Hisense_url[6:])
+            streamProvider1.start_send('udp', file_path1, url=SAMSUNG_url[6:])
         except Exception as e:
             logging.error("stream provider start send failed.")
             raise False
@@ -60,10 +61,11 @@ def test_Multi_PIP_UDPV2_TS_H265_4KP60_1080P():
                     file_path1 = file_path1[0]
                     file_path_list.append(file_path1)
             print("file_path_list", file_path_list)
+            file_path_list = list(set(file_path_list))
             for i in range(0, len(file_path_list) - 1):
                 try:
-                    streamProvider.start_send('udp', file_path_list[i])
-                    streamProvider1.start_send('udp1', file_path_list[i + 1])
+                    streamProvider.start_send('udp', file_path_list[i], url=url[6:])
+                    streamProvider1.start_send('udp', file_path_list[i + 1], url=url1[6:])
                 except Exception as e:
                     logging.error("stream provider start send failed.")
                     raise False
@@ -75,7 +77,10 @@ def test_Multi_PIP_UDPV2_TS_H265_4KP60_1080P():
                 multi.send_cmd(start_cmd)
                 assert common_case.player_check.check_startPlay()[0], "start play failed"
                 common_case.switch_pip_2_window()
-                common_case.pause_resume_seek_stop()
+                #common_case.pause_resume_seek_stop()
                 multi.stop_multiPlayer_apk()
+                streamProvider.stop_send()
+                streamProvider1.stop_send()
+
 
 

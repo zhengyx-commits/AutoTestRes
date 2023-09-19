@@ -1,421 +1,49 @@
 # This is yaml for wifi product
 router:
   # pls write down the router name .We can use asusac88u and ...
-  name: asusac88u
+  name: asusax86u
 
 # test list config , such as if you wanna test base function use "wifi_base" , or use "wifi" test rvr
 test_config:
-  config: wifi
+  config: wifi_full
 
 rf_solution:
-  ip_address: 192.168.50.100
+  #  support RC4DAT-8G-95 ,RADIORACK-4-220
+  model: RADIORACK-4-220
+  RC4DAT-8G-95:
+    idVendor: 0x20ce
+    idProduct: 0x0023
+  RADIORACK-4-220:
+    ip_address: 192.168.50.100
   # reduction step for rf signal, can be configured according to test requirements
-  step: [ 0, 3 ]
+  step: [ 0 ]
 
 corner_angle:
   # angle step for corner, can be configured according to test requirements
   ip_address: 192.168.50.200
-  step: [ 30,120 ]
-env_command: [ "su" ]
+  step: [ 30 ,120 ]
+env_command: [ "pwd" ]
 #env_command: [ "iwpriv wlan0 set_rate_ofdm 9","iwpriv wlan0 set_rate_ofdm 8","iwpriv wlan0 set_rate_ofdm 3" ]
 test_wifi:
   ssid: i-test
   passwd: "@12345678"
 
-#for wifi
-conf_wifi:
-  repeat_count: 20
-  test_time: 15
-  AP1:
-    - ssid: AUT_VPN_Router_3
-      pwd: ""
-      security: none
-      hidden: false
-  AP2:
-    - ssid: AUT_VPN_Router_1
-      pwd: 12345678
-      security: wep
-      hidden: false
-  AP3:
-    - ssid: AUT_VPN_Router_1
-      pwd: 12345678
-      security: wpa
-      hidden: false
-  AP4:
-    - ssid: AUT_VPN_5G_Router_1
-      pwd: 12345678
-      security: wpa2
-      hidden: false
-  AP5:
-    - ssid: AUT_VPN_5G_Router_1
-      pwd: 12345678
-      security: wpa/wpa2
-      hidden: false
-  incorrectPsk:
-    - ssid: AUT_VPN_5G_Router_3@#测试
-      pwd: 4ottonly
-      security: wpa
-      hidden: false
-  hiddenSSID:
-    - ssid: AUT_VPN_Router_2
-      pwd: 12345678
-      security: wpaPSK
-      hidden: true
-  specialSSID:
-    - ssid: AUT_VPN_5G_Router_3@#测试
-      pwd: 12345678
-      security: wpa/wpa2
-      hidden: false
+pair_num:
+  ax:
+    '2': { 'tx': [ 10,8,6,4 ],'rx': [ 10,8,6,4 ] }
+    '5': { 'tx': [ 15,13,11,9 ],'rx': [ 15,13,11,9 ] }
+  ac:
+    '5': { 'tx': [ 15,13,11,9 ],'rx': [ 15,13,11,9 ] }
+  n:
+    '2': { 'tx': [ 10,8,6 ],'rx': [ 10,8,6 ] }
+    '5': { 'tx': [ 10,8,6 ],'rx': [ 10,8,6 ] }
 
-#for wifi_stress
-conf_wifi_stress:
-  repeat_count: 2000
-  testTime: 720
-  broadlink:
-    pc_ip: 192.168.68.227
-    broadlink_ip: 192.168.68.110
-    host_port: 80
-    broadcast_addr: 192.168.68.255
+# wifi func 004 repeat times
+times_004: 3
 
-# for 2g special ssid
-conf_connect_2g_special_ssid:
-  band: 2.4 GHz
-  ssid: Abc123!@#2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: Open System
+# wifi func 063 repeat times
+times_063: 20
 
-# for 2g conceal ssid
-conf_connect_2g_conceal_ssid:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  hide_ssid: 是
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 2g legcy ssid
-conf_connect_2g_legcy:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: Legacy
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: Shared Key
-  wep_encrypt: WEP-64bits
-  wep_passwd: Abc1234567
-
-# for 2g 11n
-conf_connect_2g_11n:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: N only
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 2g 40mhz
-conf_connect_2g_40mhz:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 40 MHz
-  authentication_method: Open System
-
-# for 2g 20mhz
-conf_connect_2g_20mhz:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 2g 1 channel
-conf_connect_2g_1_channel:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: 1
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 2g 6 channel
-conf_connect_2g_6_channel:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: 6
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 2g 11 channel
-conf_connect_2g_11_channel:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: 11
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 2g wpa2-aes no pmf
-conf_connect_2g_wpa2_aes_no_pmf:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: WPA2-Personal
-  wpa_passwd: 12345678
-  protect_frame: 停用
-
-# for 2g wpa2-aes pmf
-conf_connect_2g_wpa2_aes_pmf:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: WPA2-Personal
-  wpa_passwd: 12345678
-  protect_frame: 强制启用
-
-# for 2g wpa2-aes pmf no mandatory
-conf_connect_2g_wpa2_aes_pmf_no_mandatory:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: WPA2-Personal
-  wpa_passwd: 12345678
-  protect_frame: 非强制启用
-
-# for 2g wpa2-aes tkip
-conf_connect_2g_wpa2_tkip_aes:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: WPA/WPA2--Personal
-  wpa_encrypt: TKIP+AES
-  wpa_passwd: 12345678
-  protect_frame: 非强制启用
-
-# for 2g wpa3-aes
-conf_connect_2g_wpa3_aes:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: WPA3-Personal
-  wpa_passwd: 12345678
-  protect_frame: 强制启用
-
-# for 2g wpa3-aes pmf no mandatory
-conf_connect_2g_wpa3_aes_pmf_no_mandatory:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: WPA2/WPA3--Personal
-  wpa_passwd: 12345678
-  protect_frame: 非强制启用
-
-# for 2g wpa3-aes pmf
-conf_connect_2g_wpa3_aes_pmf:
-  band: 2.4 GHz
-  ssid: ATC_ASUS_AX88U_2G
-  wireless_mode: 自动
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: WPA2/WPA3--Personal
-  wpa_passwd: 12345678
-  protect_frame: 强制启用
-
-# for 5g special ssid
-conf_connect_5g_special_ssid:
-  band: 5 GHz
-  ssid: Abc123!@#5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 5g conceal ssid
-conf_connect_5g_conceal_ssid:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  hide_ssid: 是
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 5g legcy ssid
-conf_connect_5g_legcy:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: Legacy
-  channel: auto
-  bandwidth: 20 MHz
-  authentication_method: Shared Key
-  wep_encrypt: WEP-64bits
-  wep_passwd: Abc1234567
-
-# for 5g ax
-conf_connect_5g_ax:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: AX only
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 5g n_ac_ax
-conf_connect_5g_n_ac_ax:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: N/AC/AX mixed
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 5g 80mhz
-conf_connect_5g_80mhz:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 80 MHz
-  authentication_method: Open System
-
-# for 5g 40mhz
-conf_connect_5g_40mhz:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 40 MHz
-  authentication_method: Open System
-
-# for 5g 20mhz
-conf_connect_5g_20mhz:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 5g 161 channel
-conf_connect_5g_161_channel:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 161
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 5g 36 channel
-conf_connect_5g_36_channel:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 36
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-# for 5g 52 channel
-conf_connect_5g_52_channel:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 52
-  bandwidth: 20 MHz
-  authentication_method: Open System
-
-
-# for 5g wpa2-aes no pmf
-conf_connect_5g_wpa2_aes_no_pmf:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: WPA2-Personal
-  wpa_passwd: 12345678
-  protect_frame: 停用
-
-# for 5g wpa2-aes pmf
-conf_connect_5g_wpa2_aes_pmf:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: WPA2-Personal
-  wpa_passwd: 12345678
-  protect_frame: 强制启用
-
-# for 5g wpa2-aes pmf no mandatory
-conf_connect_5g_wpa2_aes_pmf_no_mandatory:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: WPA2-Personal
-  wpa_passwd: 12345678
-  protect_frame: 非强制启用
-
-# for 5g wpa2-aes tkip
-conf_connect_5g_wpa2_tkip_aes:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: WPA/WPA2--Personal
-  wpa_encrypt: TKIP+AES
-  wpa_passwd: 12345678
-  protect_frame: 非强制启用
-
-# for 5g wpa3-aes
-conf_connect_5g_wpa3_aes:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: WPA3-Personal
-  wpa_passwd: 12345678
-  protect_frame: 强制启用
-
-# for 5g wpa3-aes pmf no mandatory
-conf_connect_5g_wpa3_aes_pmf_no_mandatory:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: WPA2/WPA3--Personal
-  wpa_passwd: 12345678
-  protect_frame: 非强制启用
-
-# for 5g wpa3-aes pmf
-conf_connect_5g_wpa3_aes_pmf:
-  band: 5 GHz
-  ssid: ATC_ASUS_AX88U_5G
-  wireless_mode: 自动
-  channel: 149
-  bandwidth: 20 MHz
-  authentication_method: WPA2/WPA3--Personal
-  wpa_passwd: 12345678
-  protect_frame: 强制启用
+# wifi func 081 repeat times
+times_081: 20
+accompanying_dut: AMLS905X4AH212BT0318

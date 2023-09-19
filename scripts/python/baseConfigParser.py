@@ -17,8 +17,21 @@ import json
 import pytest
 
 AATS_TARGET_FILE_NAME = "target.json"
-
+AATS_CONFIG_JSON_PATH = "config/config.json"
 OBFUSCATE_BLACK_LIST_KEYS = ["ssid", "psk"]
+
+
+def get_device_config_by_device_id(devices):
+    device_conf_list = []
+    with open(AATS_CONFIG_JSON_PATH, 'r') as file:
+        config_data = json.load(file)
+
+    for device_conf in list(config_data['devices'].values()):
+        for device_id in devices[0].split(','):
+            pytest.multi_instance_devices.append(device_id)
+            if device_id in device_conf['device_id'] and (device_id not in device_conf_list):
+                device_conf_list.append(device_conf)
+    return device_conf_list
 
 
 def get_config_json():
@@ -29,9 +42,8 @@ def get_config_json():
     pytest.target = get_target_json_data("target")
     if pytest.target:
         prj = pytest.target.get("prj")
-    path = f'config/config.json'
-
-    return os.path.join(os.getcwd(), path), prj
+    # path = f'config/config.json'
+    return os.path.join(os.getcwd(), AATS_CONFIG_JSON_PATH), prj
 
 
 def get_target_json_data(target):

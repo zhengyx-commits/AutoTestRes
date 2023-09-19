@@ -10,12 +10,17 @@ import subprocess
 import logging
 import os
 import threading
+
+import allure
 import select
 import time
 import re
+import random
 # from lib.common.system.ADB import ADB
+import pytest
+
 from lib.common.system.SSH import SSH
-from lib.common.system.NetworkAuxiliary import getIfconfig
+from lib.common.system.NetworkAuxiliary import differentiate_servers, config_common_yaml
 
 
 class StreamProvider():
@@ -35,30 +40,43 @@ class StreamProvider():
         '''
         self.ssh_pipe = self.ssh_connect(ip, service)
         self.root_path = self.ssh_pipe.send_cmd('pwd')[0].strip()
-        # logging.info(f"self.root_path: {self.root_path}")
+        logging.info(f"self.root_path: {self.root_path}")
         if service == "vlc":
             self.video_root_path = self.root_path + '/video'
             # self.open_vlc()
-        else:
+        else:  # dvb
             # self.video_root_path = self.root_path + '/workdir/DTU-315/sample'
             self.video_root_path = self.root_path + '/work/dta-2115b'
         self._thread = None
 
     def ssh_connect(self, ip, service):
         # check sh or sz node
-        iplist = getIfconfig()
-        device_ip_sz = "192.168.1.246"
+        global ssh_pipe
+        uname = ""
+        passwd = ""
+        DEVICE_IP, STREAM_IP, RTSP_PATH = differentiate_servers()
+        p_conf_conn_info = config_common_yaml.get_note("connect_info")
         try:
             if service == "vlc":
-                if device_ip_sz in iplist:
+                if "192.168.1.246" in DEVICE_IP:
                     # shenzhen
-                    ssh_pipe = SSH(ip, uname='amlogic', passwd='Linux2017')
+                    uname = p_conf_conn_info.get("sz_uname")
+                    passwd = p_conf_conn_info.get("sz_pwd")
+                elif "192.168.1.101" in DEVICE_IP:
+                    # shenzhen_ref
+                    uname = p_conf_conn_info.get("sz_ref_uname")
+                    passwd = p_conf_conn_info.get("sz_ref_pwd")
                 else:
                     # shanghai
-                    ip = "192.168.1.102"
-                    ssh_pipe = SSH(ip, uname='aml', passwd='Linux2021')
-            else:
-                ssh_pipe = SSH(ip, uname='amlogic', passwd='Linux2020')
+                    if "192.168.1.105" in DEVICE_IP:
+                        uname = p_conf_conn_info.get("basic_uname")
+                        passwd = p_conf_conn_info.get("basic_pwd")
+                    else:
+                        uname = p_conf_conn_info.get("compatibility_uname")
+                        passwd = p_conf_conn_info.get("compatibility_pwd")
+                ssh_pipe = SSH(DEVICE_IP, uname=uname, passwd=passwd)
+            else:  # dvb, now not used yet
+                ssh_pipe = SSH(DEVICE_IP, uname='amlogic', passwd='Linux2020')
         except Exception as e:
             logging.info("Can't connect ssh")
             raise Exception("ssh unable to connect")
@@ -91,6 +109,7 @@ class StreamProvider():
             res = self.ssh_pipe.send_cmd(find_command)[0]
         return res.split('\n')[:-1]
 
+    @allure.step("Start send stream")
     def start_send(self, protocol, file_path, iswait=False, **kwargs):
         self._thread = None
         if not file_path:
@@ -98,6 +117,7 @@ class StreamProvider():
         if not isinstance(self._thread, threading.Thread):
             if "QAM64" not in protocol:
                 self._thread = threading.Thread(target=self._start_send, args=(protocol, file_path),
+                                                kwargs={**kwargs},
                                                 name='vlc_stream')
             else:
                 self._thread = threading.Thread(target=self._start_send, args=(protocol, file_path),
@@ -115,11 +135,11 @@ class StreamProvider():
         multiple player use path rtsp://192.168.50.240:8554/video/DRA_MTV.ts to play
         @return:
         '''
-        iplist = getIfconfig()
-        if "192.168.1.100" in iplist:
-            self.live555_popen = self.ssh_pipe.send_cmd('cd /home/aml/live/mediaServer;./live555MediaServer')
-        else:
-            self.live555_popen = self.ssh_pipe.send_cmd('cd /home/amlogic/live/mediaServer;./live555MediaServer')
+        DEVICE_IP, STREAM_IP, RTSP_PATH = differentiate_servers()
+        if "192.168.1.105" or "192.168.1.103" in DEVICE_IP:  # shanghai
+            self.live555_popen = self.ssh_pipe.send_cmd(f'cd {RTSP_PATH};./live555MediaServer')
+        else:  # shenzhen
+            self.live555_popen = self.ssh_pipe.send_cmd(f'cd {RTSP_PATH};./live555MediaServer')
         time.sleep(3)
 
     def _start_dektec_dtu_315_server(self, file_path, **kwargs):
@@ -143,7 +163,7 @@ class StreamProvider():
         popen.terminate()
         time.sleep(5)
 
-    def _start_send(self, protocol, file_path, **kwargs):
+    def _start_send(self, protocol, file_path, url=None, **kwargs):
         '''
         stitch vlc command
         @param protocol: udp or rtsp or rtp
@@ -153,13 +173,13 @@ class StreamProvider():
         # udp vlc -vvv ~/coco/DRA_MTV.ts --sout='#duplicate{dst=udp{dst=239.1.2.1:1234},dst=display}'
         # rtsp vlc -vvv ~/coco/DRA_MTV.ts --sout='#duplicate{dst=rtp{sdp=rtsp://:8554/1},dst=display}'
         # rtp vlc -vvv ~/coco/DRA_MTV.ts --sout='#duplicate{dst=rtp{dst=239.1.1.1,port=5004,mux=ts},dst=display}'
-        command = "/snap/bin/vlc -vvv '%s' --sout='#duplicate{dst=%s,dst=display}' >/dev/null 2>\&1 \&"
+        command = "/snap/bin/vlc -vvv '%s' --sout='#duplicate{dst=%s,dst=display}' >/dev/null 2>\&1 \& --loop"
         protocol_dict = {
-            'udp': 'udp{dst=239.1.2.1:1234}',
-            'udp1': 'udp{dst=239.1.2.2:1235}',
+            'udp': 'udp{dst=%s}' % url,
             'rtsp': 'rtp{sdp=rtsp://:8554/1}',
-            'rtp': 'rtp{dst=239.1.1.1,port=5004,mux=ts}'
+            'rtp': 'rtp{dst=239.1.1.1,port=%s,mux=ts}' % url
         }
+
         if not file_path:
             raise IOError("pls set local playback file path.")
         if protocol not in ['udp', 'udp1', 'rtsp', 'rtp', 'QAM64']:
@@ -188,6 +208,7 @@ class StreamProvider():
         #         self.ssh_pipe.client.close()
         #     time.sleep(1)
 
+    @allure.step("Stop send stream")
     def stop_send(self):
         '''
         kill the streaming thread at the end of case execution
@@ -199,8 +220,25 @@ class StreamProvider():
         if 'vlc' in p_vlc_thread_list:
             p_vlc_pid = re.search('(.*?) vlc', p_vlc_thread_list, re.M | re.I).group(1).strip().split(" ")[0]
             self.ssh_pipe.send_cmd(f'kill {p_vlc_pid}')
-            logging.info(f'vlc thread:{p_vlc_pid} is killed.')
-            return
+            p_count = 0
+            # check p_vlc_pid status
+            while True:
+                first_temp = self.ssh_pipe.send_cmd(f'ps -p {p_vlc_pid}')[0].strip()
+                if p_vlc_pid not in first_temp:
+                    logging.info(f'vlc thread:{p_vlc_pid} is killed.')
+                    return
+                else:
+                    p_count += 1
+                if p_count >= 10:
+                    logging.info("force kill vlc process")
+                    self.ssh_pipe.send_cmd(f'kill -9 {p_vlc_pid}')
+                    second_temp = self.ssh_pipe.send_cmd(f'ps -p {p_vlc_pid}')[0].strip()
+                    if p_vlc_pid in second_temp:
+                        raise Exception(f'force kill {p_vlc_pid} process fail')
+                    else:
+                        return
+                else:
+                    logging.debug("continue to check vlc process")
         else:
             logging.info('there is no vlc thread.')
         p_lookup_live555_thread_cmd = 'ps -e | grep live555'

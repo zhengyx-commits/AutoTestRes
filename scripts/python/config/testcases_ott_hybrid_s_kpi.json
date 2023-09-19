@@ -1,0 +1,184 @@
+{
+    "testcases": [
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_HTTP_H264_4KP30_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/VOD/test_Sanity_Func_http_h264_4KP30_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_HTTP_H264_1080i_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/VOD/test_Sanity_Func_http_h264_1080i_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_HLSV3_1080_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/VOD/test_Sanity_Func_hlsv3_1080_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_HLSV3_H265_4K_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/VOD/test_Sanity_Func_hlsv3_h265_4K_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_RTSP_1080P_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/VOD/test_Sanity_Func_rtsp_1080p_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_RTSP_H264_4KP30_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/VOD/test_Sanity_Func_rtsp_h264_4kP30_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_UDP_H264_4KP30_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/LIVE/test_Sanity_Func_udp_h264_4KP30_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_RTP_H264_4KP60_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/LIVE/test_Sanity_Func_rtp_h264_4KP60_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_RTP_H265_4KP60_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/LIVE/test_Sanity_Func_rtp_h265_4KP60_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_UDP_H264_1080I_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/LIVE/test_Sanity_Func_udp_h264_1080i_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_UDP_H265_4KP30_START_KPI",
+            "path": "tests/OTT_Hybrid/KPI/LIVE/test_Sanity_Func_udp_h265_4KP30_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_HTTP_4K_SEEK_KPI",
+            "path": "tests/OTT_Hybrid/KPI/SEEK/test_Sanity_Func_http_4K_seek_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_HLS_4K_SEEK_KPI",
+            "path": "tests/OTT_Hybrid/KPI/SEEK/test_Sanity_Func_hls_4K_seek_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_UDP_H265_1080P_SWITCH_CHANNEL_KPI",
+            "path": "tests/OTT_Hybrid/KPI/LIVE_SWITCH/test_Sanity_Func_udp_h265_1080p_switch_channel_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_UDP_H265_TO_H264_SWITCH_CHANNEL_KPI",
+            "path": "tests/OTT_Hybrid/KPI/LIVE_SWITCH/test_Sanity_Func_udp_h265_to_h264_switch_channel_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_RTP_H265_TO_H264_SWITCH_CHANNEL_KPI",
+            "path": "tests/OTT_Hybrid/KPI/LIVE_SWITCH/test_Sanity_Func_rtp_h265_to_h264_switch_channel_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_RTP_H265_1080P_SWITCH_CHANNEL_KPI",
+            "path": "tests/OTT_Hybrid/KPI/LIVE_SWITCH/test_Sanity_Func_rtp_h265_1080p_switch_channel_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_BOOT_UP_KPI",
+            "path": "tests/OTT_Hybrid/KPI/BOOT_UP/test_ott_s_s905y4_boot_up.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#YOUTUBE",
+            "name": "AATS_OTT_FUNC_YOUTUBE_COOL_START",
+            "path": "tests/OTT_Hybrid/KPI/test_youtube_cool_start.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#KPI",
+            "name": "AATS_OTT_FUNC_SPEED_2.0_TO_START",
+            "path": "tests/OTT_Hybrid/KPI/SPEED/test_Sanity_Func_rtsp_h264_4kP30_speed_2_to_start_kpi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        }
+    ]
+}

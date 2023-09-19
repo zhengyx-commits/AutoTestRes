@@ -4,9 +4,7 @@ from . import p_conf_play_time_after_restore_network, p_conf_offline_network_tim
 from tests.OTT_Hybrid.MULTI import *
 from tests.OTT_Hybrid import *
 
-g_conf_device_id = pytest.config['device_id']
-multi = MultiPlayer(g_conf_device_id)
-playerCheck = PlayerCheck()
+playerCheck = PlayerCheck_Iptv()
 adb = ADB()
 
 

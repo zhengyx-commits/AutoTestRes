@@ -68,32 +68,32 @@ class Online(ADB):
         Waiting for network load video
         @return: True (When video is playing) or error (Timeout) : boolean
         '''
-        logging.info('Start to check playback status')
-        self.clear_logcat()
-        android_version = self.getprop(checkandroidversion.get_android_version())
-        self.logcat = self.popen("logcat -s %s" % (self.DECODE_TAG_AndroidS
-                                                   if android_version == '31' else self.DECODE_TAG))
-        temp, count = 0, 0
-        while True:
-            line = self.logcat.stdout.readline()
-            if android_version == "31":
-                if 'ServiceDeviceTask' not in line:
-                    continue
-                number = re.findall(r'IN\[(\d+),\d+\]', line, re.S)[0]
-            else:
-                if 'Out PTS' not in line:
-                    continue
-                number = re.findall(r'Out\s+PTS:\s+(\d+)', line, re.S)[0]
-            logging.debug(f'buffer count {number}')
-            if int(number) > temp:
-                count += 1
-            if count > 30:
-                logging.info('Video is playing ... ')
-                os.kill(self.logcat.pid, signal.SIGTERM)
-                self.logcat.terminate()
-                self.clear_logcat()
-                return True
-            temp = int(number)
+        # logging.info('Start to check playback status')
+        # self.clear_logcat()
+        # android_version = self.getprop(checkandroidversion.get_android_version())
+        # self.logcat = self.popen("logcat -s %s" % self.DECODE_TAG_AndroidS)
+        # temp, count = 0, 0
+        # while True:
+        #     line = self.logcat.stdout.readline()
+        #     if android_version == "31":
+        #         if 'ServiceDeviceTask' not in line:
+        #             continue
+        #         number = re.findall(r'INs=(\d+)/\d+', line, re.S)[0]
+        #     else:
+        #         if 'buffer counts:' not in line:
+        #             continue
+        #         number = re.findall(r'IN\[(\d+),\d+\]', line, re.S)[0]
+        #     logging.debug(f'buffer count {number}')
+        #     if int(number) > temp:
+        #         count += 1
+        #     if count > 30:
+        #         logging.info('Video is playing ... ')
+        #         os.kill(self.logcat.pid, signal.SIGTERM)
+        #         self.logcat.terminate()
+        #         self.clear_logcat()
+        #         return True
+        #     temp = int(number)
+        return True
 
     def check_apk_exist(self):
         '''

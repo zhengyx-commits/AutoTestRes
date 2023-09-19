@@ -19,3 +19,4 @@ def test_HLSV5_TS_H264_1080():
         multi.send_cmd(start_cmd)
         assert common_case.player_check.check_startPlay()[0], "start playback failed"
         common_case.pause_resume_seek_stop()
+        multi.stop_multiPlayer_apk()

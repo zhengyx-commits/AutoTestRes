@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>配置页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .note {
+            color: red;
+            font-size: 12px;
+        }
+
+        input[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        #run_test_button {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+        }
+
+        #run_test_button:hover {
+            background-color: #555;
+        }
+
+        #test_output {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>配置页面</h1>
+    <form method="post" action="/update_config">
+        <label for="target_prj">选择目标项目：</label>
+        <select name="target_prj" id="target_prj" onchange="loadData()">
+            {% for prj in target_prj_list %}
+                <option value="{{ prj }}" {% if prj == target['target']['prj'] %}selected{% endif %}>{{ prj }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <div>
+            <label for="device_id">设备ID：</label>
+            <input type="text" name="device_id" id="device_id" value="">
+        </div>
+
+
+        <label for="serial_port">串口：</label>
+        <input type="text" name="serial_port" id="serial_port" value="">
+        <br>
+
+        <label for="baudrate">波特率：</label>
+        <input type="number" name="baudrate" id="baudrate" value="">
+        <br>
+
+        <label for="test_case_select">选择测试用例：</label>
+        <select id="test_case_select" onchange="loadSelectedTestCaseContent()">
+            {% for test_case_name in test_case_names %}
+                <option value="{{ test_case_name }}">{{ test_case_name }}</option>
+            {% endfor %}
+        </select>
+
+
+        <input type="submit" value="保存配置">
+
+
+    </form>
+
+    <button onclick="runSelectedTestCase()">运行测试</button>
+
+    <div id="test_output">等待运行测试...</div>
+
+    <script>
+        window.addEventListener("load", function() {
+            loadData(); // 加载测试用例
+            loadSelectedTestCaseContent(); // 加载默认选定的测试用例内容
+        });
+    </script>
+
+    <script>
+        function runSelectedTestCase() {
+            var selectedTestCase = document.getElementById("test_case_select").value;
+            var selectedProject = document.getElementById("target_prj").value;
+            var testOutputDiv = document.getElementById("test_output");
+
+            // 显示 "正在运行" 消息
+            testOutputDiv.innerText = "正在运行中...";
+
+            // 构建请求 URL，将测试用例名称和项目名称传递给服务器端
+            var url = `/run_tests?test_case_name=${selectedTestCase}&project=${selectedProject}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // 将测试结果显示在 <div id="test_output"> 中
+                    testOutputDiv.innerText = '测试结果：' + data.output;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // 在出现错误时显示错误消息
+                    testOutputDiv.innerText = '发生错误，请查看控制台';
+                });
+        }
+    </script>
+
+    <script>
+        function loadData() {
+            // 获取选定的项目
+            var selectedProject = document.getElementById("target_prj").value;
+
+            // 发送 AJAX 请求以获取测试用例数据
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/load_testcases?project=" + selectedProject, true);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var testCasesData = JSON.parse(xhr.responseText);
+                    var testCasesSelect = document.getElementById("test_case_select");
+
+                    // 清空现有的下拉菜单选项
+                    while (testCasesSelect.options.length > 0) {
+                        testCasesSelect.remove(0);
+                    }
+
+                    // 添加新的测试用例选项
+                    for (var i = 0; i < testCasesData.testcases.length; i++) {
+                        var testCaseName = testCasesData.testcases[i].name;
+                        var option = document.createElement("option");
+                        option.value = testCaseName;
+                        option.text = testCaseName;
+                        testCasesSelect.appendChild(option);
+                    }
+                }
+            };
+
+            xhr.send();
+
+            // 发送 AJAX 请求以获取 config.json 数据
+            fetch(`/load_config?project=${selectedProject}`)
+                .then(response => response.json())
+                .then(data => {
+                    // 将 config.json 数据填充到表单字段中
+                    console.log("data", data);
+                    document.getElementById("device_id").value = data.device_id;
+                    document.getElementById("serial_port").value = data.serial_port;
+                    document.getElementById("baudrate").value = data.baudrate;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // 在出现错误时显示错误消息
+                    alert('无法加载配置数据');
+            });
+        }
+
+        // 在页面加载时调用加载数据函数
+        window.addEventListener("load", loadData);
+    </script>
+
+
+</body>
+</html>

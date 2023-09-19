@@ -1,0 +1,148 @@
+# # This is a config file of AutoTestRes/scripts/python/tests/OTT
+#  for cpu
+conf_cpu_thermal:
+  thermal_mode: enabled
+
+# for usb and camera
+conf_usb_and_camera:
+  usb:
+    exFAT: F69D-0041
+    NTFS: A6A486D8A486AA7F
+    FAT32: 4C01-4C93
+  keyboard: event9
+  mouse: mouse2
+  project: ott_ref
+  broadlink:
+    pc_ip: 192.168.1.101
+    broadlink_ip: 192.168.1.100
+    host_port: 80
+    broadcast_addr: 192.168.1.255
+  Camera_Recorder:
+    log_path: Camera
+    path: /storage/emulated/0/DCIM/Camera/
+    name: 'VID_*.3gp'
+    img_name: 'IMG_*.jpg'
+    reference_fps: 10.00
+    reference_width: 1280
+    reference_height: 720
+
+# for IR
+conf_ir:
+  remote_key:
+    back: back
+    right: right
+    down: down
+    up: up
+    left: left
+  keycode:
+    1: 4
+    2: 22
+    3: 20
+    4: 19
+    5: 21
+
+# for wifi
+conf_wifi:
+  repeat_count: 20
+  test_time: 15
+  AP:
+      ssid: JCG-73D7F4-5G
+      pwd: "88888888"
+      security: none
+      hidden: false
+  AP_SH:
+    ssid: sunshine
+    pwd: Home1357
+    security: wpa2
+    ip: 10.18.32.111
+
+# for apk
+conf_install_apk_name:
+  V1.6.4.3-20210426.apk: V1.6.4.3-20210426.apk
+  KeyMonitor.apk: KeyMonitor.apk
+
+# for seek
+conf_seek_press_event:
+  seek_type: press_seek
+  seek_enable: False
+  event: event4
+
+# for local_playback
+conf_local_playback:
+  uuid: 46F5-7E75
+  video:
+    h264:
+      path: /h264/
+    h265:
+      path: /h265/
+    vp9:
+      path: /vp9/
+
+# for multi playback
+conf_multi_playback:
+  uuid: 46F5-7E75
+  video:
+    h264:
+      path: /h264/
+      name: big-buck-bunny-h264-1080p-60fps-3949kbps.mp4
+    h265:
+      path: /h265/
+      name: HEVC_bbb_sunflower_2160p_60fps_VBR_15M_22M_AC36.ts
+
+# for ddr
+conf_freeinfo:
+ reference_totalmemory: 1
+
+# for system image
+conf_system:
+  ota_location: ./image/ohm-ota.zip
+  fastboot_location: ./image/ohm-fastboot-flashall.zip
+  ota_url: http://10.28.8.30:8882/chfs/shared/CustomerBuild_OTT/OTT/Gretzky_Auto/ohm-ota.zip
+  fastboot_url: http://10.28.11.79:8881/chfs/shared/Public_OTT/AUT_Gretzky/fastboot-flashall.zip
+  password: Linux2017
+  set_env: /usr/lib/android-sdk/platform-tools
+
+# for account_setting
+conf_account_setting:
+  wifi:
+    ssid: JCG-73D7F4-2.4G
+    pawd: 88888888
+  account:
+    acc: amltest9@amlogic.com
+    pawd: Qatest789!
+
+# for youtube
+conf_youtube_video:
+  vp9:
+    ref: -ZMVjKT3-5A
+    boreal: uKGWNdwBv8Y
+  "360":
+    boreal: hNAbQYU0wpg
+  live: QjoYpj2G-ug
+
+# for secure_os
+conf_secure_os:
+  name:
+    - "Widevine DASH (MP4, H264)"
+    - "Widevine DASH (WebM, VP9)"
+    - "Widevine DASH (MP4, H265)"
+
+# for hdmi_display
+conf_hdmi_display:
+  480p60hz: 'fps=60.00, width=720, height=480'
+  576p50hz: 'fps=50.00, width=720, height=576'
+  720p50hz: 'fps=50.00, width=1280, height=720'
+  720p60hz: 'fps=60.00, width=1280, height=720'
+  1080p24hz: 'fps=24.00, width=1920, height=1080'
+  1080p30hz: 'fps=30.00, width=1920, height=1080'
+  1080p50hz: 'fps=50.00, width=1920, height=1080'
+  1080p60hz: 'fps=60.00, width=1920, height=1080'
+  2160p24hz: 'fps=24.00, width=3840, height=2160'
+  2160p25hz: 'fps=25.00, width=3840, height=2160'
+  2160p30hz: 'fps=30.00, width=3840, height=2160'
+  2160p50hz: 'fps=50.00, width=3840, height=2160'
+  2160p60hz: 'fps=60.00, width=3840, height=2160'
+  smpte24hz: 'fps=24.00, width=4096, height=2160'
+  smpte30hz: 'fps=30.00, width=4096, height=2160'
+  smpte50hz: 'fps=50.00, width=4096, height=2160'
+  smpte60hz: 'fps=60.00, width=4096, height=2160'

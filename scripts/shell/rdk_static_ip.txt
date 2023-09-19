@@ -1,0 +1,47 @@
+1. False, 1, ifconfig^
+
+2. True, 10, ping 10.18.7.19^
+
+3. False, 1, rm /lib/modules/4.9.113/kernel/drivers/broadcom -rf^
+
+4. False, 1, cat <<EOF> /etc/resolv.conf
+nameserver 127.0.0.1                    
+#++SECTION: NetworkControl              
+nameserver 10.18.11.2                   
+nameserver 10.18.11.3                   
+#--SECTION: NetworkControl
+EOF^
+
+5. False, 1, cat <<EOF> /etc/WPEFramework/plugins/NetworkControl.json
+{
+ "locator":"libWPEFrameworkNetworkControl.so",
+ "classname":"NetworkControl",
+ "autostart":true,
+ "configuration":{
+ "dnsfile":"/etc/unkown.conf",
+ "timeout":5,
+ "retries":4,
+ "interfaces":[
+  {
+   "interface":"wlan0",
+   "mode":"Dynamic"
+  },
+  {
+   "interface":"eth0",
+   "mode":"Static",
+    "address":"10.18.7.19",
+    "mask":24,
+    "gateway":"10.18.7.1"
+  }
+ ]
+ }
+}
+EOF^
+
+6. False, 1, sync^
+
+7. True, 120, reboot^
+
+8. False, 1, ifconfig^
+
+9. True, 10, ping www.baidu.com^

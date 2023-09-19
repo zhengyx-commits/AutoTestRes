@@ -14,9 +14,9 @@ import threading
 import time
 from subprocess import CalledProcessError
 
+import pytest
 import uiautomator2 as u2
-
-from lib.common.playback import Environment_Detection
+from lib import get_device
 from lib.common.system.Permission import Permission
 from lib.common.system.ADB import ADB
 from lib.common.tools.LoggingTxt import log
@@ -24,8 +24,8 @@ from lib.common.tools.VideoPlayerMointor import VideoPlayerMonitor
 from util.Decorators import stop_thread
 
 
-class LocalPlayer(Environment_Detection):
-    '''
+class LocalPlayer(Permission, ADB):
+    """
     LocalPlayer apk test lib
 
     Attributes:
@@ -35,31 +35,32 @@ class LocalPlayer(Environment_Detection):
 
         uuid: u-disk uuid
         path: u-disk video path
-        playFromList:
-        sourceType:
+        play_from_list:
+        source_type:
         localplayer:
 
-    '''
+    """
 
     LOCALPLAYER_PACKAGE_TUPLE = 'com.droidlogic.videoplayer', '.VideoPlayer'
+    LOCALPLAYER_AMPLAYER_PACKAGE_TUPLE = 'com.droidlogic.exoplayer2.demo', 'com.droidlogic.videoplayer.MoviePlayer'
     VIDEOPLAYER_APK_NAME = 'VideoPlayer2.apk'
     VIDEO_TAG_REGU = r'\.rm|\.rmvb|\.avi|\.mkv|\.mp4|\.wmv|\.mov|\.flv|\.asf|\.3gp|\.mpg|\.mvc|\.m2ts|\.ts|\.swf|\.mlv|\.divx|\.3gp2|\.3gpp|\.h265|\.m4v|\.mts|\.tp|\.bit|\.webm|\.3g2|\.f4v|\.pmp|\.mpeg|\.vob|\.dat|\.m2v|\.iso|\.vp9|\.trp|\.bin|\.hm10'
+    IPTV_PATH = 'setenforce 0;setprop vendor.media.ammediaplayer.enable 1;setprop iptv.streamtype 1'
 
-    def __init__(self, uuid="", path="", playFromList=False, sourceType=""):
+    def __init__(self, uuid="", path="", play_from_list=False, source_type=""):
         super(LocalPlayer, self).__init__()
         self.uuid = uuid
         self.path = path
-        self.playFromList = playFromList
+        self.play_from_list = play_from_list
         self.home()
-        self.sourceType = sourceType
+        self.source_type = source_type
         # self.permission_check()
         self.localplayer = True
-        self.android_s_so_check()
+        # self.permission = Permission()
 
-
-    def setup(self, yuv_able=False, dropcheck_able=False, videoplayerMonitorEnable=False,
-              randomSeekEnable=False, play3dEnable=False, avSyncChkEnable=False, subTitleChkEnable=False):
-        '''
+    def set_up(self, yuv_able=False, demux_able=False, drop_check_able=False, video_player_monitor_enable=False,
+               random_seek_enable=False, play_3d_enable=False, av_sync_chk_enable=False, subtitle_chk_enable=False):
+        """
         set up test env
         1. check u-disk status
         2. check video path
@@ -67,22 +68,22 @@ class LocalPlayer(Environment_Detection):
         4. setup random and 3d video type command
 
         @param yuv_able: yuv fun control : boolean
-        @param dropcheck_able: drop fun control : boolean
-        @param videoplayerMonitorEnable: video mointor control : boolean
-        @param randomSeekEnable: random seek control : boolean
-        @param play3dEnable: 3d video fun control : boolean
-        @param avSyncChkEnable: avsync fun control : boolean
-        @param subTitleChkEnable: subtitle fun control : boolean
+        @param drop_check_able: drop fun control : boolean
+        @param video_player_monitor_enable: video monitor control : boolean
+        @param random_seek_enable: random seek control : boolean
+        @param play_3d_enable: 3d video fun control : boolean
+        @param av_sync_chk_enable: avsync fun control : boolean
+        @param subtitle_chk_enable: subtitle fun control : boolean
         @return: None
 
         Raise：
             EnvironmentError('can not get uuid, no external storage was found')
             EnvironmentError("Can't find path , pls check then retry")
-        '''
+        """
         logging.info(
-            f"[setup]YUVEnable:{yuv_able}, dropChkEnable:{dropcheck_able}, playerMonitorEnable:{videoplayerMonitorEnable}, "
-            f"randomSeekEnable:{randomSeekEnable}, play3dEnable:{play3dEnable},avSyncChkEnable:{avSyncChkEnable},"
-            f"subTitleChkEnabl:{subTitleChkEnable}")
+            f"[set_up]yuv_able:{yuv_able}, demux_able:{demux_able}, drop_check_able:{drop_check_able}, video_player_monitor_enable:{video_player_monitor_enable}, "
+            f"random_seek_enable:{random_seek_enable}, play_3d_enable:{play_3d_enable},av_sync_chk_enable:{av_sync_chk_enable},"
+            f"subtitle_chk_enable:{subtitle_chk_enable}")
 
         # Clear boot video
         self.run_shell_cmd('pm disable com.google.android.tungsten.setupwraith')
@@ -96,7 +97,7 @@ class LocalPlayer(Environment_Detection):
                 raise EnvironmentError('can not get uuid, no external storage was found')
 
         # scan for video list
-        if self.playFromList:
+        if self.play_from_list:
             logging.info('play from list path: %s' % self.path)
             if not self.path:
                 logging.warning('can not find path: %s' % self.path)
@@ -110,39 +111,49 @@ class LocalPlayer(Environment_Detection):
             self.videoList = [video]
             self.path = self.path[0:self.path.find(video)]
 
-        self.yuvEnable = yuv_able
-        self.dropChkEnable = dropcheck_able
-        self.videoplayerMonitorEnable = videoplayerMonitorEnable
-        self.randomSeekEnable = randomSeekEnable
-        self.play3dEnable = play3dEnable
-        self.avSyncChkEnable = avSyncChkEnable
-        self.subTitleChkEnable = subTitleChkEnable
+        self.yuv_enable = yuv_able
+        self.demux_enable = demux_able
+        self.drop_check_able = drop_check_able
+        self.video_player_monitor_enable = video_player_monitor_enable
+        self.random_seek_enable = random_seek_enable
+        self.play_3d_enable = play_3d_enable
+        self.av_sync_chk_enable = av_sync_chk_enable
+        self.subtitle_chk_enable = subtitle_chk_enable
 
         # create playerMonitor
-        if self.videoplayerMonitorEnable:
-            self.videoplayerMonitor = VideoPlayerMonitor()
-            self.videoplayerMonitor.setup(self.videoplayerMonitor.PLAYER_TYPE_LOCAL, self.sourceType, self.yuvEnable,
-                                          self.dropChkEnable, self.avSyncChkEnable, self.randomSeekEnable,
-                                          self.subTitleChkEnable)
-            self.videoplayerMonitor.postInit()
-            self.videoplayerMonitor.logcatStop()
-            self.videoplayerMonitor.set_AndroidVersion_R_checkpoint()
+        if self.video_player_monitor_enable:
+            self.video_player_monitor = VideoPlayerMonitor()
+            self.video_player_monitor.set_up("Local", self.source_type, self.yuv_enable, self.demux_enable,
+                                             self.drop_check_able, self.av_sync_chk_enable, self.random_seek_enable,
+                                             self.subtitle_chk_enable)
+            self.video_player_monitor.post_init()
+            if self.yuv_enable or self.demux_enable:
+                self.video_player_monitor.player_check.logcatStop()
+                self.video_player_monitor.player_check.set_AndroidVersion_R_checkpoint()
+        else:
+            logging.info("VideoPlayerMonitor hasn't create")
+
+        if self.demux_enable:
+            self.run_shell_cmd(self.IPTV_PATH)
+            from lib.common.tools.Demux import DemuxCheck
+            self.demux_check = DemuxCheck()
 
         # random seek
-        if self.randomSeekEnable:
-            self.randomSeekExt = ' --ez need_random_seek true'
+        if self.random_seek_enable:
+            self.random_seek_ext = ' --ez need_random_seek true'
             self.run_shell_cmd('setprop vendor.sys.vprandomseek.enable true')
 
         # 3d mode
         # 0:3doff, 1:3dlr, 2:3dtb, 3:3dfp
-        if self.play3dEnable:
-            self.play3dExt = ' --ei 3d_mode 1 '
+        if self.play_3d_enable:
+            self.play_3d_ext = ' --ei 3d_mode 1 '
 
         # if self.subTitleChkEnable:
         #     subtitle_type = video["type"]
 
         # connect uiautomator2
-        self.d = u2.connect(self.serialnumber)
+        for serialnumber in get_device():
+            self.d = u2.connect(serialnumber)
 
     def getVideoList(self):
         '''
@@ -177,7 +188,7 @@ class LocalPlayer(Environment_Detection):
         else:
             logging.info("apk already exist")
         self.start_activity(*self.LOCALPLAYER_PACKAGE_TUPLE)
-        self.permission.permission_check(uiautomator_type="u1")
+        self.permission_check(uiautomator_type="u2")
         self.home()
         self.app_stop(self.LOCALPLAYER_PACKAGE_TUPLE[0])
 
@@ -197,65 +208,95 @@ class LocalPlayer(Environment_Detection):
         res = True
         logging.info('start to play')
         self.clear_logcat()
-        self.run_shell_cmd('setprop vendor.sys.videoplayer.debug true')
+        self.run_shell_cmd('setenforce 0;setprop vendor.sys.videoplayer.debug true')
 
-        if self.videoplayerMonitorEnable:
-            self.videoplayerMonitor.logcatStart()
+        # get VideoPlayer's logcat
+        if self.video_player_monitor_enable:
+            self.video_player_monitor.player_check.logcatStart()
+
+        # scan video and playback
         for video in self.videoList:
+            # prepare video
             if not re.search(self.VIDEO_TAG_REGU, video):  # filter video type ,must be mp4,ts,....
                 continue
+            logging.info('Playing : %s' % video)
             video_for_command = re.sub(r'([\s\(\)])', r'\\\1', video)
+
             if "vp9" in video_for_command.lower():
-                self.videoplayerMonitor.videoType = "vp9"
-            if self.videoplayerMonitorEnable:
+                self.video_player_monitor.videoType = "vp9"
+            if self.video_player_monitor_enable:
                 # self.playerMonitor.videoPath = video.strip()
-                self.videoplayerMonitor.setName(video.strip())
-                self.videoplayerMonitor.setPath(video.strip())
+                self.video_player_monitor.player_check.setName(video.strip())
+                self.video_player_monitor.player_check.setPath(video.strip())
 
             # prepare for play command
             play_command = 'am start -n ' + self.LOCALPLAYER_PACKAGE_TUPLE[0] + '/' + self.LOCALPLAYER_PACKAGE_TUPLE[
                 1] + ' -d file:/storage/' + self.uuid + self.path + video_for_command
 
-            if self.randomSeekEnable:  # handle play command with randomseek fun
-                if self.videoplayerMonitor.seek.seek_type != 'press_seek':
-                    play_command += self.randomSeekExt
+            # handle play command with randomseek fun
+            if self.random_seek_enable:
+                if self.video_player_monitor.player_check.seek.seek_type != 'press_seek':
+                    play_command += self.random_seek_ext
 
-            if self.play3dEnable:  # handle play command with 3d fun
-                play_command += self.play3dExt
-            logging.info('Playing : %s' % video)
+            # handle play command with 3d fun
+            if self.play_3d_enable:
+                play_command += self.play_3d_ext
+
             # start to play
+            if self.demux_enable and re.findall(r".*.ts", video_for_command):
+                self.demux_check.start_get_dmx_logcat_thread(video_for_command)
             info = self.run_shell_cmd(play_command)[1]
             playcommand_time = time.strftime("%H:%M:%S")  # time.strftime("%H:%M:%S")
             logging.info(f'playcommand_time:{time.strftime("%H:%M:%S")}, Play Command {play_command}')
             time.sleep(10)
-            if self.videoplayerMonitorEnable:
-                if not self.videoplayerMonitor.check_vfm_map:
-                    logging.info(f"check_vfm_map:{self.videoplayerMonitor.check_vfm_map}")
+            # get dmx video and audio pid
+            if self.demux_enable:
+                dmx_video_pid, dmx_audio_pid = self.video_player_monitor.player_check.check_demux()
+            # res = playerCheck.run_check_main_thread(30)
+            if self.video_player_monitor_enable:
+                if not self.video_player_monitor.player_check.check_vfm_map:
+                    logging.info(f"check_vfm_map:{self.video_player_monitor.player_check.check_vfm_map}")
                     res = False
             # TODO @chao.li : add more except situation
             if 'error' in info:  # playback command with error
                 logging.warning('Error! Disable to playback')
-                if self.videoplayerMonitorEnable:
-                    self.videoplayerMonitor.error = 'Error'
-                    log.writeResultTXT(self.videoplayerMonitor.getvideoName(), self.videoplayerMonitor.videoType,
-                                       self.videoplayerMonitor.decodeType, self.videoplayerMonitor.error)
+                if self.video_player_monitor_enable:
+                    self.video_player_monitor.error = 'Error'
+                    log.writeResultTXT(self.video_player_monitor.player_check.getvideoName(),
+                                       self.video_player_monitor.player_check.videoType,
+                                       self.video_player_monitor.player_check.decodeType,
+                                       self.video_player_monitor.error)
                 continue
-            time.sleep(1)
-            if self.videoplayerMonitorEnable:
+            # time.sleep(1)
+
+            # analyze VideoPlayer's logcat
+            if self.video_player_monitor_enable:
                 logging.info('playerMonitor')
-                self.videoplayerMonitor.error = 'OK'
-                self.videoplayerMonitor.get_logcat(playcommand_time=playcommand_time)  # analyze logcat
-                if not (self.videoplayerMonitor.playfile_error or
-                        self.videoplayerMonitor.eof or
-                        self.videoplayerMonitor.play_error or
-                        self.videoplayerMonitor.avSync):
+                self.video_player_monitor.error = 'OK'
+                self.video_player_monitor.get_logcat(playcommand_time=playcommand_time)
+                if not (self.video_player_monitor.playfile_error or
+                        self.video_player_monitor.eof or
+                        self.video_player_monitor.play_error or
+                        self.video_player_monitor.avSync):
                     res = False
+
+            if self.demux_enable:
+                if re.findall(r".*.ts", video_for_command):
+                    video = video.strip(".ts")
+                    destination_path = self.set_dest_path("~/video")
+                    self.close_demux()
+                    self.pull(f"/storage/{self.uuid}" + self.path + video_for_command, destination_path)
+                    dmx_video = True if self.demux_check.analysis_dmx_video_info(dmx_video_pid, destination_path + "/" + video_for_command, f"packet_video_{video}.json") else False
+                    dmx_audio = True if self.demux_check.analysis_dmx_audio_info(dmx_audio_pid, destination_path + "/" + video_for_command, f"packet_audio_{video}.json") else False
+                    if (dmx_video is False) or (dmx_audio is False):
+                        res = False
+
+        # close app and write result
         self.app_stop(self.LOCALPLAYER_PACKAGE_TUPLE[0])
-        if self.videoplayerMonitorEnable:  # stop video player monitor
-            self.videoplayerMonitor.logcatStop()
-        if self.yuvEnable:  # stop yuv
-            log.write_yuv_excel()
-            log.check_yuv_data()
+        self.stop_logcat()
+        if self.yuv_enable:  # stop yuv
+            self.analysis_yuv_data()
+
         # if self.randomSeekEnable:
         #     if not self.videoplayerMonitor.seek.res:
         #         res = False
@@ -266,13 +307,28 @@ class LocalPlayer(Environment_Detection):
         # logging.info(f"res:{res}")
         return res
 
+    def set_dest_path(self, dest):
+        destination_path = dest
+        return destination_path
+
+    def stop_logcat(self):
+        if self.video_player_monitor_enable:  # stop video player monitor
+            self.video_player_monitor.player_check.logcatStop()
+
+    def analysis_yuv_data(self):
+        log.write_yuv_excel()
+        log.check_yuv_data()
+
+    def close_demux(self):
+        self.demux_check.close_file()
+
     def audio_play(self):
         res = True
         logging.info('start to play')
         self.clear_logcat()
         self.run_shell_cmd('setprop vendor.sys.videoplayer.debug true')
-        if self.videoplayerMonitorEnable:
-            self.videoplayerMonitor.logcatStart()
+        if self.video_player_monitor_enable:
+            self.video_player_monitor.yuv.local_logcat_start()
         play_command = 'am start -n ' + self.LOCALPLAYER_PACKAGE_TUPLE[0] + '/' + self.LOCALPLAYER_PACKAGE_TUPLE[
             1] + ' -d file:/storage/' + self.uuid + self.path
         for video in self.videoList:
@@ -281,10 +337,10 @@ class LocalPlayer(Environment_Detection):
             video_for_command = re.sub(r'([\s\(\)])', r'\\\1', video)
             play_command += video_for_command
             logging.info('Playing : %s' % video)
-        if self.randomSeekEnable:
-            play_command += self.randomSeekExt
-        if self.play3dEnable:
-            play_command += self.play3dExt
+        if self.random_seek_enable:
+            play_command += self.random_seek_ext
+        if self.play_3d_enable:
+            play_command += self.play_3d_ext
         # start to play
         self.run_shell_cmd(play_command)
         # playcommand_time = time.strftime("%H:%M:%S")  # time.strftime("%H:%M:%S")

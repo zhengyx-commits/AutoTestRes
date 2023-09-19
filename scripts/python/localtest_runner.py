@@ -11,6 +11,7 @@
 # IMPLIED, OR STATUTORY, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
 #
+import platform
 from __init__ import *
 import glob
 import os
@@ -26,6 +27,7 @@ import logging
 import argparse
 from collections import defaultdict
 from collections import OrderedDict
+from tools.xtsAnalyer import Analyzer
 from aatsbuildconfig import AATSBuildConfig
 import datetime
 from baseConfigParser import get_target_json_data
@@ -38,7 +40,7 @@ class LocalTestRunner(object):
 
     def __init__(self, args):
         self.args = args
-        self.build_config = AATSBuildConfig()
+        self.build_config = AATSBuildConfig(args)
         self.module_name = None
         self.test_session = TestSession()
         self.valid_tests = {}
@@ -91,23 +93,31 @@ class LocalTestRunner(object):
                     logging.info(f"Updating execution args: {module_exec_args}")
                     module_exec_args = pytest_args
         pytest_run_cmd = f"{module_exec_args}"
-
+        
         # If the user sets the "failure" flag in CLI
         if self.args.count:
             pytest_run_cmd += f" --count={self.args.count}"
         if self.args.markers:
-            pytest_run_cmd += f" -m {' '.join(self.args.markers)}"
+            pytest_run_cmd += f" -k {' '.join(self.args.markers)}"
         if self.args.retry:
             pytest_run_cmd += f" --reruns {self.args.retry}"
         if self.args.stop_after_first_failure:
             pytest_run_cmd += " --exitfirst"
         if self.args.timeout:
             pytest_run_cmd += f" --timeout={self.args.timeout}"
+        if self.args.piplineType:
+            pytest_run_cmd += f" --piplineType={self.args.piplineType}"
+        if self.args.multiInstance:
+            pytest_run_cmd += f" --multiInstance={self.args.multiInstance}"
+        if self.args.project:
+            pytest_run_cmd += f" --project={self.args.project}"
         if html_result_path:
             pytest_run_cmd += f" --html={html_result_path} --self-contained-html"
             pytest_run_cmd += f" --junitxml={xml_result_path}"
+        if self.args.conn_type:
+            pytest_run_cmd += f" --conn_type={self.args.conn_type}"
         # run_cmd = f"/home/amlogic/work/AATS/pycharm_test/AATS/.tox/py36/bin/pytest -v -s {pytest_run_cmd}"
-        run_cmd = f"tox -c {curPath} -- {pytest_run_cmd}"
+        run_cmd = f"tox -c {curPath}  -- {pytest_run_cmd}"
         logging.debug(f"Test Run command: {run_cmd}")
         return run_cmd
 
@@ -173,10 +183,19 @@ class LocalTestRunner(object):
             for k in list(valid_modules.keys()):
                 if k not in self.test_session.fail_case:
                     del valid_modules[k]
+        if self.retest_count > 1 and len(self.test_session.fail_case) == 0:
+            logging.info("test cases all pass")
+            for k in list(valid_modules.keys()):
+                if k not in self.test_session.fail_case:
+                    del valid_modules[k]
         # valid_modules = self.sort_modules_by_phase(valid_modules)
         # 将恢复出厂放在最后执行
         if 'AATS_IPTV_CMCC_FACTORY_RESET' in valid_modules:
             valid_modules['AATS_IPTV_CMCC_FACTORY_RESET'] = valid_modules.pop('AATS_IPTV_CMCC_FACTORY_RESET')
+        if 'AATS_OTT_FUNC_FACTORY_RESET' in valid_modules:
+            valid_modules['AATS_OTT_FUNC_FACTORY_RESET'] = valid_modules.pop('AATS_OTT_FUNC_FACTORY_RESET')
+        if 'AATS_OTT_FUNC_UPGRADE_FASTBOOT' in valid_modules:
+            valid_modules['AATS_OTT_FUNC_UPGRADE_FASTBOOT'] = valid_modules.pop('AATS_OTT_FUNC_UPGRADE_FASTBOOT')
         total_modules = len(valid_modules)
         logging.info(f"Testing {total_modules} modules:\n{valid_modules}")
         for i, (name, path) in enumerate(valid_modules.items(), start=1):
@@ -402,6 +421,9 @@ class TestSession(object):
             os.path.dirname(os.path.realpath(__file__)),
             self.RESULT_DIRECTORY,
             self.session_id)
+        self.test_results = {}
+        self.fail_case = []
+
 
     @property
     def xts(self):
@@ -458,31 +480,12 @@ class TestSession(object):
         table.align['Module'] = "l"
         table.align['Report Link'] = "l"
         count = defaultdict(int)
-        self.fail_case = []
+        # self.fail_case = []
 
-        # for kpi result check
-        kpi_check_flag = False
-        kpi_fail_num = 0
         if not self.xts:
-            for file_kpi_summay in glob.glob(os.path.join(self.session_directory, "**/logs/*_summary.txt")):
-                kpi_check_flag = True
-                f = open(file_kpi_summay, 'r')
-                ret = f.read()
-                kpi_fail_list = re.findall(r'kpi_fail:(\w+)\s', ret)
-                if kpi_fail_list:
-                    kpi_fail_num = int(kpi_fail_list[0])
-                    logging.debug(f"kpi_fail_num:{kpi_fail_num}")
-
             for file in glob.glob(os.path.join(self.session_directory,
                                                "**{}/*.html".format(
                                                    str(retest_count) if retest_count != 0 else ''))):
-                # testsuite = ET.parse(file).getroot().find('testsuite')
-                # test_failures = testsuite.attrib["failures"]
-                # test_skipped = testsuite.attrib["skipped"]
-                # test_errors = testsuite.attrib["errors"]
-                # test_time = testsuite.attrib["time"]
-                # test_passes = int(testsuite.attrib["tests"]) - int(testsuite.attrib["failures"]) - \
-                #               int(testsuite.attrib["skipped"]) - int(testsuite.attrib["errors"])
                 f = open(file, 'r')
                 result_total_info = f.read()
                 test_passes = rm_empty(r'<span class="passed">(\d+)\s+passed</span>', result_total_info)
@@ -497,53 +500,119 @@ class TestSession(object):
                 count["errors"] += int(test_errors)
                 count["time"] += float('%.2f' % float(test_time))
 
-                # reset result for kpi
-                if kpi_check_flag:
-                    kpi_check_flag = False
-                    if kpi_fail_num > 0:
-                        count["failures"] += kpi_fail_num
-                        count["passes"] = 0
-                        test_failures = int(test_failures) + kpi_fail_num
-                        test_passes = 0
-                    else:
-                        if int(test_skipped) == 0:
-                            count["failures"] = 0
-                            count["passes"] = 1
-                            count["skipped"] = 0
-                            count["errors"] = 0
-                            test_failures = 0
-                            test_passes = 1
-                            test_skipped = 0
-                            test_errors = 0
-
                 casename = os.path.basename(file).replace(".html", "")
-                table.add_row([casename,
-                               runner.build_config.aats_test_cases_full_config[casename]['author'],
-                               int(test_passes),
-                               int(test_failures),
-                               int(test_skipped),
-                               int(test_errors),
-                               float('%.2f' % float(test_time)),
-                               file.replace(".xml", ".html")
-                              .replace(os.path.dirname(os.path.realpath(__file__)) + "/",
-                                       "")])
-                f.close()
-                if (int(test_failures) != 0 or int(test_errors) != 0) and casename not in self.fail_case:
+
+                test_result = {'casename': casename,
+                               'pass': int(test_passes),
+                               'fail': int(test_failures),
+                               'skip': int(test_skipped),
+                               'error': int(test_errors),
+                               'time': float('%.2f' % float(test_time)),
+                               'report_link': file.replace(".xml", ".html")
+                                   .replace(os.path.dirname(os.path.realpath(__file__)) + "/",
+                                            "")}
+                logging.debug(f"test_result: {test_result}")
+
+                if int(test_failures) != 0:
                     self.fail_case.append(casename)
+                    test_result['status'] = 'fail'
+                elif int(test_errors) != 0:
+                    self.fail_case.append(casename)
+                    test_result['status'] = 'error'
+                else:
+                    test_result['status'] = 'pass'
+                if casename in test_result:
+                    if self.test_results[casename]['status'] == 'fail' or self.test_results[casename]['status'] == 'error':
+                        self.test_results[casename] = test_result
+                else:
+                    self.test_results[casename] = test_result
+                logging.debug(f"self.test_results: {self.test_results}")
+
+                module_col_index = table.field_names.index('Module')
+                module_column = [row[module_col_index] for row in table._rows]
+                # print("self.test_results", self.test_results)
+                for casename, value in self.test_results.items():
+                    if casename not in module_column:
+                        table.add_row([casename,
+                                       runner.build_config.aats_test_cases_full_config[casename]['author'],
+                                       value["pass"],
+                                       value["fail"],
+                                       value["skip"],
+                                       value["error"],
+                                       value["time"],
+                                       value["report_link"]])
+                    else:
+                        # Find the index of the row to update
+                        row_index = None
+                        for i, row in enumerate(table._rows):
+                            if row[0] == casename:  # Assuming casename is in the first column
+                                row_index = i
+                                break
+
+                        if row_index is not None:
+                            # Create a new row with updated values
+                            updated_row = [
+                                casename,
+                                runner.build_config.aats_test_cases_full_config[casename]['author'],
+                                value["pass"],
+                                value["fail"],
+                                value["skip"],
+                                value["error"],
+                                value["time"],
+                                value["report_link"]
+                            ]
+
+                            # Replace the existing row with the updated row
+                            table._rows[row_index] = updated_row
+
+                f.close()
+                if 'JENKINS_HOME' in os.environ or 'JENKINS_UPL' in os.environ or 'BUILD_ID' in os.environ:
+                    logging.info('start insert result to db')
+                    target_json = get_target_json_data("target")
+                    if target_json:
+                        prj = target_json.get("prj")
+                    # if 'dvb' in prj:
+                        from tools.DB import DB
+                        with DB() as db:
+                            db.insert_data_row(
+                                "TEST_RESULTS",
+                                prj,
+                                test_result['casename'],
+                                runner.build_config.aats_test_cases_full_config[casename]['author'],
+                                test_result["pass"],
+                                test_result["fail"],
+                                test_result["skip"],
+                                test_result["error"],
+                                test_result["time"],
+                                test_result["report_link"]
+                            )
+                    else:
+                        logging.info('please build db environment first')
+                else:
+                    logging.info('Manually execute without recording the database')
+                    pass
         else:
             self.xts.analyze_xml()
             self.xts.print_result()
             xts_report = self.xts.pretty_table_data
             table.add_rows(xts_report)
             count = self.xts.count
+        # print(table.rows)
+
+        pass_sum = sum(int(row[2]) for row in table._rows)  # 计算 Pass 列的总和
+        fail_sum = sum(int(row[3]) for row in table._rows)  # 计算 Fail 列的总和
+        skip_sum = sum(int(row[4]) for row in table._rows)  # 计算 Skipped 列的总和
+        error_sum = sum(int(row[5]) for row in table._rows)  # 计算 Error 列的总和
+        time_sum = sum(float(row[6]) for row in table._rows)  # 计算 Time 列的总和
 
         total_summary = "[RESULT_SUMMARY] passes:{} failures:{} skipped:{} errors:{} " \
-                        "time:{} modules:{}".format(count["passes"],
-                                                    count["failures"],
-                                                    count["skipped"],
-                                                    count["errors"],
-                                                    count["time"],
-                                                    count["modules"])
+                        "time:{} modules:{}".format(pass_sum,
+                                                    fail_sum,
+                                                    skip_sum,
+                                                    error_sum,
+                                                    time_sum,
+                                                    len(self.test_results))
+
         prj = ''
         target_json = get_target_json_data("target")
         if target_json:
@@ -562,6 +631,7 @@ class TestSession(object):
         with open(os.path.join(self.session_directory, "result_summary{}.html".format(
                 '_retest_count_' + str(retest_count) if retest_count != 0 else '')), 'r') as f:
             result = re.findall(r'<tr>(.*?)</tr', f.read(), re.S)[1:]
+        # print("result", result)
         for i in result:
             count_list = re.findall(r'<td>(\d+)</td>', i, re.S)
             if int(count_list[1]) > 0 or int(count_list[3]) > 0:
@@ -582,12 +652,40 @@ def get_args():
                        action='store_true',
                        dest='list_tests',
                        help='list available test files')
+    group.add_argument("--verify-test-setup",
+                       dest='verify_test_setup',
+                       action='store_true',
+                       help='verify test setup by executing a list of tests')
+    group.add_argument("--verify-device-sanity",
+                       dest='verify_device_sanity',
+                       action='store_true',
+                       help='verify device state by executing sanity tests')
+    group.add_argument("--flash-stress", type=int, default=0,
+                       dest='flash_stress',
+                       help="The number of flashes to stress")
     group.add_argument('-m', "--modules",
                        nargs='+',
                        help='executes a single module')
     group.add_argument("--all",
                        action='store_true',
                        help='executes all the modules from testcases.json')
+    parser.add_argument("--noflash",
+                        action='store_true',
+                        help='run tests without building and flashing the device')
+    parser.add_argument("--nobuild",
+                        action='store_true',
+                        help='run tests with custom flash script that utilizes prebuilt builds')
+    parser.add_argument("--onebuild",
+                        action='store_true',
+                        help='build and flash device once before running given tests in succession')
+    parser.add_argument("--continue-on-setup-failure",
+                        action='store_true',
+                        dest='continue_on_failure',
+                        help='continue test execution even if build/flash fails')
+    parser.add_argument("--suppress-script-output",
+                        action='store_true',
+                        dest='suppress_script_output',
+                        help='logs script to file')
     parser.add_argument("--stop-after-first-failure",
                         action='store_true',
                         dest='stop_after_first_failure',
@@ -599,6 +697,43 @@ def get_args():
                         default=None,
                         help='per module timeout. if not provided, default \
                               timeout defined in pytest.ini will be used.')
+    parser.add_argument("--generate-baseline",
+                        action='store_true',
+                        dest='generate_baseline',
+                        help='generate test baseline from given test module(s)')
+    parser.add_argument("--compare-baseline",
+                        nargs='+',
+                        dest='compare_baseline',
+                        help='compare test results or existing baseline against \
+                              a specified baseline')
+    parser.add_argument("--select",
+                        nargs='+',
+                        dest='select_marker_tests',
+                        help='selects tests with given marker(s) for display or '
+                             'execution (ex. bat_test, cert_test, etc)')
+    parser.add_argument("--integration",
+                        action='store_true',
+                        dest='integration',
+                        help='specify integration as test type for selected markers')
+    parser.add_argument("--system",
+                        action='store_true',
+                        dest='system',
+                        help='specify system as test type for selected markers')
+    parser.add_argument("--display",
+                        action='store_true',
+                        dest='display_marker_tests',
+                        help='displays test list with given marker(s) '
+                             '(ex. bat_test, cert_test, etc)')
+    parser.add_argument("--include",
+                        nargs='+',
+                        dest='include_paths',
+                        help='includes specified directories/files only '
+                             'for marker search')
+    parser.add_argument("--exclude",
+                        nargs='+',
+                        dest='exclude_paths',
+                        help='excludes specified directories/files '
+                             'from marker search')
     parser.add_argument("--retry",
                         type=int,
                         help='open retry function')
@@ -612,6 +747,18 @@ def get_args():
     parser.add_argument("--count",
                         type=int,
                         help='cases execution times')
+    parser.add_argument("--piplineType",
+                        type=str,
+                        help='set pipline type')
+    parser.add_argument("--multiInstance",
+                        type=str,
+                        help='multi instance')
+    parser.add_argument("--project",
+                        type=str,
+                        help='run specific project test cases')
+    parser.add_argument("--conn_type",
+                        type=str,
+                        help='connect DUT with serial or adb')
     return parser.parse_args()
 
 
@@ -632,7 +779,7 @@ if __name__ == "__main__":
 
     elif args.all:
         if args.retest:
-            for i in range(args.retest or 1):
+            for i in range(args.retest+1 or 1):
                 runner.retest_count = i + 1
                 runner.execute_all()
                 runner.print_section_log("TEST EXECUTION SUMMARY")
@@ -641,3 +788,4 @@ if __name__ == "__main__":
             runner.execute_all()
     runner.print_section_log("TEST EXECUTION SUMMARY")
     runner.test_session.generate_result_summary()
+    time.sleep(10)

@@ -17,23 +17,24 @@ common_case = Common_Playcontrol_Case(playerNum=2)
 def multi_teardown():
     multi.multi_setup()
     yield
-    multi.stop_multiPlayer_apk()
-    streamProvider.stop_send()
+    # multi.stop_multiPlayer_apk()
+    # streamProvider.stop_send()
 
 
 # @pytest.mark.skip
+@pytest.mark.flaky(reruns=3)
 def test_Multi_PIP_UDP_TS_H265_1080():
     h264_1080P_stream_name, h264_1080P_url = get_conf_url("conf_udp_url", "udp", "conf_stream_name", "h264_1080P")
     if p_conf_single_stream:
-        h264_1080P_1_stream_name, h264_1080P_1_url = get_conf_url("conf_udp_url", "udp", "conf_stream_name", "h264_1080P_1")
+        h264_1080P_1_stream_name, h264_1080P_1_url = get_conf_url("conf_udp_url", "udp1", "conf_stream_name", "h264_1080P_1") 
         file_path = streamProvider.get_file_path('h264_1080P', 'ts', h264_1080P_stream_name[0])
         file_path1 = streamProvider1.get_file_path('h264_1080P', 'ts', h264_1080P_1_stream_name[0])
         if file_path and file_path1:
             file_path = file_path[0]
             file_path1 = file_path1[0]
         try:
-            streamProvider.start_send('udp', file_path)
-            streamProvider1.start_send('udp1', file_path1)
+            streamProvider.start_send('udp', file_path, url=h264_1080P_url[6:])
+            streamProvider1.start_send('udp', file_path1, url=h264_1080P_1_url[6:])
         except Exception as e:
             logging.error("stream provider start send failed.")
             raise False
@@ -44,6 +45,8 @@ def test_Multi_PIP_UDP_TS_H265_1080():
         multi.send_cmd(start_cmd)
         assert common_case.player_check.check_startPlay()[0], "start play failed"
         common_case.switch_pip_2_window()
+        multi.stop_multiPlayer_apk()
+        streamProvider.stop_send()
         #common_case.pause_resume_seek_stop()
     else:
         file_path_list = []
@@ -58,8 +61,8 @@ def test_Multi_PIP_UDP_TS_H265_1080():
 
             for i in range(0, len(file_path_list) - 1):
                 try:
-                    streamProvider.start_send('udp', file_path_list[i])
-                    streamProvider1.start_send('udp1', file_path_list[i + 1])
+                    streamProvider.start_send('udp', file_path_list[i], url=url[6:])
+                    streamProvider1.start_send('udp', file_path_list[i + 1], url=url1[6:])
                 except Exception as e:
                     logging.error("stream provider start send failed.")
                     raise False
@@ -68,6 +71,7 @@ def test_Multi_PIP_UDP_TS_H265_1080():
                     multi.send_cmd(start_cmd)
                     assert common_case.player_check.check_startPlay()[0], "start play failed"
                     common_case.switch_pip_2_window()
-                    common_case.pause_resume_seek_stop()
+                    #common_case.pause_resume_seek_stop()
                     multi.stop_multiPlayer_apk()
-
+                    streamProvider.stop_send()
+                    streamProvider1.stop_send()

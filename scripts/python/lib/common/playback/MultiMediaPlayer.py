@@ -17,6 +17,7 @@ import logging
 import os
 import time
 
+import allure
 import pytest
 
 from lib.common import config_yaml
@@ -25,53 +26,66 @@ from lib.common.system.NetworkAuxiliary import getIfconfig
 from lib.common.system.Permission import Permission
 from lib.common.system.SignApk import SignApk, SignatureType
 from tools.resManager import ResManager
-from lib.common.playback import Environment_Detection
+from . import Environment_Detection
 
 
 TIME_SLEEP = 2
 TIMEOUT = 4
 DEVICE_NAME = None
-MULTIMEDIAPLAYER_TEST_APP_NAME = 'com.amlogic.multimediaplayer'
+MULTIMEDIAPLAYER_T_TEST_APP_NAME = 'com.android.multimediaplayer'
 API_LEVEL_PROP = 'ro.build.version.sdk'
 MANUFACTURER_PROP = 'ro.product.manufacturer'
 SIGNED_APK = 'MultiMediaPlayer_inside_1.0_signed.apk'
 CHECK_LOG = 'logcat -s AmlMultiPlayer'
 ERROR_KEYWORDS = ["newStatus=Error"]
-MULTI_APK = 'MultiMediaPlayer.apk'
+# MULTI_APK = 'MultiMediaPlayer_S_2023.03.10_410c40c.apk'
+adb = ADB()
+android_version = adb.getprop(key="ro.build.version.release")
+logging.debug(f"android version: {android_version}")
+if android_version == '14':
+    MULTI_APK = 'signed_app.apk'
+else:
+    MULTI_APK = 'MultiMediaPlayer_S_2023.03.10_410c40c.apk'
 
 # player_check = PlayerCheck
 
 
 class MultiPlayer(Environment_Detection, ADB, SignApk):
-    def __init__(self, device):
+    def __init__(self):
         # self.sn = MULTI.get_note('Multiplayer')['device_id']
         # print(self.sn)
         ADB.__init__(self, "MultiPlayerTestApp", unlock_code="", logdir=pytest.result_dir, stayFocus=True)
         SignApk.__init__(self)
-        self.device = device
+        # self.device = self.serialnumber
         self.resManager = ResManager()
-        self._out_path = self.resManager.get_target("signed/")
+        self._out_path = self.resManager.get_target(path="signed/", source_path="signed/")
         self._debug_apk_name = self.resManager.get_target(
             "debug/MultiMediaPlayer_inside_1.0_c1b1707_debug_202108021508.apk")
         self._signType = SignatureType.PLATFORM.value
         self.permission = Permission()
-        # self.android_s_so_check()
+        # self.replace_logd()
         self.multi_setup()
-        self.expand_logcat_capacity()
+        # add so
+        self.android_s_so_add()
         # logging.debug(self._path)
-
         # MultiMediaPlayer APK command
         self.PAUSE_CMD = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command pause'
         self.RESUME_CMD = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command resume'
         self.STOP_CMD = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command stop'
-        self.SWITCH_CHANNEL = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command switch_channel --ez is_play_next true'
-        self.SWITCH_CHANNEL1 = 'am broadcast -a multimediaplayer.test --ei instance_id 1 --es command switch_channel --ez is_play_next true'
-        self.SWITCH_WINDOW = 'am broadcast -a multimediaplayer.test --es command switch_window --ei source_window_id 0 --ei target_window_id 1'
-        self.SEEK_CMD = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command seek_offset --el seek_pos 20000'
+        self.SWITCH_CHANNEL1 = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command switch_channel ' \
+                               '--ez is_play_next true '
+        self.SWITCH_CHANNEL2 = 'am broadcast -a multimediaplayer.test --ei instance_id 1 --es command switch_channel ' \
+                               '--ez is_play_next true '
+        self.SWITCH_WINDOW = 'am broadcast -a multimediaplayer.test --es command switch_window --ei source_window_id ' \
+                             '0 --ei target_window_id 1 '
+        self.SEEK_CMD = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command seek_offset --el ' \
+                        'seek_pos 20000 '
         self.FF_CMD_1 = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command setspeed --ef speed 1.5'
         self.FF_CMD_2 = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command setspeed --ef speed 2.0'
         self.FB_CMD = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command setspeed --ef speed 0.5'
-        self.STANDARD_SPEED = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command setspeed --ef speed 2.0'
+        self.STANDARD_SPEED = 'am broadcast -a multimediaplayer.test --ei instance_id 0 --es command setspeed --ef ' \
+                              'speed 2.0 '
+        self.CURRENT_FOCUS = 'dumpsys window | grep -i mCurrentFocus'
 
     def get_url_dict(self):
         URL_DICT = {}
@@ -134,18 +148,35 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
         return URL_DICT
 
     def check_multi_exist(self):
-        return True if MULTIMEDIAPLAYER_TEST_APP_NAME in self.checkoutput('pm list packages') else False
+        # if "hybrid_t" in pytest.target.get("prj"):
+        if isinstance(pytest.device, list):
+            for output in self.checkoutput('pm list packages'):
+                if MULTIMEDIAPLAYER_T_TEST_APP_NAME in output:
+                    return True
+                else:
+                    return False
+        else:
+            return True if MULTIMEDIAPLAYER_T_TEST_APP_NAME in self.checkoutput('pm list packages') else False
+        # else:
+        #     return False
 
+    @allure.step("Check multiPlayer APK,if None install it")
     def multi_setup(self):
-        if not self.check_multi_exist():
-            assert self.install_apk("apk/" + MULTI_APK)
-            self.start_multiPlayer_apk()
-            time.sleep(5)
-            self.get_permission()
+        if "hybrid_t" in pytest.target.get("prj"):
+            if not self.check_multi_exist():
+                raise ValueError("apk does not exist")
+            else:
+                logging.debug("apk has existed")
+        else:
+            if not self.check_multi_exist():
+                assert self.install_apk("apk/" + MULTI_APK)
+                self.start_multiPlayer_apk()
+                time.sleep(5)
+                self.get_permission()
         self.clear_logcat()
 
     def install_apk(self, apk_path):
-        apk_path = self.resManager.get_target(apk_path)
+        apk_path = self.resManager.get_target(apk_path, source_path="apk")
         cmd = ['install', '-r', '-t', apk_path]
         logging.info(cmd)
         output = self.run_adb_cmd_specific_device(cmd)[1].decode().strip().split('\n')
@@ -171,13 +202,17 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
     def get_permission(self):
         self.permission.permission_check()
 
+    def check_current_window(self):
+        current_window = self.run_shell_cmd(self.CURRENT_FOCUS)[1]
+        return current_window
+
     def check_multiplayer_apk_exist(self):
         rc, out = self.run_shell_cmd('pm list packages', TIMEOUT)
         packagelist = out.split()
         if len(packagelist) > 0:
             for item in packagelist:
                 logging.debug(item)
-                if MULTIMEDIAPLAYER_TEST_APP_NAME in item:
+                if MULTIMEDIAPLAYER_T_TEST_APP_NAME in item:
                     return True
             return False
         else:
@@ -185,42 +220,61 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
 
     def start_multiPlayer_apk(self, start_flag=True):
         flag = 'true' if start_flag else 'false'
-        cmd = 'am start -n ' + MULTIMEDIAPLAYER_TEST_APP_NAME + '/.MainActivity ' + '--ez start ' + flag
+        cmd = 'am start -n ' + MULTIMEDIAPLAYER_T_TEST_APP_NAME + '/.MainActivity ' + '--ez start ' + flag
         logging.debug(cmd)
         self.shell(cmd)
 
+    @allure.step("Close multiPlayer APK")
     def stop_multiPlayer_apk(self):
-        cmd = 'am force-stop ' + MULTIMEDIAPLAYER_TEST_APP_NAME
-        logging.debug(cmd)
-        self.shell(cmd)
+        self.shell("input keyevent 4")
+        count = 0
+        # if "hybrid_t" in pytest.target.get("prj"):
+        while True:
+            if MULTIMEDIAPLAYER_T_TEST_APP_NAME not in self.check_current_window():
+                logging.debug("apk has exited")
+                break
+            else:
+                time.sleep(1)
+                count = count + 1
+            if count >= 5:
+                self.shell("input keyevent 4")
+                if MULTIMEDIAPLAYER_T_TEST_APP_NAME not in self.check_current_window():
+                    logging.debug("apk has exited")
+                    break
+                else:
+                    raise ValueError("apk hasn't exited yet")
+            else:
+                logging.debug("continue check")
         self.kill_logcat_pid()
+        self.run_shell_cmd("logcat -c")
 
-    def startMultiPlayerTest(self, src_path=None):
-        if src_path is None:
-            raise ValueError('Param src_path is None.')
-        else:
-            if not os.path.exists(src_path):
-                raise ValueError("src_path don't exists.")
-        # self.hasDeviceToTest()
-        self.device.root()
-        manufacturer = self.getprop(MANUFACTURER_PROP, TIMEOUT)
-        api_level = self.getprop(API_LEVEL_PROP, TIMEOUT)
-        # self.adb_mount()
-        signedApk = self.sign_apk(self._signType, manufacturer, api_level,
-                                  self._debug_apk_name, self._out_path, SIGNED_APK)
-        logging.info(signedApk)
-        if self.check_multiplayer_apk_exist():
-            self.app_uninstall(MULTIMEDIAPLAYER_TEST_APP_NAME)
-            time.sleep(TIME_SLEEP)
-            self.app_install(signedApk)
-            time.sleep(TIME_SLEEP)
-        else:
-            self.app_install(signedApk)
-            time.sleep(TIME_SLEEP)
-        dest_path = '/sdcard/'
-        self.push(src_path, dest_path)
-        time.sleep(TIME_SLEEP)
-        self.start_multiPlayer_apk()
+    # def startMultiPlayerTest(self, src_path=None):
+    #     if src_path is None:
+    #         raise ValueError('Param src_path is None.')
+    #     else:
+    #         if not os.path.exists(src_path):
+    #             raise ValueError("src_path don't exists.")
+    #     # self.hasDeviceToTest()
+    #     self.device.root()
+    #     manufacturer = self.getprop(MANUFACTURER_PROP, TIMEOUT)
+    #     api_level = self.getprop(API_LEVEL_PROP, TIMEOUT)
+    #     # self.adb_mount()
+    #     signedApk = self.sign_apk(self._signType, manufacturer, api_level,
+    #                               self._debug_apk_name, self._out_path, SIGNED_APK)
+    #     logging.info(signedApk)
+    #     if self.check_multiplayer_apk_exist():
+    #         self.app_uninstall(MULTIMEDIAPLAYER_T_TEST_APP_NAME)
+    #         time.sleep(TIME_SLEEP)
+    #         self.app_install(signedApk)
+    #         time.sleep(TIME_SLEEP)
+    #         time.sleep(TIME_SLEEP)
+    #     else:
+    #         self.app_install(signedApk)
+    #         time.sleep(TIME_SLEEP)
+    #     dest_path = '/sdcard/'
+    #     self.push(src_path, dest_path)
+    #     time.sleep(TIME_SLEEP)
+    #     self.start_multiPlayer_apk()
 
     def get_startplay_params(self):
         p_conf_multi = config_yaml.get_note('conf_multiplayer')
@@ -235,15 +289,32 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
     def get_start_cmd(self, url_list, **kwargs):
         p_conf_is_loopplay, p_conf_is_amumediaplayer, p_conf_is_ts_mode, p_conf_is_prefer_tunerhal = self.get_startplay_params()
         urllist = ""
+        if kwargs:
+            if "pipline_type" in kwargs:
+                if kwargs["pipline_type"] == "default":
+                    p_conf_is_amumediaplayer = "false"
+                    logging.info(f"p_conf_is_amumediaplayer:{p_conf_is_amumediaplayer}")
+                else:
+                    logging.info(f"p_conf_is_amumediaplayer:{p_conf_is_amumediaplayer}")
+                    pass
+            else:
+                pass
+        else:
+            pass
         if isinstance(url_list, list):
-            if "2" in kwargs.values():
+            if "2" in kwargs.values():  # if switch channel
+                url_list2 = url_list.copy()
+                url_list2.reverse()
                 urllist = str(';'.join(i for i in url_list))
+                urllist2 = str(';'.join(i for i in url_list2))
+                if "PIP" in kwargs.values():    # if PIP and switch channel
+                    urllist = urllist+','+urllist2
             else:
                 urllist = str(','.join(i for i in url_list))
         else:
             urllist = url_list
         print(urllist)
-        start_cmd = (f'am start -n com.amlogic.multimediaplayer/.multiplay.MultiPlayActivity '
+        start_cmd = (f'am start -n {MULTIMEDIAPLAYER_T_TEST_APP_NAME}/.multiplay.MultiPlayActivity '
                      f'--esal url_list "{urllist}" --ez is_loopplay {p_conf_is_loopplay} '
                      f'--ez is_amumediaplayer {p_conf_is_amumediaplayer} --ez is_ts_mode {p_conf_is_ts_mode} '
                      f'--ez IS_prefer_tunerhal {p_conf_is_prefer_tunerhal}')
@@ -261,7 +332,7 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
         return start_cmd
 
     def send_cmd(self, cmd):
-        self.clear_logcat()
+        # self.clear_logcat()
         self.run_shell_cmd(cmd)
 
     def check_multi_play(self):
@@ -279,4 +350,5 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
                     logging.info(f"error keyword: {keyword}")
                     self.stop_multiPlayer_apk()
                     return False
+
 

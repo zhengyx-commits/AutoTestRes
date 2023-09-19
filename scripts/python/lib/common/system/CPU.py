@@ -203,4 +203,3 @@ class CPU(ADB):
     def check_network(self):
         if self.tvset.check_ping_host(self.__class__.__name__, "eth0"):
             return True
-

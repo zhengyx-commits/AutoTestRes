@@ -39,6 +39,9 @@ class HdmiOut(ADB):
                          'echo {} > /sys/class/display/mode;'
                          'echo 2 > /sys/class/amhdmitx/amhdmitx0/hdcp_mode;'
                          'echo 2 > /sys/class/amhdmitx/amhdmitx0/cedst_policy;')
+    SET_RATIO_ID = "dumpsys SurfaceFlinger | grep '{}' | cut -d '=' -f 2 | cut -d ',' -f 1"
+    GET_RESOLUTION_TABLE = "dumpsys SurfaceFlinger | grep 'fps='"
+    SET_RATIO_COMMAND_R = 'service call SurfaceFlinger 1035 i32 {}'
 
     def __init__(self):
         super(HdmiOut, self).__init__()
@@ -57,6 +60,7 @@ class HdmiOut(ADB):
         self.root()
         self.switch_fail_list = []
         self.switch_error_list = []
+        self.version = "ro.build.version.sdk"
 
     def get_ratio_list(self):
         '''
@@ -70,34 +74,60 @@ class HdmiOut(ADB):
         return resList.replace('*', '').split('\n')[:-1]
 
     @count_down(90)
-    def switch_resolution(self):
+    def switch_resolution(self, ration_list):
         # self.start_activity(*self.settingResActivity)
         # self.run_shell_cmd(self.hdmidebug_cmd)
-        logging.info(f'Resolution Ratio: {self.get_ratio_list()}')
         self.resolution = self.get_ratio_list()
+        resolution_table = self.run_shell_cmd(self.GET_RESOLUTION_TABLE)[1]
         if not self.resolution:
             raise EnvironmentError('Pls check hdmi status')
-        for i in self.get_ratio_list():
-            if self.check_hdmi():
-                logging.info('HDMI is ok,start to switch display')
-                logging.info(f'Switch -> {i}')
-                self.switch_times += 1
-                for j in self.set_ration_command_list:
-                    self.run_shell_cmd(j.format(i))
-                sleep(6)
-                current = self.run_shell_cmd(self.GET_RATIO_COMMAND)[1]
-                logging.info(f'Current radio: {current}')
-                self.screenshot(i + str(self.switch_times))
-                if i not in current:
-                    logging.debug(f'Switch -> {i} failed')
-                    self.switch_error_list.append(i)
-                    self.switch_error_times += 1
-                    # self.result = 'Fail'
-            else:
-                logging.info(f'Cannot Switch -> {i}')
-                self.switch_fail_list.append(i)
-                self.switch_fail_times += 1
-        self.run_shell_cmd('echo {} > /sys/class/display/mode'.format(self.best_resolution))
+        if self.getprop(self.version) >= "30":
+            logging.debug(f'ration_list : {ration_list}')
+            for ration in ration_list:
+                if ration in self.get_ratio_list() and ration_list[ration] in resolution_table:
+                    logging.debug(f'ration : {ration}')
+                    if self.check_hdmi():
+                        logging.info('HDMI is ok,start to switch display')
+                        logging.info(f'Switch -> {ration}')
+                        self.switch_times += 1
+                        display_mode_id = self.run_shell_cmd(self.SET_RATIO_ID.format(ration_list[ration]))[1]
+                        logging.debug(f'ration id : {display_mode_id}')
+                        self.run_shell_cmd(self.SET_RATIO_COMMAND_R.format(display_mode_id))
+                        sleep(8)
+                        current = self.run_shell_cmd(self.GET_RATIO_COMMAND)[1]
+                        logging.info(f'Current radio: {current}')
+                        self.screenshot(ration + str(self.switch_times))
+                        if ration not in current:
+                            logging.info(f'Switch -> {ration} failed')
+                            self.switch_error_list.append(ration)
+                            self.switch_error_times += 1
+                            # self.result = 'Fail'
+                    # else:
+                    #     logging.info(f'Cannot Switch -> {ration}')
+                    #     self.switch_fail_list.append(ration)
+                    #     self.switch_fail_times += 1
+        else:
+            for i in self.get_ratio_list():
+                if self.check_hdmi():
+                    logging.info('HDMI is ok,start to switch display')
+                    logging.info(f'Switch -> {i}')
+                    self.switch_times += 1
+                    for j in self.set_ration_command_list:
+                        self.run_shell_cmd(j.format(i))
+                    sleep(6)
+                    current = self.run_shell_cmd(self.GET_RATIO_COMMAND)[1]
+                    logging.info(f'Current radio: {current}')
+                    self.screenshot(i + str(self.switch_times))
+                    if i not in current:
+                        logging.debug(f'Switch -> {i} failed')
+                        self.switch_error_list.append(i)
+                        self.switch_error_times += 1
+                        # self.result = 'Fail'
+                else:
+                    logging.info(f'Cannot Switch -> {i}')
+                    self.switch_fail_list.append(i)
+                    self.switch_fail_times += 1
+            self.run_shell_cmd('echo {} > /sys/class/display/mode'.format(self.best_resolution))
 
         # self.run_shell_cmd(self.hdmidebug_stop_cmd)
         # self.app_stop(self.settingResActivity[0])
@@ -108,12 +138,16 @@ class HdmiOut(ADB):
         check hdmi status , wait for 60 seconds
         @return: hdmi status : boolean
         '''
+        check_hdmi = True
         if not self.get_ratio_list():
             for _ in range(20):
                 if self.get_ratio_list():
-                    return True
+                    check_hdmi = True
+                    break
                 else:
                     logging.info('Please Check HDMI')
                     sleep(3)
+                    check_hdmi = False
+            return check_hdmi
         else:
-            return False
+            return check_hdmi

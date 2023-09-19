@@ -1,0 +1,122 @@
+kpi_config:
+  kpi_debug:
+    flag: disable
+    name: dvb_switch_channel_kpi
+    repeat_count: 100
+    reference_time: 2
+    reference_percentage: 1.1
+
+  kpi_results_detect:
+    dvb_switch_channel_cross_freq_kpi_excepted_results: 2000
+    dvb_switch_channel_cross_freq_kpi_manual_results: 727
+    dvb_switch_channel_same_freq_kpi_excepted_results: 1000
+    dvb_switch_channel_same_freq_kpi_manual_results: 750
+    dvb_scan_kpi_excepted_results: 17000
+    dvb_scan_kpi_manual_results: 9300
+
+  dvb_switch_channel_kpi_config_id:
+    "1": start tune off
+    "2": released tsplayer
+    "3": play stopped
+    "4": play start
+    "5": tune locked
+    "6": create tsplayer
+    "7": video decoding started
+    "8": get first video es data
+    "9": display video first frame
+    "10": queue frame buufer to display
+    "11": display video second frame
+  dvb_switch_channel_kpi_config_result:
+    "1,2": releaseTsplayer
+    "2,3": playStop
+    "3,4": playStart
+    "4,5": tuneLock
+    "5,6": createTsplayer
+    "6,7": videoDecodingStart
+    "7,8": getFirstVideo
+    "8,9": displayFirstFrame
+    "9,10": queueFrameBuffer
+    "10,11": displaySecondFrame
+    "1,11": total
+
+  stb_dvb_switch_channel_kpi_config_id:
+    "1": "MainActivity: PVR_MAIN_LOG tuneToChannel"
+    "2": 'dtvkitserver: IPC--> {"command": "Player.stop"'
+    "3": Player.stopTeletext , reply
+    "4": player.play
+    "5": STB_DPSetupLNBandDiSEqC
+    "6": ": LOCKED"
+    "7": "Disabled, event: enable"
+    "8": "Starting, event: restart decode"
+    "9": "Starting, event: scramble change"
+    "10": "startAudioDecoding_l:.*] end"
+    "11": get first video es data
+    "12": decoded video first frame
+    "13": display video first frame
+  stb_dvb_switch_channel_kpi_config_result:
+    "1,2": startPlayStop
+    "2,3": endPlayStop
+    "3,4": startPlay
+    "4,5": startLock
+    "5,6": endLock
+    "6,7": startCreatePlayer
+    "7,8": PMTChange
+    "8,9": CAChange
+    "9,10": stopCreatePlayer
+    "10,11": getFirstES
+    "11,12": decodeFirstFrame
+    "12,13": displayFirstFrame
+    "1,13": total
+
+  new_stb_dvb_switch_channel_kpi_config_id:
+    "1": "MainActivity: PVR_MAIN_LOG tuneToChannel"
+    "2": 'dtvkitserver: IPC--> {"command": "Player.stop"'
+    "3": Player.stopTeletext , reply
+    "4": player.play
+    "5": STB_DPSetupLNBandDiSEqC
+    "6": ": LOCKED"
+    "7": "Disabled, event: enable"
+    "8": "startAudioDecoding_l:.*] end"
+    "9": get first video es data
+    "10": decoded video first frame
+    "11": "SHOW FIRST FRAME NOSYNC"
+    "12": "Render first frame mediaTimeUs"
+    "13": display video first frame
+    "14": "AM_TSPLAYER_EVENT_TYPE_FIRST_FRAME"
+    "15": "AML_MP_PLAYER_EVENT_FIRST_FRAME"
+    "16": "av aligned: audio drop pcm"
+    "17": "SLOWSYNC ENANLED, VIDEO START"
+    "18": "mSlowSyncFinished:1"
+  new_stb_dvb_switch_channel_kpi_config_result:
+    "1,2": begin to stop
+    "2,3": finish stop
+    "3,4": begin next play
+    "4,5": begin tuner lock
+    "5,6": finish tuner lock
+    "6,8": start audio & video
+    "8,9": first video es data
+    "9,10": first decoded vframe
+    "10,13": display first vframe
+    "1,13": Display Total Time
+    "13,16": AVAlign Time
+    "16,17": Cache time
+    "17,18": doSlowsync time
+    "1,18": AV sync Done Time
+    "11-15": Playback success
+
+  dvb_scan_kpi_config_id:
+    "1": scan started
+    "2": tune locked
+    "3": request pat/sdt/nit start
+    "4": si sdt data ok
+    "5": si pat data ok
+    "6": si nit data ok
+    "7": scan end
+  dvb_scan_kpi_config_result:
+    "1,2": tune_lock
+    "2,3": si_start
+    "3,4": sdt
+    "4,5": pat
+    "5,6": nit
+    "6,7": scan_end
+    "1,7": total

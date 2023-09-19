@@ -99,10 +99,8 @@ class LoggingHandler():
         '''
         logging.info('Writing yuv data...')
         df = pd.read_excel(self.yuv_excel)
-        originList = []
-        if len(df.values) > 1:
-            originList = df.iloc[:, 1].values
         yuvResult = []
+
         # read yuv data from log_file
         with open(self.log_file, 'r') as f:
             for i in f.readlines():
@@ -110,15 +108,54 @@ class LoggingHandler():
                 self.video_name = i.strip().split(',')[1]
                 if 'yuvsum' in i:
                     yuvSum = re.findall(r'yuvsum\:(.*?)\,', i)[0]
-                yuvResult.append(self.get_video_name() + '-' + yuvSum if yuvSum else self.get_video_name() + '-error')
-        # reshape Dataframe
-        if len(df) < len(yuvResult):
-            df = df.reindex(range(len(yuvResult) + 1))
-            if len(df.values) > 1:
-                for i in range(len(originList)):
-                    if isinstance(originList[i], str) and originList[i].split('-')[0] != yuvResult[i].split('-')[0]:
-                        yuvResult.append(yuvResult.pop(i))
-        df[datetime.now()] = pd.Series(yuvResult)
+                current_time = datetime.now().strftime('%Y %m %d %H')
+                yuvResult.append(self.get_video_name() + '-' + yuvSum + '-' + current_time if yuvSum else self.get_video_name() + '-error' + '-' + current_time)
+
+        standard_rows = df[df['Result'] == 'standard']
+
+        if len(standard_rows) > 0:
+            # Extract the 'video name' collection of standard rows
+            standard_video_names = set(standard_rows['video status'].str.split('-').str[0])
+
+            # Convert yuvResult to the 'video name' collection
+            yuv_video_names = set(video_name.split('-')[0] for video_name in yuvResult)
+
+            # Determine if two sets intersect
+            has_difference = len(standard_video_names.intersection(yuv_video_names)) != len(standard_video_names)
+        else:
+            has_difference = True
+
+        print("has_difference:", has_difference)
+
+        if has_difference:
+            # Check if 'standard_rows' is empty, if so, create a new DataFrame with 'standard' value in 'result' column
+            if standard_rows.empty:
+                yuvResult_df = pd.DataFrame({'Result': ['standard'] * len(yuvResult), 'video status': yuvResult})
+                df = df.append(yuvResult_df, ignore_index=True)
+            else:
+                # Append yuvResult to the 'video status' column, with 'standard' as the 'Result' value
+                yuvResult_df = pd.DataFrame({'Result': ['standard'] * len(yuvResult), 'video status': yuvResult})
+                df = df.append(yuvResult_df, ignore_index=True)
+                # Set the 'Result' value of 'standard' rows to empty
+                df.loc[standard_rows.index, 'Result'] = 'invalid'
+        else:
+            # Append yuvResult to the 'video status' column, matching the order of 'standard' rows
+            yuvResult_df = pd.DataFrame({'video status': yuvResult})
+            yuvResult_df['video name'] = yuvResult_df['video status'].str.split('-').str[0]
+            yuvResult_df_sorted = yuvResult_df.set_index('video name').loc[
+                standard_rows['video status'].str.split('-').str[0]].reset_index()
+
+            # Traverse every row of yuvResult df sorted DataFrame
+            for _, row in yuvResult_df_sorted.iterrows():
+                # Extract the 'video status' value of the current row
+                video_status_value = row['video status']
+
+                # Use this value as the dictionary value, with the key 'video status'
+                row_data = {'video status': video_status_value}
+
+                # Use the append() method of DataFrame to append the dictionary to the df DataFrame
+                df = df.append(row_data, ignore_index=True)
+
         df.to_excel(self.yuv_excel, index=False)
 
     def check_yuv_data(self):
@@ -130,23 +167,44 @@ class LoggingHandler():
         logging.info('Checking yuv data')
         df = pd.read_excel(self.yuv_excel)
         background = []
+
         for i in range(len(df.values)):
-            df.iloc[i, 0] = 'Pass'
-            temp = ''
-            for j in range(1, len(df.values[i])):
-                if isinstance(df.values[i][j], str):
-                    temp = df.values[i][j]
-                    break
-            if 'error' in temp:
-                background.append(df.values[i][j])
-                df.iloc[i, 0] = 'Fail'
-                continue
-            for j in range(1, len(df.values[i])):
-                if temp != df.values[i][j] and isinstance(df.values[i][j], str):
-                    # self.notCompare.append((i + 1, j))
-                    background.append(df.values[i][j])
-                    df.iloc[i, 0] = 'Fail'
-                    background.append(df.values[i, 0])
+            # Only check rows with empty 'Result' column
+            if pd.isnull(df.at[i, 'Result']):
+                result = 'Pass'
+                video_status = df.iloc[i, 1]
+
+                # Check if 'error' is in 'video_status'
+                if 'error' in video_status:
+                    result = 'Fail'
+                    background.append(video_status)
+                # If 'error' not present, compare video names and test results
+                else:
+                    video_name_part = video_status.split('-')[0].strip()
+                    test_result = video_status.split('-')[1].strip()
+
+                    # Find 'standard' rows matching the video name part
+                    standard_rows = df[df['Result'] == 'standard']
+                    matched_standard_rows = standard_rows[standard_rows['video status'].str.startswith(video_name_part)]
+
+                    # If no matched 'standard' rows, consider as 'Fail'
+                    if matched_standard_rows.empty:
+                        result = 'Fail'
+                        background.append(video_status)
+                    else:
+                        # Check if the test result is different from the 'standard' row
+                        for _, standard_row in matched_standard_rows.iterrows():
+                            standard_test_result = standard_row['video status'].split('-')[1].strip()
+                            if test_result != standard_test_result:
+                                result = 'Fail'
+                                background.append(video_status)
+                                break
+
+                # Set the 'Result' column value and background color
+                df.at[i, 'Result'] = result
+                if result == "Fail":
+                    background.append(df.iloc[i, 0])
+
         df.to_excel(self.yuv_excel, index=False)
         writer = pd.ExcelWriter(self.yuv_excel, engine='xlsxwriter')
         df.to_excel(writer, sheet_name='Sheet1', index=False)

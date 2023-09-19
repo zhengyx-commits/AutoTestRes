@@ -125,7 +125,7 @@ class ADB:
     CLEAR_DMESG_COMMAND = 'dmesg -c'
 
     def __init__(self, name="", unlock_code="", logdir="", stayFocus=False, serialnumber=""):
-        self.serialnumber = serialnumber or pytest.config['device_id']
+        self.serialnumber = pytest.serialnumber
         self.name = name
         self.unlock_code = unlock_code
         self.logdir = logdir or pytest.result_dir
@@ -134,8 +134,9 @@ class ADB:
         self.res_manager = ResManager()
         self.live = False
         self.lock = threading.Lock()
-        self.wait_devices()
-        self.build_version = self.getprop(CheckAndroidVersion().get_android_version())
+        # self.wait_devices()
+        if pytest.target.get("prj") != "zapper":
+            self.build_version = self.getprop(CheckAndroidVersion().get_android_version())
         self.p_config_wifi = config_yaml.get_note('conf_wifi')
 
     def set_status_on(self):
@@ -160,14 +161,25 @@ class ADB:
             logging.debug(f'Adb status is Off')
             self.lock.release()
 
-    # @property
     def u(self, type="u2"):
         '''
         uiautomater instance
-        @return: instance
+        @return: instance or list of instances
         '''
-        # if not hasattr(self, '_u'):
-        self._u = UiautomatorTool(self.serialnumber, type)
+        if isinstance(self.serialnumber, str):  # 单设备情况
+            return self._get_uiautomator_instance(self.serialnumber, type)
+        elif isinstance(self.serialnumber, list):  # 多设备情况
+            instance_list = []
+            for device_id in self.serialnumber:
+                instance = self._get_uiautomator_instance(device_id, type)
+                instance_list.append(instance)
+            return instance_list
+        else:
+            raise ValueError("Invalid serialnumber type. It should be a string or a list of strings.")
+
+    def _get_uiautomator_instance(self, device_id, type):
+        if not hasattr(self, '_u'):
+            self._u = UiautomatorTool(device_id, type)
         return self._u
 
     def getUUID(self):
@@ -227,8 +239,7 @@ class ADB:
         '''
         if isinstance(keycode, int):
             keycode = str(keycode)
-        os.system(self.ADB_S + self.serialnumber +
-                  " shell input keyevent " + keycode)
+        self.execute_adb_command(" input keyevent " + str(keycode))
 
     def home(self):
         '''
@@ -298,7 +309,7 @@ class ADB:
         self.run_shell_cmd(f"pm clear {app_name}")
 
     def expand_logcat_capacity(self):
-        self.run_shell_cmd("logcat -G 40M")
+        self.run_shell_cmd("logcat -G 40m")
         self.run_shell_cmd("renice -n -50 `pidof logd`")
 
     def delete(self, times=1):
@@ -321,7 +332,18 @@ class ADB:
         @param y: y index
         @return: None
         '''
-        os.system(self.ADB_S + self.serialnumber + " shell input tap " + str(x) + " " + str(y))
+        self.execute_adb_command(" input tap " + str(x) + " " + str(y))
+
+    def execute_adb_command(self, command):
+        '''
+        Execute the given ADB command on the specified devices.
+        @param command: ADB command to execute
+        @return: None
+        '''
+        if isinstance(self.serialnumber, list):
+            [os.system(self.ADB_S + device_id + " shell " + command) for device_id in self.serialnumber]
+        else:
+            os.system(self.ADB_S + self.serialnumber + " shell " + command)
 
     def swipe(self, x_start, y_start, x_end, y_end, duration):
         '''
@@ -333,8 +355,8 @@ class ADB:
         @param duration: action time duration
         @return: None
         '''
-        os.system(self.ADB_S + self.serialnumber + " shell input swipe " + str(x_start) +
-                  " " + str(y_start) + " " + str(x_end) + " " + str(y_end) + " " + str(duration))
+        self.execute_adb_command("input swipe " + str(x_start) +
+                      " " + str(y_start) + " " + str(x_end) + " " + str(y_end) + " " + str(duration))
 
     def text(self, text):
         '''
@@ -342,33 +364,17 @@ class ADB:
         @param text: text
         @return: None
         '''
+
         if isinstance(text, int):
             text = str(text)
-        os.system(self.ADB_S + self.serialnumber + " shell input text " + text)
+        self.execute_adb_command(" input text " + text)
 
     def clear_logcat(self):
         '''
         clear logcat
         @return: None
         '''
-        os.system(self.ADB_S + self.serialnumber + " logcat -b all -c")
-
-    def save_logcat(self, filepath, tag=''):
-        '''
-        save logcat
-        @param filepath: file path for logcat
-        @param tag: tag for -s
-        @return: log : subprocess.Popen , logcat_file : _io.TextIOWrapper
-        '''
-        filepath = self.logdir + '/' + filepath
-        logcat_file = open(filepath, 'w+')
-        if tag and ("grep -E" not in tag) and ("all" not in tag):
-            tag = f'-s {tag}'
-            log = subprocess.Popen(f"adb -s {self.serialnumber} shell logcat -v time {tag}".split(), stdout=logcat_file, preexec_fn=os.setsid)
-        else:
-            log = subprocess.Popen(f"adb -s {self.serialnumber} shell logcat -v time {tag}", stdout=logcat_file,
-                                   shell=True, stdin=subprocess.PIPE, preexec_fn=os.setsid)
-        return log, logcat_file
+        self.execute_adb_command(" logcat -b all -c")
 
     def stop_save_logcat(self, log, filepath):
         '''
@@ -383,9 +389,27 @@ class ADB:
         if not isinstance(filepath, _io.TextIOWrapper):
             logging.warning('pls pass in the stream object')
             return 'pls pass int the stream object'
+        # subprocess.Popen.send_signal(signal.SIGINT)
+        self.filter_logcat_pid()
         log.terminate()
+        log.send_signal(signal.SIGINT)
         # os.kill(log.pid, signal.SIGTERM)
         filepath.close()
+
+    def filter_logcat_pid(self):
+        p_lookup_logcat_thread_cmd = 'ps -e | grep logcat'
+        rc, output = self.run_shell_cmd(p_lookup_logcat_thread_cmd)
+        if 'logcat' in output:
+            p_logcat_pid = re.search('(.*?) logcat', output, re.M | re.I).group(1).strip().split(" ")
+            # print(f"p_logcat_pid 1: {p_logcat_pid}")
+            # print(f"p_logcat_pid 1-1: {p_logcat_pid[9]}")
+            if "S" in p_logcat_pid:
+                for one in p_logcat_pid:
+                    if re.findall(r".*\d+", one):
+                        # print(f"p_logcat_pid 2: {one}")
+                        self.run_shell_cmd(f"kill -9 {one}")
+                        break
+        return rc, output
 
     def start_activity(self, packageName, activityName, intentname=""):
         '''
@@ -415,8 +439,15 @@ class ADB:
         @param destination: target path
         @return: None
         '''
-        os.system(self.ADB_S + self.serialnumber +
-                  " pull " + filepath + " " + destination)
+        # self.execute_adb_command(" pull " + filepath + " " + destination)
+
+        if isinstance(self.serialnumber, list):
+            [os.system(self.ADB_S + device_id +
+                       " pull " + filepath + " " + destination) for device_id in
+             self.serialnumber]
+        else:
+            os.system(self.ADB_S + self.serialnumber +
+                      " pull " + filepath + " " + destination)
 
     def push(self, filepath, destination):
         '''
@@ -425,8 +456,13 @@ class ADB:
         @param destination: target path
         @return: None
         '''
-        os.system(self.ADB_S + self.serialnumber +
-                  " push " + filepath + " " + destination)
+        if isinstance(self.serialnumber, list):
+            [os.system(self.ADB_S + device_id +
+                      " push " + filepath + " " + destination) for device_id in
+             self.serialnumber]
+        else:
+            os.system(self.ADB_S + self.serialnumber +
+                      " push " + filepath + " " + destination)
 
     def shell(self, cmd):
         '''
@@ -434,7 +470,8 @@ class ADB:
         @param cmd: command
         @return: None
         '''
-        os.system(self.ADB_S + self.serialnumber + " shell " + cmd)
+        self.execute_adb_command(cmd)
+        # os.system(self.ADB_S + self.serialnumber + " shell " + cmd)
 
     def ping(self, interface=None, hostname="www.baidu.com",
              interval_in_seconds=1, ping_time_in_seconds=5,
@@ -460,10 +497,9 @@ class ADB:
             return False
         p_conf_wifi_ping_count = 5
         try:
-            # ping_time_in_seconds = pytest.config.get("wifi")['ping_count']
             p_conf_wifi_ping_count = self.p_config_wifi['wifi']['ping_count']
         except Exception as e:
-            logging.error("Failed.Reason: " + repr(e) +
+            logging.debug("Failed.Reason: " + repr(e) +
                           " in config doesn't exist, so use the default value " + str(p_conf_wifi_ping_count))
         count = int(p_conf_wifi_ping_count / interval_in_seconds)
         timeout_in_seconds += p_conf_wifi_ping_count
@@ -471,19 +507,13 @@ class ADB:
         # in ping_time seconds
 
         try:
-            # ping_percentge = pytest.config.get("wifi")['ping_pass_percentage']
             p_conf_wifi_ping_pass_percentage = self.p_config_wifi['wifi']['ping_pass_percentage']
         except Exception as e:
             p_conf_wifi_ping_pass_percentage = 0
-            logging.error("Failed.Reason: " + repr(e) +
+            logging.debug("Failed.Reason: " + repr(e) +
                           " in config doesn't exist, so use the default value " +
                           str(p_conf_wifi_ping_pass_percentage))
         ping_pass_percentage = int(count * p_conf_wifi_ping_pass_percentage * 0.01)
-        # if "rtos" in pytest.device.get_platform():
-        #     hostname = "8.8.8.8"
-        #     cmd = "%s %s %s" % (pytest.wifi.ACE_CLI_PING_RTOS, hostname,
-        #                         count)
-        # else:
         if interface:
             if size_in_bytes:
                 cmd = "ping -i %s -I %s -c %s -s %s %s" % (
@@ -537,7 +567,7 @@ class ADB:
         @param apk_path: apk path
         @return: install status : boolean
         '''
-        apk_path = self.res_manager.get_target(apk_path)
+        apk_path = self.res_manager.get_target(path=apk_path, source_path="apk")
         cmd = ['install', '-r', '-t', apk_path]
         logging.info(cmd)
         output = self.run_adb_cmd_specific_device(cmd)[1].decode().strip().split('\n')
@@ -587,7 +617,8 @@ class ADB:
         '''
         with set_timer(3):
             try:
-                output = subprocess.Popen(cmdcheck.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
+                output = subprocess.Popen(cmdcheck.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                          preexec_fn=os.setsid)
                 output_lines = output.stdout.readlines()
                 for line in output_lines:
                     ret = re.findall(r'bin', line.decode('utf-8'))
@@ -619,7 +650,8 @@ class ADB:
             if ret:
                 with set_timer(timeout):
                     try:
-                        output = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
+                        output = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                                  preexec_fn=os.setsid)
                         rc = 0
                     except subprocess.CalledProcessError as e:
                         output = e.output
@@ -631,31 +663,99 @@ class ADB:
                     else:
                         return rc, output.stdout.readlines()
 
-    @classmethod
-    def run_adb_cmd(cls, cmd, timeout=0, verbose=True):
+    def run_shell_cmd(self, cmd, timeout=0):
+        '''
+        Run shell command
+        @param cmd: command
+        @param timeout: time out
+        @return: return code , feedback : tuple
+        '''
+        shell_cmd = ['shell', cmd]
+        rc, output = self.run_adb_cmd(shell_cmd, timeout=timeout)
+        return rc, output.decode('utf-8', errors='ignore')
+
+    def run_adb_cmd(self, cmd, timeout=0, verbose=True):
         '''
         run adb command
         @param cmd: command
         @param timeout: time out
         @param verbose: debug info output control
-        @return: return code , feedback : tuple
+        @return: return code, feedback: tuple
         '''
+        if isinstance(self.serialnumber, str):
+            cmd = [['-s', self.serialnumber] + cmd]
+        elif isinstance(self.serialnumber, list):
+            cmd = [['-s', device_id] + cmd for device_id in self.serialnumber]
+        else:
+            raise ValueError("Invalid serialnumber type. It should be a string or a list of strings.")
+        return self._run_adb_cmd_impl(cmd, timeout=timeout, verbose=verbose)
+
+    def _run_adb_cmd_impl(self, cmd, timeout=0, verbose=True):
         # Run adb command.
         # adbpath = adbpath or cls.find_adb()
-        cmd = ['adb'] + cmd
         rc = 1
         output = b''
         logging.debug("<<<%s>>>", cmd)
         with set_timer(timeout):
-            try:
-                output = subprocess.check_output(cmd).strip()
-                rc = 0
-            except subprocess.CalledProcessError as e:
-                output = e.output
-                rc = e.returncode
+            for single_cmd in cmd:
+                try:
+                    full_cmd = ['adb'] + single_cmd
+                    logging.debug(f"full_cmd is {full_cmd}")
+                    output = subprocess.check_output(full_cmd).strip()
+                    rc = 0
+                except subprocess.CalledProcessError as e:
+                    output = e.output
+                    rc = e.returncode
+                    # If there is an error for any of the devices, break the loop and return the error.
+                    break
             if verbose:
                 logging.debug("(%s){{{%s}}}", rc, output)
             return rc, output
+
+    # @classmethod
+    # def run_adb_cmd(cls, cmd, timeout=0, verbose=True):
+    #     '''
+    #     run adb command
+    #     @param cmd: command
+    #     @param timeout: time out
+    #     @param verbose: debug info output control
+    #     @return: return code , feedback : tuple
+    #     '''
+    #     # Run adb command.
+    #     # adbpath = adbpath or cls.find_adb()
+    #     cmd = ['adb'] + cmd
+    #     rc = 1
+    #     output = b''
+    #     logging.debug("<<<%s>>>", cmd)
+    #     logging.info("poppy <<<%s>>>", cmd)
+    #     with set_timer(timeout):
+    #         try:
+    #             output = subprocess.check_output(cmd).strip()
+    #             rc = 0
+    #         except subprocess.CalledProcessError as e:
+    #             output = e.output
+    #             rc = e.returncode
+    #         if verbose:
+    #             logging.debug("(%s){{{%s}}}", rc, output)
+    #         return rc, output
+
+    def getTime(self, time=None):
+        if (":" not in time[6:8]) and (":" not in time[9:11]) and (":" not in time[12:14]) and (
+                ":" not in time[15:18]) and ("." not in time[15:18]):
+            th = int(time[6:8])
+            # print(th)
+            tm = int(time[9:11])
+            # print(tm)
+            ts = int(time[12:14])
+            # print(ts)
+            tms = int()
+            if "-" not in time[15:18]:
+                tms = int(time[15:18])
+            # print(tms)
+            # print(time)
+            return (tms + ts * 1000 + tm * 60 * 1000 + th * 3600 * 1000) / 1000
+        # else:
+        #     return 0
 
     # @connect_again
     def run_adb_cmd_specific_device(self, cmd, timeout=0, verbose=True):
@@ -668,20 +768,27 @@ class ADB:
         '''
         if isinstance(cmd, str):
             cmd = [cmd]
-        cmd = ['-s', self.serialnumber] + cmd
 
-        return self.run_adb_cmd(cmd, timeout=timeout, verbose=verbose)
+        if isinstance(self.serialnumber, list):
+            for device_id in self.serialnumber:
+                cmd = ['-s', device_id] + cmd
+                # cmd = ['-s', self.serialnumber] + cmd
+                print("cmd---------", cmd)
+                return self.run_adb_cmd(cmd, timeout=timeout, verbose=verbose)
+        else:
+            cmd = ['-s', self.serialnumber] + cmd
+            return self.run_adb_cmd(cmd, timeout=timeout, verbose=verbose)
 
-    def run_shell_cmd(self, cmd, timeout=0):
-        '''
-        run shell command
-        @param cmd: command
-        @param timeout: time out
-        @return: return code , feedback : tuple
-        '''
-        shell_cmd = ['shell', cmd]
-        rc, output = self.run_adb_cmd_specific_device(shell_cmd, timeout=timeout)
-        return rc, output.decode('utf-8', errors='ignore')
+    # def run_shell_cmd(self, cmd, timeout=0):
+    #     '''
+    #     run shell command
+    #     @param cmd: command
+    #     @param timeout: time out
+    #     @return: return code , feedback : tuple
+    #     '''
+    #     shell_cmd = ['shell', cmd]
+    #     rc, output = self.run_adb_cmd_specific_device(shell_cmd, timeout=timeout)
+    #     return rc, output.decode('utf-8', errors='ignore')
 
     def setprop(self, key, value, timeout=0):
         '''
@@ -713,7 +820,8 @@ class ADB:
         @param path: file path
         @return: None
         '''
-        os.system(self.ADB_S + self.serialnumber + " shell rm " + flags + " " + path)
+        self.execute_adb_command(" rm " + flags + " " + path)
+        # os.system(self.ADB_S + self.serialnumber + " shell rm " + flags + " " + path)
 
     def uiautomator_dump(self, filepath='', uiautomator_type='u2'):
         '''
@@ -745,9 +853,6 @@ class ADB:
             self.logdir + self.DUMP_FILE) else self.logdir + '/window_dump.xml'
         with open(path, 'r') as f:
             temp = f.read()
-        if '错误代码' in temp:
-            logging.warning('Server Exception')
-            self.find_and_tap('返回重试', 'text')
         return temp
 
     def expand_notifications(self):
@@ -991,7 +1096,7 @@ class ADB:
         @param extractKey:
         @return:
         '''
-        logging.info('find_element')
+        logging.debug('find_element')
         filepath = self.logdir + self.DUMP_FILE
         self.uiautomator_dump(filepath)
         xml_file = minidom.parse(filepath)
@@ -1092,22 +1197,20 @@ class ADB:
         check adb exists if not wait for one minute
         @return: None
         '''
-        if subprocess.run(f'adb -s {self.serialnumber} shell getprop sys.boot_completed', shell=True,
-                          encoding='utf-8', stdout=subprocess.PIPE).returncode == 1:
-            logging.info('devices exists')
-        else:
-            count = 0
-            while subprocess.run(f'adb -s {self.serialnumber} shell getprop sys.boot_completed', shell=True,
-                                 encoding='utf-8', stdout=subprocess.PIPE).returncode != 0:
-                if count % 10 == 0:
-                    logging.info('devices not exists')
-                self.set_status_off()
-                # subprocess.check_output('adb connect {}'.format(self.serialnumber), shell=True, encoding='utf-8')
-                time.sleep(3)
-                count += 1
-                if count > 20:
-                    raise EnvironmentError('Lost Device')
-            self.set_status_on()
+        count = 0
+        rc, output = self.run_shell_cmd("getprop sys.boot_completed")
+        while rc != 0:
+        # while subprocess.run(f'adb -s {self.serialnumber} shell getprop sys.boot_completed', shell=True,
+        #                      encoding='utf-8', stdout=subprocess.PIPE).returncode != 0:
+            if count % 10 == 0:
+                logging.info('devices not exists')
+            self.set_status_off()
+            # subprocess.check_output('adb connect {}'.format(self.serialnumber), shell=True, encoding='utf-8')
+            time.sleep(3)
+            count += 1
+            if count > 20:
+                raise EnvironmentError('Lost Device')
+        self.set_status_on()
 
     def kill_logcat_pid(self):
         '''
@@ -1117,45 +1220,171 @@ class ADB:
         self.run_shell_cmd("killall logcat")
 
     # @connect_again
-    def popen(self, command):
+    def popen(self, command, stdout=None):
         '''
         run adb command over popen
         @param command: command
         @return: subprocess.Popen
         '''
-        logging.debug(f"command:{self.ADB_S + self.serialnumber + ' ' + command}")
-        cmd = self.ADB_S + self.serialnumber + ' ' + command
-        return subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8', preexec_fn=os.setsid)
+        if isinstance(self.serialnumber, list):
+            for device_id in self.serialnumber:
+                logging.debug(f"command:{self.ADB_S + device_id + ' ' + command}")
+                cmd = self.ADB_S + device_id + ' ' + command
+                return self.popen_term(cmd, stdout)
+        else:
+            logging.debug(f"command:{self.ADB_S + self.serialnumber + ' ' + command}")
+            cmd = self.ADB_S + self.serialnumber + ' ' + command
+            return self.popen_term(cmd, stdout)
+
+    def popen_term(self, command, stdout=subprocess.PIPE):
+        if stdout:
+            return subprocess.Popen(command.split(), stdout=stdout, stderr=subprocess.PIPE, encoding='utf-8',
+                                    preexec_fn=os.setsid)
+        else:
+            return subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8',
+                                    preexec_fn=os.setsid)
+
+    def save_logcat(self, filepath, tag=''):
+        '''
+        Save logcat to a file.
+        @param filepath: File path for logcat
+        @param tag: Tag for -s
+        @return: logcat process : subprocess.Popen
+        '''
+        filepath = self.logdir + '/' + filepath
+        logcat_file = open(filepath, 'w', encoding="utf-8")
+        if tag and ("grep -E" not in tag) and ("all" not in tag):
+            tag = f'-s {tag}'
+        cmd = f"shell logcat -v time {tag}"
+        logcat_process = self.popen(cmd, stdout=logcat_file)
+        return logcat_process, logcat_file
+
+    # def save_logcat(self, filepath, tag=''):
+    #     '''
+    #     save logcat
+    #     @param filepath: file path for logcat
+    #     @param tag: tag for -s
+    #     @return: log : subprocess.Popen , logcat_file : _io.TextIOWrapper
+    #     '''
+    #     filepath = self.logdir + '/' + filepath
+    #     logcat_file = open(filepath, 'w', encoding="utf-8")
+    #     if tag and ("grep -E" not in tag) and ("all" not in tag):
+    #         tag = f'-s {tag}'
+    #         log = subprocess.Popen(f"adb -s {self.serialnumber} shell logcat -v time {tag}".split(), stdout=logcat_file,
+    #                                preexec_fn=os.setsid)
+    #     else:
+    #         log = subprocess.Popen(f"adb -s {self.serialnumber} shell logcat -v time {tag}", stdout=logcat_file,
+    #                                shell=True, stdin=subprocess.PIPE, preexec_fn=os.setsid, encoding="utf-8")
+    #     return log, logcat_file
 
     def checkoutput(self, command):
         '''
-        run adb command over check_output
-        raise error if not success
+        Run adb command over check_output, raise error if not success.
         @param command: command
         @return: feedback
         '''
-        command = self.ADB_S + self.serialnumber + ' shell ' + command
-        return self.checkoutput_term(command)
+        if isinstance(self.serialnumber, str):  # 单设备情况
+            return self._execute_checkoutput_command_single(self.serialnumber, command)
+        elif isinstance(self.serialnumber, list):  # 多设备情况
+            feedback_list = []
+            for device_id in self.serialnumber:
+                feedback = self._execute_checkoutput_command_single(device_id, command)
+                feedback_list.append(feedback)
+            return feedback_list
+        else:
+            raise ValueError("Invalid serialnumber type. It should be a string or a list of strings.")
+
+    def _execute_checkoutput_command_single(self, device_id, command):
+        full_command = self.ADB_S + device_id + " shell " + command
+        return self.checkoutput_term(full_command)
 
     def checkoutput_term(self, command):
         '''
-        run pc command over check_output
-        raise error if not success
-        @param command: command
+        Run pc command over check_output, raise error if not success.
+        @param command: command (list of strings)
         @return: feedback
         '''
-        logging.debug(f"command:{command}")
-        return subprocess.check_output(command, shell=True, encoding='utf-8')
+        logging.info(f"command:{command}")
+        try:
+            output = subprocess.check_output(command, shell=True, encoding='utf-8')
+            return output
+        except subprocess.CalledProcessError as e:
+            logging.info(f"Command failed with return code {e.returncode}: {e.output}")
+            raise e
 
-    # @connect_again
     def subprocess_run(self, command):
         '''
-        run adb command over subporcess.run
+        Run adb command over subprocess.run.
         @param command: command
+        @return: subprocess.CompletedProcess or list of subprocess.CompletedProcess
+        '''
+        if isinstance(self.serialnumber, str):  # 单设备情况
+            return self._execute_run_command_single(self.serialnumber, command)
+        elif isinstance(self.serialnumber, list):  # 多设备情况
+            feedback_list = []
+            for device_id in self.serialnumber:
+                feedback = self._execute_run_command_single(device_id, command)
+                feedback_list.append(feedback)
+            return feedback_list
+        else:
+            raise ValueError("Invalid serialnumber type. It should be a string or a list of strings.")
+
+    def _execute_run_command_single(self, device_id, command):
+        full_command = self.ADB_S + device_id + " shell " + command
+        return self.subprocess_run_term(full_command)
+
+    def subprocess_run_term(self, command):
+        '''
+        Run pc command over subprocess.run.
+        @param command: command (list of strings)
         @return: subprocess.CompletedProcess
         '''
-        return subprocess.run(self.ADB_S + self.serialnumber + ' shell ' + command,
-                              shell=True, encoding='utf-8', check=False)
+        logging.debug(f"command:{command}")
+        try:
+            completed_process = subprocess.run(command, shell=True, encoding='utf-8', check=False,
+                                               stdout=subprocess.PIPE)
+            return completed_process
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Command failed with return code {e.returncode}: {e.output}")
+            raise e
+
+    # def checkoutput(self, command):
+    #     '''
+    #     run adb command over check_output
+    #     raise error if not success
+    #     @param command: command
+    #     @return: feedback
+    #     '''
+    #     command = self.ADB_S + self.serialnumber + ' shell ' + command
+    #     return self.checkoutput_term(command)
+
+    # def checkoutput_term(self, command):
+    #     '''
+    #     run pc command over check_output
+    #     raise error if not success
+    #     @param command: command
+    #     @return: feedback
+    #     '''
+    #     logging.debug(f"command:{command}")
+    #     return subprocess.check_output(command, shell=True, encoding='utf-8')
+
+    # @connect_again
+    # def subprocess_run(self, command):
+    #     '''
+    #     run adb command over subporcess.run
+    #     @param command: command
+    #     @return: subprocess.CompletedProcess
+    #     '''
+    #     command = self.ADB_S + self.serialnumber + ' shell ' + command
+    #     return self.subprocess_run_term(command,)
+    #
+    # def subprocess_run_term(self,command):
+    #     '''
+    #
+    #     @param command:
+    #     @return:
+    #     '''
+    #     return subprocess.run(command,shell=True, encoding='utf-8', check=False, stdout=subprocess.PIPE)
 
     def open_omx_info(self):
         '''
@@ -1164,6 +1393,8 @@ class ADB:
         '''
         self.run_shell_cmd("setprop media.omx.log_levels 255")
         self.run_shell_cmd("setprop vendor.media.omx.log_levels 255")
+        self.run_shell_cmd("setprop debug.stagefright.omx-debug 5")
+        self.run_shell_cmd("setprop vendor.mediahal.loglevels 255")
 
     def close_omx_info(self):
         '''
@@ -1172,6 +1403,20 @@ class ADB:
         '''
         self.run_shell_cmd("setprop media.omx.log_levels 0")
         self.run_shell_cmd("setprop vendor.media.omx.log_levels 0")
+        self.run_shell_cmd("setprop debug.stagefright.omx-debug 0")
+        self.run_shell_cmd("setprop vendor.mediahal.loglevels 0")
+
+    def open_mediahal_info(self):
+        self.run_shell_cmd("setprop vendor.mediahal.loglevels 6")
+
+    def close_mediahal_info(self):
+        self.run_shell_cmd("setprop vendor.mediahal.loglevels 0")
+
+    def open_media_codec_info(self):
+        self.run_shell_cmd("setprop debug.stagefright.c2-debug 3")
+
+    def close_media_codec_info(self):
+        self.run_shell_cmd("setprop debug.stagefright.c2-debug 0")
 
     def factory_reset(self):
         '''
@@ -1195,3 +1440,69 @@ class ADB:
             logging.info('Error occur')
         self.checkoutput_term('fastboot reboot')
         time.sleep(120)
+
+    def apk_enable(self, packageName):
+        '''
+        aok enable
+        @param packageName: apk package name
+        @return: None
+        '''
+        rc, output = self.run_shell_cmd(f'pm enable {packageName}')
+        return re, output
+
+    def check_cmd_wifi(self):
+        '''
+        check cmd wifi command is available
+        @return: True or False
+        '''
+        output = self.run_shell_cmd("cmd wifi -h")
+        check_command = ["set-wifi-enabled enabled|disabled", "list-scan-results",
+                         "connect-network <ssid> open|owe|wpa2|wpa3 [<passphrase>]", "forget-network <networkId>",
+                         "list-networks"]
+        for command in check_command:
+            if command in output[1]:
+                return True
+            else:
+                return False
+
+    def set_wifi_enabled(self):
+        '''
+        open wifi
+        '''
+        output = self.run_shell_cmd("ifconfig")
+        if "wlan0" not in output[1]:
+            self.run_shell_cmd("cmd wifi set-wifi-enabled enabled")
+        else:
+            logging.debug("wifi has opened,no need to open wifi")
+
+    def set_wifi_disabled(self):
+        '''
+        close wifi
+        '''
+        output = self.run_shell_cmd("cmd wifi set-wifi-enabled disabled")
+        if "wlan0" not in output[1]:
+            logging.debug("wifi has closed")
+
+    def connect_wifi(self, ssid, pwd, security):
+        '''
+        To connect wifi
+        '''
+        cmd = f"cmd wifi connect-network {ssid} {security} {pwd}"
+        logging.info(f"Connect wifi command: {cmd}")
+        output = self.run_shell_cmd(cmd)
+        return output
+
+    def forget_wifi(self):
+        '''
+        Remove the network mentioned by <networkId>
+        '''
+        list_networks_cmd = "cmd wifi list-networks"
+        output = self.run_shell_cmd(list_networks_cmd)
+        if "No networks" in output[1]:
+            logging.debug("has no wifi connect")
+        else:
+            network_id = re.findall("\n(.*?) ", output[1])
+            forget_wifi_cmd = "cmd wifi forget-network {}".format(int(network_id[0]))
+            output1 = self.run_shell_cmd(forget_wifi_cmd)
+            if "successful" in output1[1]:
+                logging.info(f"Network id {network_id[0]} closed")

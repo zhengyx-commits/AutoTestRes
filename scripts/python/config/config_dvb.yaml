@@ -1,19 +1,52 @@
 # This is a config file instead of part of config_dvb.json
 
+#for stream provider
+conf_stream_node:
+  ip_Win: 10.18.19.15
+  user_Win: SH171300-536
+  pwd_Win: Linux2017
+  ip_Linux: 10.18.19.16
+  user_Linux: amlogic
+  pwd_Linux: Linux2017
+  ip_Win_sz: 10.28.9.54
+  user_Win_sz: lenovo
+  pwd_Win_sz: Amlsz888
+
+conf_stream_path:
+  stream_Win: C:\\DVB
+  video_Win: C:\\DVB\\video
+  stream_Linux: ~/Dtu315/DtPlay_v4.16.0
+  video_Linux: ~/Dtu315/video
+  stream_Win_sz: C:\\DVB
+  video_Win_sz: C:\\DVB\\video
+  serial_number: 2115012336
+  serial_number_sz: 2115011695
+
 # for stress test
 conf_stress:
   stress_time: 60
   stress_switch_time: 0.1
-  switch_count: 5
+  1080p_1080i_switch_count: 5
   plug_count: 5
-  timeshift_pause_resume_count: 5
-  timeshift_seek_count: 5
+  30_pvr_basic_function_count: 5
+  33_timeshift_basic_function_count: 5
+  timeshift_seek_count: 2
   timeshift_playback_count: 5
   timeshift_ff_count: 5
   pvr_rf_hotplug_count: 5
   timeshift_rf_hotplug_count: 5
   pvr_use_three_hours_recording_goto_count: 5
   pvr_playback_every_two_hours_count: 5
+  115_standby_count: 5
+  160_standby_reboot_count: 100
+  full_freq_manual_scan_count: 1
+  switch_player_count: 5
+  dvbc_stress_scan_count: 1500
+  dvbc_stress_channel_switch_count: 4000
+  dvbc_stress_playback_time: 18000
+  dvbc_stress_pvr_count: 600
+  dvbc_stress_timeshift_count: 1500
+  dvbc_stress_player_switch_time: 36
 
 # for suspend
 conf_suspend_time:
@@ -47,7 +80,112 @@ conf_channel_dif_id:
   dvb: 3
   scte27: 2
 
-# for check whether it's need to scan after streaming changed.
+# for DVBCheck: Time of check keywords and run cmd
 conf_dvb_check_time:
-  # 0: every case need to scan again; 10: check whether the first frame appears in ten seconds.
+  check_time: 120
+  cmd_time: 5
+  check_play_time: 60
+  check_dvbs_scan_time: 300
+  check_dvbt_auto_scan_time: 600
+#  for check whether it's need to scan after streaming changed.
+#  0: every case need to scan again; 10: check whether the first frame appears in ten seconds.
   check_is_need_search_time: 0
+
+# for full auto scan in stress test room
+full_sacn_other_channnel_number:
+  other_channel_number: 0
+
+# for connect external network
+external_wifi:
+  name: "sunshine"
+  pwd: "Home1357"
+
+
+# for full freq scan:
+conf_freq:
+  - 370
+  - 578
+  - 482
+  - 490
+  - 498
+  - 506
+  - 514
+  - 522
+  - 73
+  - 113
+  - 114
+  - 121
+  - 122
+  - 129
+  - 130
+  - 137
+  - 138
+  - 306
+  - 314
+  - 322
+  - 330
+  - 338
+  - 346
+  - 354
+  - 362
+#  - 370
+  - 378
+  - 386
+  - 394
+  - 402
+  - 410
+  - 418
+  - 426
+  - 434
+  - 442
+  - 450
+  - 458
+  - 466
+  - 474
+#  - 482
+#  - 490
+#  - 498
+#  - 506
+#  - 514
+#  - 522
+  - 530
+  - 538
+  - 546
+  - 554
+  - 562
+  - 570
+#  - 578
+  - 586
+  - 594
+  - 602
+  - 610
+  - 618
+  - 626
+  - 634
+  - 642
+  - 650
+  - 658
+  - 666
+  - 674
+  - 682
+  - 690
+  - 698
+  - 706
+  - 714
+  - 722
+  - 730
+  - 738
+  - 746
+  - 754
+  - 762
+  - 770
+  - 778
+  - 786
+  - 794
+  - 802
+  - 810
+  - 826
+  - 834
+  - 842
+  - 850
+  - 858

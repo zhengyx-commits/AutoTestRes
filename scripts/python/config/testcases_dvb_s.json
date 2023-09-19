@@ -1,0 +1,85 @@
+{
+    "testcases": [
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-S2_NIT_SEARCH",
+            "path": "tests/DVB/dvbsScan/test_DVB_Sanity_Func_DVB-S2_NIT_Search.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-S2_TRANSPONDER_SEARCH",
+            "path": "tests/DVB/dvbsScan/test_DVB_Sanity_Func_DVB-S2_Transponder_Search.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-S_ADD_REMOVE_SATELLITE",
+            "path": "tests/DVB/dvbsScan/test_DVB_Sanity_Func_DVB-S_Add_Remove_Satellite.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-S_BLIND_SEARCH_ALL",
+            "path": "tests/DVB/dvbsScan/test_DVB_Sanity_Func_DVB-S_Blind_Search_All.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-S_BLIND_SEARCH_FTI",
+            "path": "tests/DVB/dvbsScan/test_DVB_Sanity_Func_DVB-S_Blind_Search_FTI.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-S_BLIND_SEARCH_TP",
+            "path": "tests/DVB/dvbsScan/test_DVB_Sanity_Func_DVB-S_Blind_Search_TP.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-S_NON_NIT_STREAM_SEARCH",
+            "path": "tests/DVB/dvbsScan/test_DVB_Sanity_Func_DVB-S_Non_NIT_Stream_Search.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-S_SATELLITE_SEARCH",
+            "path": "tests/DVB/dvbsScan/test_DVB_Sanity_Func_DVB-S_Satellite_Search.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-S_TRANSPONDER_SEARCH",
+            "path": "tests/DVB/dvbsScan/test_DVB_Sanity_Func_DVB-S_Transponder_Search.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        }
+    ]
+}

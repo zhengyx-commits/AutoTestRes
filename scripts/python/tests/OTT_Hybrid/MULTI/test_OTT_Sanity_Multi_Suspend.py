@@ -10,9 +10,7 @@ from tools.StreamProvider import StreamProvider
 from tests.OTT_Hybrid.MULTI import *
 from tests.OTT_Hybrid import *
 
-player_check = PlayerCheck()
-g_config_device_id = pytest.config['device_id']
-multi = MultiPlayer(g_config_device_id)
+player_check = PlayerCheck_Iptv()
 streamProvider = StreamProvider()
 resManager = ResManager()
 apk_path = "apk/testSuspend2.apk"
@@ -31,8 +29,7 @@ def multi_teardown():
     streamProvider.stop_send()
 
 
-# @pytest.mark.flaky(reruns=3)
-# @pytest.mark.skip
+@pytest.mark.flaky(reruns=3)
 def test_Multi_Suspend():
     stream_name_list, url = get_conf_url("conf_rtp_url", "rtp", "conf_stream_name", "mpeg2_1080I_30FPS")
     for stream_name in stream_name_list:
@@ -40,7 +37,7 @@ def test_Multi_Suspend():
         if file_path:
             file_path = file_path[0]
             try:
-                streamProvider.start_send('rtp', file_path)
+                streamProvider.start_send('rtp', file_path, url=url[-4:])
             except Exception as e:
                 logging.error("stream provider start send failed.")
                 raise False
@@ -59,3 +56,4 @@ def test_Multi_Suspend():
             multi.send_cmd("am broadcast -n com.droidlogic.suspend/.SuspendReceiver -a suspend.test --es command wakeup")
             assert player_check.check_play_after_restore(p_conf_play_time_after_wakeup, flag=False)
             multi.stop_multiPlayer_apk()
+            streamProvider.stop_send()

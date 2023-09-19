@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Jenkins test status</title>
+<meta name="generator" content="Jenkins test result: 1.0.1"/>
+<meta http-equiv="refresh" content="305">
+<link rel="shortcut icon" href="./html/resource/image/favicon.ico" />
+<!--link rel="stylesheet" type="text/css" href="./html/resource/css/webStyle.css"-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ 
+    <style type="text/css">
+body {
+        width: 95%;
+        margin: 0 auto;
+        font-family: verdana, arial, helvetica, sans-serif;
+        font-size: 80%
+}
+ 
+h1 {
+    text-align: center;
+}
+ 
+.location_href{
+    float: left;
+    font-size: 12pt;
+}
+ 
+.update {
+    float: right;
+    font-size: 12px;
+}
+ 
+.last_update_time {
+    float: right;
+    font-size: 12px;
+    color: red;
+}
+ 
+.main_board {
+    padding-top: 1em;
+}
+ 
+.location {
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #15A379;
+    width:112px;
+    margin-top: 1em;
+    padding-left: 13px;
+    color: #FFFFFF;
+    line-height: 30px;
+}
+ 
+.info {
+     
+}
+ 
+.tftable {
+    font-size:12px;
+    color: #333333;
+    width:100%;
+    border-width: 1px;
+    border-color: #729ea5;
+    border-collapse: collapse;
+}
+ 
+.tftable th {
+    font-size:12px;
+    background-color:#15A379;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #729ea5;
+    text-align:center;
+    color: #FFFFFF;
+}
+ 
+.tftable tr {
+    background-color:#FFFFFF;
+}
+ 
+.tftable td {
+    font-size:12px;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #729ea5;
+    width: auto;
+}
+ 
+.tftable tr:hover {
+    background-color:#eeeeee;
+}
+ 
+#jenkins_list, #jenkins_list li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    float: right;
+}
+ 
+li.jenkins_id{
+    width: 60px;
+}
+ 
+li.jenkins_log{
+    width: 20px;
+    text-align: right;
+}
+ 
+.status_success {
+    background-color: #A6FFA6;
+}
+ 
+.status_fail{
+    background-color: #FF2D2D;
+}
+ 
+.status_aborted{
+    background-color: #D0D0D0;
+}
+ 
+.status_running{
+    background-color: #A3D1D1;
+}
+ 
+.status_unkown{
+    background-color: yellow;
+}
+ 
+td.comments_more {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+ 
+.footer {
+    margin:3em 0 3em 0;
+    padding: 1em 0 1em 0;
+    text-align:center;
+    #background: #ddd;
+    font-weight: bold;
+    line-height: 16px;
+}
+ 
+.footer a{
+    text-decoration: none;
+    color: #666;
+    font-weight: normal;
+}
+ 
+a{
+  text-decoration: none;
+  color: #0066FF;
+}
+ 
+a:hover{
+  color: red;
+}
+ 
+a:visted{
+  color: gray;
+}
+ 
+pre {
+    margin: 0px;
+}
+</style>
+ 
+ 
+ 
+</head>
+<body>
+<h1>FAE SE Automated Test Status</h1>
+<hr>
+<div class="location_href">
+<a href='https://confluence.amlogic.com/pages/viewpage.action?pageId=262472786'>HomePage</a> | <a target='_blank' href='/summary'>Summary</a> | <a target='_blank' href='https://confluence.amlogic.com/pages/viewpage.action?pageId=262472786'>Hourly</a>
+</div>
+<div class="update">
+    <!--div>Update result every 3 minutes</div-->
+    <div class="last_update_time">Last update: 2023-06-07 17:46:26</div>
+</div>
+<div class="main_board">
+       
+    <div class="location" id="Shang Hai">Shang Hai</div>
+    <div class="info">
+        <table class="tftable" border="1">
+        <tr>    <!-- title row 这边是设置标题的宽度及标题的名字 -->
+            <th width="80px">Project</th>
+            <th width="30px">Platform</th>
+            <th width="30px">Chipset</th>
+            <th width="80px">Status</th>
+            <th width="350px">Tests</th>
+            <th width="140px">Last Started</th>
+            <th width="30px">Duration</th>
+            <th width="30px">Report</th>
+            <th width="85px">Jenkins Link</th>
+            <th width="30px">History</th>
+            <th>Comments</th>
+        </tr>
+            <!-- test info row -->
+    <script>
+      function fetchData(url, targetClass) {
+        fetch(url)
+          .then(response => response.json())
+          .then(jsonData => {
+            var data = jsonData.statistic;
+            var targetCell = document.getElementsByClassName(targetClass)[1];
+            var passRatio = (data.passed / data.total) * 100;
+            var htmlContent = "<pre>Total:" + data.total + "  <font color='#2828FF'>Pass:" + data.passed + "  </font><font color='red'>Failed:" + data.failed + "   </font><font color='orange'>Error:" + data.broken + "   </font><font color='#2828FF'>PassRatio:" + passRatio.toFixed(1) + "%</font></pre>";
+            targetCell.innerHTML = htmlContent;
+          });
+      }
+    </script>
+
+    <script>
+      function fetchSummaryData(url, startCellId, durationCellId) {
+        fetch(url)
+          .then(response => response.json())
+          .then(jsonData => {
+            var startTimestamp = jsonData.time.start; // 获取 start 时间戳
+            var duration = jsonData.time.duration; // 获取 duration 时间
+
+            var startDate = new Date(startTimestamp); // 将 start 时间戳转换为日期对象
+
+            var hours = startDate.getHours().toString().padStart(2, '0'); // 获取小时，并在不足两位数时补零
+            var minutes = startDate.getMinutes().toString().padStart(2, '0'); // 获取分钟，并在不足两位数时补零
+            var seconds = startDate.getSeconds().toString().padStart(2, '0'); // 获取秒数，并在不足两位数时补零
+
+            var formattedStart = hours + ':' + minutes + ':' + seconds; // 格式化 start 时间为 "时:分:秒" 的形式
+
+            var targetStartCell = document.getElementById(startCellId); // 获取 start 时间的目标单元格
+            targetStartCell.textContent = formattedStart; // 将格式化后的 start 时间写入单元格中
+
+            var durationHours = Math.floor(duration / 3600000); // 计算 duration 的小时部分
+            var durationMinutes = Math.floor((duration % 3600000) / 60000); // 计算 duration 的分钟部分
+            var durationSeconds = Math.floor((duration % 60000) / 1000); // 计算 duration 的秒部分
+
+            var formattedDuration = durationHours.toString().padStart(2, '0') + ':' + durationMinutes.toString().padStart(2, '0') + ':' + durationSeconds.toString().padStart(2, '0'); // 格式化 duration 时间为 "时:分:秒" 的形式
+
+            var targetDurationCell = document.getElementById(durationCellId); // 获取 duration 时间的目标单元格
+            targetDurationCell.textContent = formattedDuration; // 将格式化后的 duration 时间写入单元格中
+          });
+      }
+
+    </script>
+             
+     <!-- IPTV Basic Play Control placeholder -->
+     <!-- IPTV Compatibility placeholder -->
+     <!-- Sanity Test placeholder -->
+     <!-- KPI placeholder -->
+     <!-- Stress placeholder -->
+     <!-- CAS placeholder -->
+     <!-- DVB-Stress placeholder -->
+     <!-- DVB-C placeholder -->
+     <!-- DVB-S placeholder -->
+     <!-- DVB-T placeholder -->
+     <!-- DVB-KPI placeholder -->
+     <!-- CTS placeholder -->
+     <!-- GTS placeholder -->
+     <!-- VTS placeholder -->
+     <!-- TVTS placeholder -->
+     <!-- STS placeholder -->
+
+        </table>
+    </div>
+     
+</div>
+ 
+    <div class="footer">Powered by <a href="mailto:jun.yang1@amlogic.com;yongbo.shao@amlogic.com">Amlogic FAE SE AUT development team</a></div>
+     
+</body>
+</html>
+
+
+

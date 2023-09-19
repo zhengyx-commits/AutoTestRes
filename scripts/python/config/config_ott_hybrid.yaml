@@ -10,8 +10,9 @@ conf_localplay:
 
 #for test_OTT-Sanity_Func_Local_Video.py, should debug again 20220324
 conf_local_playback:
-  sz_uuid: 849A-3D5A
+  sz_uuid: F69D-0041
   sh_uuid: 635F-6668
+  sh_amplayer_uuid: F0CA-E84F
   video_path:
     h264:
       path: /h264/
@@ -38,6 +39,44 @@ conf_local_playback:
       path: /probe/
   track_path:
     path: /track/
+  amplayer_path:
+    TS_path: /amplayer/TS/
+    3G2_path: /amplayer/3G2/
+    3GP_path: /amplayer/3GP/
+    ASF_path: /amplayer/ASF/
+    AVI_path: /amplayer/AVI/
+    DAT_path: /amplayer/DAT/
+    DIVX_path: /amplayer/DIVX/
+    F4V_path: /amplayer/F4V/
+    FLV1_path: /amplayer/FLV1/
+    M2TS_path: /amplayer/M2TS/
+    M2V_path: /amplayer/M2V/
+    M4V_path: /amplayer/M4V/
+    MOV_path: /amplayer/MOV/
+    MP4_path: /amplayer/MP4/
+    MPG_path: /amplayer/MPG/
+    MTS_path: /amplayer/MTS/
+    OGM_path: /amplayer/OGM/
+    PMP_path: /amplayer/PMP/
+    RMVB_path: /amplayer/RMVB/
+    TP_path: /amplayer/TP/
+    VOB_path: /amplayer/VOB/
+    WMV_path: /amplayer/WMV/
+    4K2K_path: /amplayer/4K2K/
+    H265_path: /amplayer/H265/
+    VP6_path: /amplayer/VP6/
+    VP8_path: /amplayer/VP8/
+    VP9_path: /amplayer/VP9/
+    3D_path: /amplayer/3D/
+    MVC_path: /amplayer/MVC/
+    4KH264_path: /amplayer/4KH264/
+    4KH265_path: /amplayer/4KH265/
+    4KVP9_path: /amplayer/4KVP9/
+    ISO_path: /amplayer/ISO/
+    AMV_path: /amplayer/AMV/
+    MKV_path: /amplayer/MKV/
+    EVO_path: /amplayer/EVO/
+    FLV2_path: /amplayer/FLV2/
 
 #for cpu
 conf_cpu_thermal:
@@ -111,8 +150,8 @@ conf_oobe:
     ssid: AutoTest2_5G
     pwd: Mrtest456
   account:
-    acc: xxx
-    pwd: xxx
+    acc: amlogictest1@gmail.com
+    pwd: amltest123
 
 conf_online:
   check_seek_enable: False
@@ -132,7 +171,7 @@ conf_dvb:
 
 #for OTA
 conf_ota:
-  ota_url: http://firmware.amlogic.com/shanghai/image/android/Android-S_Google_Partner/autobuild/2021-12-15/ohm-userdebug-android32-kernel64-GTV-29/ohm-ota-20211215.zip
+  ota_url: "http://10.18.11.6/shanghai/image/android/Android-S_Google_Partner/autobuild/2022-12-15/ohm_hybrid_vmxiptv-userdebug-android32-kernel64-GTV-8796/ohm_hybrid_vmxiptv-ota-20221215.zip"
 
 #for USB
 conf_usb:
@@ -173,9 +212,12 @@ conf_stream_name:
   pid_changed: "video_pid_change_201_to_202"
   h264_1080P: "PhilipsColorsofMiami"
   h264_1080P_1: "1080PH264_AC3"
+  Andy_Lau: "Andy.Lau"
+  h264_1080I:  "BTV_1080i"
+  h264_1080P_25FPS: "PhilipsColorsofMiami"
   h264_4K: "H264_Butterfly_4k"
   h264_4K_1: "Lovely_Swiss"
-  h265_4K: "2015Hisense"
+  h265_4K: "worldcup2014"
   h265_1080P: "SAMSUNG"
   mpeg2_1080I_30FPS: "MPEG2-1080I-30fps"
   # used in compatibility test
@@ -190,24 +232,33 @@ conf_stream_name:
 conf_udp_url:
   udp:
     file: "udp://239.1.2.1:1234"
+    file1: "udp://239.1.2.2:1236"
   udp1:
     file: "udp://239.1.2.2:1235"
+    file1: "udp://239.1.2.2:1237"
 
 conf_rtsp_url:
   rtsp_TS_H264_1080:
+    dir: video/http_TS_H264_1080/
     file: /video/http_TS_H264_1080/1080PH264_AC3.ts
   rtsp_TS_H265_1080:
+    dir: video/http_TS_H265_1080/
     file: /video/http_TS_H265_1080/H265_TEN_BA2_SAMSUNG_1080p_50P_20M_3min_cbr.ts
   rtsp_TS_MPEG2_1080:
+    dir: video/http_TS_1080i/
     file: /video/http_TS_1080i/MPEG2-1080I-30fps.ts
   rtsp_TS_H264_4K:
+    dir: video/http_TS_H264_4K/
     file: /video/http_TS_H264_4K/H264_Butterfly_4k_High@L5.1_AAC_30M_30fps_3min.ts
   rtsp_TS_H265_4K:
-    file: /video/http_TS_H265_4K/H265_UHD_2015Hisense_28M_29.97fps_3min25s_logo.ts
+    dir: video/http_TS_H265_4K/
+    #file: /video/http_TS_H265_4K/H265_UHD_2015Hisense_28M_29.97fps_3min25s_logo.ts
+    file: /video/http_TS_H265_4K/[4KH265_21.1Mbps_59.940fps_8bit]worldcup2014_8bit_19m_60p.ts
 
 conf_rtp_url:
   rtp:
     file: "rtp://239.1.1.1:5004"
+    file1: "rtp://239.1.1.2:5005"
 
 conf_http_url:
   http_TS_H264_1080:
@@ -216,6 +267,9 @@ conf_http_url:
   http_TS_H265_1080:
     file: /res/video/http_TS_H265_1080/[1080PH265_1764Kbps_8bit]1_aodaliya_24fps_1920x1080_h265shijun.ts
     dir: video/http_TS_H265_1080/
+  http_TS_H265_1080_P60:
+    file: /res/video/http_TS_H265_1080_P60/[1080pH265_60.000fps_9070Kbps]Wetek-Astra-2m.ts
+    dir: video/http_TS_H265_1080_P60/
   http_TS_H265_1080_1:
     file: /res/video/http_TS_H265_1080/[1080PH265_1623Kbps_8bit]chengshizhiguang_1.5M_1920x1080_h265shijun.ts
   http_TS_1080i:
@@ -225,10 +279,11 @@ conf_http_url:
     file: /res/video/http_TS_MPEG2_1080/MPEG2_1080P_butterfly_10M_25fps_Mp&HL_mpeg1layer2.ts
     dir: video/http_TS_MPEG2_1080/
   http_TS_H264_4K:
-    file: /res/video/http_TS_H264_4K/H264_UHD_PQ_Lovely_Swiss_HP_20M_60fps_3min40_logo.ts
+    file: /res/video/http_TS_H264_4K/H264_Butterfly_4k_High@L5.1_AAC_30M_30fps_3min.ts
     dir: video/http_TS_H264_4K/
   http_TS_H265_4K:
-    file: /res/video/http_TS_H265_4K/H265_UHD_2015Hisense_28M_29.97fps_3min25s_logo.ts
+    #file: /res/video/http_TS_H265_4K/H265_UHD_2015Hisense_28M_29.97fps_3min25s_logo.ts
+    file: /res/video/http_TS_H265_4K/[4KH265_19.3Mbps_25.000fps_8bit]4K_h265_3840x2160.ts
     dir: video/http_TS_H265_4K/
   http_TS_H265_4K_P60:
     file: /res/video/http_TS_H265_4K_P60/[4KH265_21.1Mbps_59.940fps_8bit]worldcup2014_8bit_19m_60p.ts
@@ -250,3 +305,7 @@ conf_hls_url:
   hlsV3_TS_H265_4K:
     file: /res/HLS_V3/H265/4K-HLS-V3-H265-EAC3-TS/index.m3u8
     dir: video/hlsV3_TS_H265_4K/
+
+outside_wifi:
+  name: "sunshine"
+  pwd: "Home1357"

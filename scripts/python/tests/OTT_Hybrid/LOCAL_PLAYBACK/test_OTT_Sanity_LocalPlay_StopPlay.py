@@ -1,8 +1,9 @@
 import pytest
-from lib.common.checkpoint.PlayerCheck import PlayerCheck
+from lib.common.checkpoint.PlayerCheck_Base import PlayerCheck_Base
+from lib.common.checkpoint.PlayerCheck_Iptv import PlayerCheck_Iptv
 from . import *
 
-playerCheck = PlayerCheck()
+playerCheck = PlayerCheck_Iptv()
 video, play_command = play_cmd(p_conf_track_path['path'])
 stop_command = "am broadcast -a com.amlogic.vplayer.stopkey"
 
@@ -23,4 +24,4 @@ def test_stop():
     # find_resume_element()
     time.sleep(12)
     playerCheck.run_shell_cmd(stop_command)
-    assert playerCheck.check_stopPlay()[0]
+    assert playerCheck.check_stopPlay(keywords=["StopVideoDecoding in"])[0]

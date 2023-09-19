@@ -41,6 +41,7 @@ class HdmiCheck(ADB, Check):
     HDMI_RX_KEY_CHECK_COMMAND = 'cat /sys/module/tvin_hdmirx/parameters/hdcp22_on'
     HDMI_RX_AUTHENTICATED_COMMAND = 'echo state2 > /sys/class/hdmirx/hdmirx0/debug'
     HDMI_RX_MODE_CHECK_COMMAND = 'cat /sys/class/amhdmitx/amhdmitx0/hdcp_ver'
+    HDMI_TX_MODE = 'cat /sys/class/amhdmitx/amhdmitx0/hpd_state'
 
     def __init__(self):
         ADB.__init__(self, 'Player', unlock_code="", stayFocus=True)
@@ -148,3 +149,57 @@ class HdmiCheck(ADB, Check):
 
     def __repr__(self):
         return 'Hdmi check point'
+
+    def check_tx_mode(self):
+        '''
+        check_tx_mode
+        command : cat /sys/class/amhdmitx/amhdmitx0/hpd_state
+        @return: key : str
+        '''
+        info = self.run_shell_cmd(self.HDMI_TX_MODE)[1]
+        mode_info = {
+            '0': 'TX is not connected',
+            '1': 'TX is connected'
+        }
+        logging.info(mode_info[info])
+        return info
+
+    def check_tx_22(self):
+        """
+        check_tx_22_key
+        command : tee_provision -q -t 0x32
+        @return: key : str
+        """
+        # check_tx_22_key = str(self.subprocess_run('tee_provision -q -t 0x32'))
+        # logging.info(f'check_tx_22_key is {check_tx_22_key}')
+        check_vendor_tx22 = str(self.subprocess_run('ls -la /vendor/bin/hdcp_tx22'))
+        logging.info(f'check_vendor_tx22 is {check_vendor_tx22}')
+        if 'returncode=1' in check_vendor_tx22:
+            return False
+        else:
+            return True
+
+    def write_to_tx_22_key(self, path):
+        """
+        write_to_tx_22_key
+        command :
+        adb push path/firmware.le /odm/etc/firmware/; chmod 644 /odm/etc/firmware/firmware.le
+        adb push path/hdcp_tx22 /vendor/bin/ ; chmod 755 /vendor/bin/hdcp_tx22
+        # adb push path/hdcp22_fw_private.bin.factory-user.enc; /storage/emulated/0/
+        # tee_provision -i /storage/emulated/0/hdcp22_fw_private.bin.factory-user.enc
+        restorecon /vendor/bin/hdcp_tx22
+        reboot
+        @return: key : str
+        """
+        self.remount()
+        self.push(filepath=path + '/firmware.le', destination='/odm/etc/firmware/')
+        self.run_shell_cmd('chmod 644 /odm/etc/firmware/firmware.le')
+        self.push(filepath=path + '/hdcp_tx22', destination='/vendor/bin/hdcp_tx22')
+        self.run_shell_cmd('chmod 755 /vendor/bin/hdcp_tx22')
+        self.run_shell_cmd('restorecon /vendor/bin/hdcp_tx22')
+        self.reboot()
+        time.sleep(30)
+        self.wait_devices()
+        self.root()
+        self.remount()
+

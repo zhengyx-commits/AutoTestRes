@@ -23,6 +23,7 @@ import threadpool
 from lib.common.system.ADB import ADB
 from lib.common.system.CPU import CPU
 from lib.common.system.MemInfo import MemInfo
+from lib import get_device
 
 
 def _bytes_repr(c):
@@ -111,22 +112,23 @@ class DutCheckMointor():
         start logcat and save to logcat_xxxx.log
         @return: None
         '''
-        self.logcat_file = open(os.path.join(self.adb.logdir, f'logcat_{self.adb.serialnumber}.log'), 'w',
-                                encoding='utf-8')
-        logging.info('start to catch logcat -b all')
-        self.log = subprocess.Popen(f'adb -s {self.adb.serialnumber} logcat -b all'.split(),
-                                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, preexec_fn=os.setsid)
-        fcntl.fcntl(self.log.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
-        while True:
-            if self.log:
-                line = self.log.stdout.readline().decode('utf-8', 'backslashreplace_backport') \
-                    .encode('unicode_escape') \
-                    .decode('utf-8', errors='ignore') \
-                    .replace('\\r', '\r') \
-                    .replace('\\n', '\n') \
-                    .replace('\\t', '\t')
-                self.check_logcat(line, self.logcat_file)
-                if not self.logcat_file.closed: self.logcat_file.write(line)
+        for serialnumber in get_device():
+            self.logcat_file = open(os.path.join(self.adb.logdir, f'logcat_{serialnumber}.log'), 'w',
+                                    encoding='utf-8')
+            logging.info('start to catch logcat -b all')
+            self.log = subprocess.Popen(f'adb -s {serialnumber} logcat -b all'.split(),
+                                        stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            fcntl.fcntl(self.log.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
+            while True:
+                if self.log:
+                    line = self.log.stdout.readline().decode('utf-8', 'backslashreplace_backport') \
+                        .encode('unicode_escape') \
+                        .decode('utf-8', errors='ignore') \
+                        .replace('\\r', '\r') \
+                        .replace('\\n', '\n') \
+                        .replace('\\t', '\t')
+                    self.check_logcat(line, self.logcat_file)
+                    if not self.logcat_file.closed: self.logcat_file.write(line)
 
     def check_logcat(self, log, logcat_file):
         '''
@@ -176,9 +178,9 @@ class DutCheckMointor():
         if not isinstance(self.logcat_file, _io.TextIOWrapper):
             logging.warning('pls pass in the stream object')
             return 'pls pass in the stream object'
+        os.kill(self.log.pid, signal.SIGTERM)
         logging.info('stop to catch logcat -b all')
         self.log.terminate()
-        self.log.wait()
         self.log = None
         self.logcat_file.close()
         with open(self.result_file, 'a') as f:

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Jenkins test status</title>
+<meta name="generator" content="Jenkins test result: 1.0.1"/>
+<meta http-equiv="refresh" content="305">
+<link rel="favicon icon" href="../Resource/Images/favicon.ico" />
+<!--link rel="stylesheet" type="text/css" href="./html/resource/css/webStyle.css"-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ 
+    <style type="text/css">
+body {
+        width: 95%;
+        margin: 0 auto;
+        font-family: verdana, arial, helvetica, sans-serif;
+        font-size: 80%
+}
+ 
+h1 {
+    text-align: center;
+}
+
+img {
+    vertical-align: middle;
+}
+
+.location_href{
+    font-size: 12pt;
+}
+ 
+.update {
+    float: right;
+    font-size: 12px;
+}
+ 
+.last_update_time {
+    float: right;
+    font-size: 12px;
+    color: red;
+}
+ 
+.main_board {
+    align-items: center; /* 垂直居中对齐 */
+}
+ 
+.location_container {
+    display: flex; /* 横向排列 */
+    align-items: center; /* 垂直居中对齐 */
+}
+
+.location {
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #0066FF;
+    width: 112px;
+    margin-top: 1em;
+    padding-left: 13px;
+    color: #FFFFFF;
+    line-height: 30px;
+}
+
+a.location {
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #0066FF;
+    width: 112px;
+    margin-top: 1em;
+    padding-left: 13px;
+    color: #FFFFFF;
+    line-height: 30px;
+}
+
+.location:hover{
+    color: red;
+}
+
+.info {
+     
+}
+ 
+.tftable {
+    align-items: center; /* 垂直居中对齐 */
+    font-size:12px;
+    color: #333333;
+    width:100%;
+    border-width: 1px;
+    border-color: #729ea5;
+    border-collapse: collapse;
+}
+ 
+.tftable th {
+    font-size:12px;
+    background-color:#0066FF;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #729ea5;
+    text-align:center;
+    color: #FFFFFF;
+}
+ 
+.tftable tr {
+    background-color:#FFFFFF;
+}
+ 
+.tftable td {
+    font-size:12px;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #729ea5;
+    width: auto;
+}
+ 
+.tftable tr:hover {
+    background-color:#eeeeee;
+}
+
+
+#jenkins_list, #jenkins_list li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    float: right;
+    display: inline-block;
+}
+ 
+li.jenkins_id{
+    width: 60px;
+    display: inline-block;
+}
+ 
+li.jenkins_log{
+    width: 20px;
+    text-align: right;
+    display: inline-block;
+}
+
+.status_success {
+    background-color: #A6FFA6;
+}
+ 
+.status_fail{
+    background-color: #FF2D2D;
+}
+ 
+.status_aborted{
+    background-color: #D0D0D0;
+}
+ 
+.status_running{
+    background-color: #A3D1D1;
+}
+ 
+.status_unkown{
+    background-color: yellow;
+}
+ 
+td.comments_more {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+ 
+.footer {
+    margin:3em 0 3em 0;
+    padding: 1em 0 1em 0;
+    text-align:center;
+    #background: #ddd;
+    font-weight: bold;
+    line-height: 16px;
+}
+ 
+.footer a{
+    text-decoration: none;
+    color: #666;
+    font-weight: normal;
+}
+ 
+a{
+  text-decoration: none;
+  color: #0066FF;
+}
+ 
+a:hover{
+  color: red;
+}
+ 
+a:visted{
+  color: gray;
+}
+ 
+pre {
+    margin: 0px;
+}
+</style>
+ 
+ 
+ 
+</head>
+<body>
+	<img src="../Resource/Images/logo.png" align="left" />  <h1>FAE SE Automated Test Status</h1>
+<hr>
+<div class="location_href">
+<a href='index.html'>HomePage</a>  <!--a target='_blank' href='/summary'>Summary</a-->  <!--a target='_blank' href='https://confluence.amlogic.com/pages/viewpage.action?pageId=262472786'>Hourly</a-->
+</div>
+
+<div class="main_board">
+       
+    <div class="location_container">
+        <div class="location" id="ShenZhen"> <a href="shenzhen/index.html" class="location" >Shen Zhen</a></div>
+        <!-- 其他地点 -->
+    </div>
+    <div class="info">
+        <table class="tftable" border="1">
+        <tr>    <!-- title row 这边是设置标题的宽度及标题的名字 -->
+            <th width="80px">Series</th>
+            <th width="30px">Module Type</th>
+            <th width="30px">Project</th>
+            <th width="30px">Chipset</th>
+            <th width="80px">Jenkins Status</th>
+            <th width="350px">Test Results</th>
+            <th width="140px">Last Started</th>
+            <th width="30px">Duration</th>
+            <th width="30px">Report</th>
+            <th width="85px">Jenkins Link</th>
+            <th width="30px">History</th>
+            <th>Comments</th>
+        </tr>
+            <!-- test info row -->
+    <script>
+      function fetchData(url, targetClass) {
+        fetch(url)
+          .then(response => response.json())
+          .then(jsonData => {
+            var data = jsonData.statistic;
+            var targetCell = document.getElementById(targetClass);
+            var passRatio = ((data.total-data.failed-data.broken) / data.total) * 100;
+	    var htmlContent = "<pre>Total:" + data.total + "  <font color='#2828FF'>Pass:" + data.passed + "  </font><font color='red'>Failed:" + data.failed + "  </font><font color='gray'>Skipped:" + data.skipped + "   </font><font color='orange'>Error:" + data.broken + "   </font><font color='#2828FF'>PassRatio:" + passRatio.toFixed(1) + "%</font></pre>";
+            targetCell.innerHTML = htmlContent;
+          });
+      }
+    </script>
+
+    <script>
+      function fetchSummaryData(url, startCellId, durationCellId) {
+        fetch(url)
+          .then(response => response.json())
+          .then(jsonData => {
+            var startTimestamp = jsonData.time.start; // 获取 start 时间戳
+            var duration = jsonData.time.duration; // 获取 duration 时间
+
+            var startDate = new Date(startTimestamp); // 将 start 时间戳转换为日期对象
+
+            var hours = startDate.getHours().toString().padStart(2, '0'); // 获取小时，并在不足两位数时补零
+            var minutes = startDate.getMinutes().toString().padStart(2, '0'); // 获取分钟，并在不足两位数时补零
+            var seconds = startDate.getSeconds().toString().padStart(2, '0'); // 获取秒数，并在不足两位数时补零
+            const regex = /\/(\d{4}\.\d{2}\.\d{2})_/;
+            const match = regex.exec(url);
+            if (match) {
+              const time = match[1];
+              console.log(time);  // 输出：2023.06.18
+              var formattedStart = time + '  ' + hours + ':' + minutes + ':' + seconds; // 格式化 start 时间为 "时:分:秒" 的形式
+            } else {
+              console.log('未找到时间');
+            }
+            var targetStartCell = document.getElementById(startCellId); // 获取 start 时间的目标单元格
+            targetStartCell.textContent = formattedStart; // 将格式化后的 start 时间写入单元格中
+
+            var durationHours = Math.floor(duration / 3600000); // 计算 duration 的小时部分
+            var durationMinutes = Math.floor((duration % 3600000) / 60000); // 计算 duration 的分钟部分
+            var durationSeconds = Math.floor((duration % 60000) / 1000); // 计算 duration 的秒部分
+
+            var formattedDuration = durationHours.toString().padStart(2, '0') + ':' + durationMinutes.toString().padStart(2, '0') + ':' + durationSeconds.toString().padStart(2, '0'); // 格式化 duration 时间为 "时:分:秒" 的形式
+
+            var targetDurationCell = document.getElementById(durationCellId); // 获取 duration 时间的目标单元格
+            targetDurationCell.textContent = formattedDuration; // 将格式化后的 duration 时间写入单元格中
+          });
+      }
+    </script>
+
+    <script>
+        // 获取 ShenZhen 地点元素
+    const shenZhenElement = document.getElementById("ShenZhen");
+
+    // 添加点击事件监听器
+    shenZhenElement.addEventListener("click", function () {
+        // 在点击时执行的操作
+        // 可以在这里添加其他你想要执行的操作
+    });
+    </script>
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    <tr class="Android_U-Sanity Test">
+        
+        
+        
+        <td rowspan="2">Android_U</td>
+        <td rowspan="2">Basic Function</td>
+        
+        
+        
+        
+        
+        <td rowspan="1">Sanity Test</td>
+        <td rowspan="1">S905X4</td>
+        <td class="jenkins_status"><img src="jenkins_png">jenkins_text</td>
+        <td id="Android_U-Sanity Test" class="Android_U-Sanity Test"></td>
+        <script>
+        fetchData('http://aut.amlogic.com/AutoTest/AllureReport/ott_sanity/2023.08.27_22.56/report/widgets/summary.json', 'Android_U-Sanity Test');
+        </script>
+
+        <td id="Android_U-Sanity Test-start-time" class="data-cell" data-url="http://aut.amlogic.com/AutoTest/AllureReport/ott_sanity/2023.08.27_22.56/report/widgets/summary.json"></td>
+        <td id="Android_U-Sanity Test-duration-time" class="data-cell" data-url="http://aut.amlogic.com/AutoTest/AllureReport/ott_sanity/2023.08.27_22.56/report/widgets/summary.json"></td>
+
+        <script>
+         fetchSummaryData('http://aut.amlogic.com/AutoTest/AllureReport/ott_sanity/2023.08.27_22.56/report/widgets/summary.json', 'Android_U-Sanity Test-start-time', 'Android_U-Sanity Test-duration-time');
+        </script>
+
+        <td><a target='_blank' href='http://aut.amlogic.com/AutoTest/AllureReport/ott_sanity/2023.08.27_22.56/report'>Report</a></td>
+        <td title="header=[Client Computer Information] body=[Name: Autotest124_BJ<br><br>IP Address:10.68.9.144]">
+            <ul id="jenkins_list">
+              <li class='jenkins_log'><a target='_blank' href='https://jenkins-sh.amlogic.com/job/FAE/job/AutoTest/job/OTT/job/Android_U_Hybrid_Openlinux_Autotest_Sanity_SZ/30/console'>Log</a></li>
+              <li class="jenkins_id"><a target='_blank' href="https://jenkins-sh.amlogic.com/job/FAE/job/AutoTest/job/OTT/job/Android_U_Hybrid_Openlinux_Autotest_Sanity_SZ/30">#30</a></li>
+            </ul>
+        </td>
+        <td><a target='_blank' href='http://aut.amlogic.com/AutoTest/AllureReport/ott_sanity'>History</a></td>
+        <td title="header=[Comments] body=[]" class="comments_more">N/A</td>
+    </tr>
+    
+    
+    
+    
+    
+    
+    
+    
+
+  <tr class="Android_U-DVB-C">
+
+
+
+
+
+
+
+
+        <td rowspan="1">DVB-C</td>
+        <td rowspan="1">S905Y4</td>
+        <td class="jenkins_status"><img src="jenkins_png">jenkins_text</td>
+        <td id="Android_S-DVB-C" class="Android_S-DVB-C"></td>
+        <script>
+        fetchData('http://aut.amlogic.com/AutoTest/AllureReport/dvb_trunk/2023.08.19_09.45/report/widgets/summary.json', 'Android_S-DVB-C');
+        </script>
+
+        <td id="Android_S-DVB-C-start-time" class="data-cell" data-url="http://aut.amlogic.com/AutoTest/AllureReport/dvb_trunk/2023.08.19_09.45/report/widgets/summary.json"></td>
+        <td id="Android_S-DVB-C-duration-time" class="data-cell" data-url="http://aut.amlogic.com/AutoTest/AllureReport/dvb_trunk/2023.08.19_09.45/report/widgets/summary.json"></td>
+
+        <script>
+         fetchSummaryData('http://aut.amlogic.com/AutoTest/AllureReport/dvb_trunk/2023.08.19_09.45/report/widgets/summary.json', 'Android_S-DVB-C-start-time', 'Android_S-DVB-C-duration-time');
+        </script>
+
+        <td><a target='_blank' href='http://aut.amlogic.com/AutoTest/AllureReport/dvb_trunk/2023.08.19_09.45/report'>Report</a></td>
+        <td title="header=[Client Computer Information] body=[Name: Autotest124_BJ<br><br>IP Address:10.68.9.144]">
+            <ul id="jenkins_list">
+              <li class='jenkins_log'><a target='_blank' href='https://jenkins-sh.amlogic.com/job/FAE/job/AutoTest/job/OTT/job/Android_S_Hybrid_Openlinux_Autotest_DVB_C/489/console'>Log</a></li>
+              <li class="jenkins_id"><a target='_blank' href="https://jenkins-sh.amlogic.com/job/FAE/job/AutoTest/job/OTT/job/Android_S_Hybrid_Openlinux_Autotest_DVB_C/489">#489</a></li>
+            </ul>
+        </td>
+        <td><a target='_blank' href='http://aut.amlogic.com/AutoTest/AllureReport/dvb_trunk'>History</a></td>
+        <td title="header=[Comments] body=[]" class="comments_more">N/A</td>
+    </tr>
+
+<!--<tr class="Android_U-GTS" id="Android_U-GTS">-->
+<!--    <td rowspan="1">GTS</td>-->
+<!--    <td rowspan="1">{chipset}</td>-->
+<!--	<td class="jenkins_status"><img src="status_src">status_text</td>-->
+<!--    <td class={reportName}>{statistic}</td>-->
+
+<!--    <td id="gts-start-time" class="data-cell" data-url="{report_url}/summary.json">${start}</td>-->
+<!--    <td id="gts-duration-time" class="data-cell" data-url="{report_url}/summary.json">${duration}</td>-->
+
+<!--    <td><a target='_blank' href='{report_url}index.html'>Report</a></td>-->
+<!--    <td title="header=[Client Computer Information] body=[Name: Autotest124_BJ<br><br>IP Address:10.68.9.144]">-->
+<!--        <ul id="jenkins_list">-->
+<!--          <li class='jenkins_log'><a target='_blank' href='{build_job_url}console'>Log</a></li>-->
+<!--          <li class="jenkins_id"><a target='_blank' href="{build_job_url}">#132</a></li>-->
+<!--        </ul>-->
+<!--    </td>-->
+<!--    <td><a target='_blank' href='/query/history?dbid=1&col=android_s-s905y4-ap222_vmx_e2e-daily&limi=10'>History</a></td>-->
+<!--    <td title="header=[Comments] body=[]" class="comments_more">N/A</td>-->
+<!--    </tr>-->
+
+<!--<tr class="Android_U-CTS" id="Android_U-CTS">-->
+<!--    <td rowspan="1">CTS</td>-->
+<!--    <td rowspan="1">{chipset}</td>-->
+<!--	<td class="jenkins_status"><img src="status_src">status_text</td>-->
+<!--    <td class={reportName}>{statistic}</td>-->
+
+<!--    <td id="cts-start-time" class="data-cell" data-url="{report_url}/summary.json">${start}</td>-->
+<!--    <td id="cts-duration-time" class="data-cell" data-url="{report_url}/summary.json">${duration}</td>-->
+
+<!--    <td><a target='_blank' href='{report_url}index.html'>Report</a></td>-->
+<!--    <td title="header=[Client Computer Information] body=[Name: Autotest124_BJ<br><br>IP Address:10.68.9.144]">-->
+<!--        <ul id="jenkins_list">-->
+<!--          <li class='jenkins_log'><a target='_blank' href='{build_job_url}console'>Log</a></li>-->
+<!--          <li class="jenkins_id"><a target='_blank' href="{build_job_url}">#132</a></li>-->
+<!--        </ul>-->
+<!--    </td>-->
+<!--    <td><a target='_blank' href='/query/history?dbid=1&col=android_s-s905y4-ap222_vmx_e2e-daily&limi=10'>History</a></td>-->
+<!--    <td title="header=[Comments] body=[]" class="comments_more">N/A</td>-->
+<!--    </tr>-->
+
+
+<!--<tr class="Android_U-VTS" id="Android_U-VTS">-->
+<!--    <td rowspan="1">VTS</td>-->
+<!--    <td rowspan="1">{chipset}</td>-->
+<!--	<td class="jenkins_status"><img src="status_src">status_text</td>-->
+<!--    <td class={reportName}>{statistic}</td>-->
+
+<!--    <td id="vts-start-time" class="data-cell" data-url="{report_url}/summary.json">${start}</td>-->
+<!--    <td id="vts-duration-time" class="data-cell" data-url="{report_url}/summary.json">${duration}</td>-->
+
+<!--    <td><a target='_blank' href='{report_url}index.html'>Report</a></td>-->
+<!--    <td title="header=[Client Computer Information] body=[Name: Autotest124_BJ<br><br>IP Address:10.68.9.144]">-->
+<!--        <ul id="jenkins_list">-->
+<!--          <li class='jenkins_log'><a target='_blank' href='{build_job_url}console'>Log</a></li>-->
+<!--          <li class="jenkins_id"><a target='_blank' href="{build_job_url}">#132</a></li>-->
+<!--        </ul>-->
+<!--    </td>-->
+<!--    <td><a target='_blank' href='/query/history?dbid=1&col=android_s-s905y4-ap222_vmx_e2e-daily&limi=10'>History</a></td>-->
+<!--    <td title="header=[Comments] body=[]" class="comments_more">N/A</td>-->
+<!--    </tr>-->
+
+<!--<tr class="Android_U-STS" id="Android_U-STS">-->
+<!--    <td rowspan="1">STS</td>-->
+<!--    <td rowspan="1">{chipset}</td>-->
+<!--	<td class="jenkins_status"><img src="status_src">status_text</td>-->
+<!--    <td class={reportName}>{statistic}</td>-->
+
+<!--    <td id="sts-start-time" class="data-cell" data-url="{report_url}/summary.json">${start}</td>-->
+<!--    <td id="sts-duration-time" class="data-cell" data-url="{report_url}/summary.json">${duration}</td>-->
+
+<!--    <td><a target='_blank' href='{report_url}index.html'>Report</a></td>-->
+<!--    <td title="header=[Client Computer Information] body=[Name: Autotest124_BJ<br><br>IP Address:10.68.9.144]">-->
+<!--        <ul id="jenkins_list">-->
+<!--          <li class='jenkins_log'><a target='_blank' href='{build_job_url}console'>Log</a></li>-->
+<!--          <li class="jenkins_id"><a target='_blank' href="{build_job_url}">#132</a></li>-->
+<!--        </ul>-->
+<!--    </td>-->
+<!--    <td><a target='_blank' href='/query/history?dbid=1&col=android_s-s905y4-ap222_vmx_e2e-daily&limi=10'>History</a></td>-->
+<!--    <td title="header=[Comments] body=[]" class="comments_more">N/A</td>-->
+<!--    </tr>-->
+
+<!--<tr class="Android_U-TVTS" id="Android_U-TVTS">-->
+<!--    <td rowspan="1">TVTS</td>-->
+<!--    <td rowspan="1">{chipset}</td>-->
+<!--	<td class="jenkins_status"><img src="status_src">status_text</td>-->
+<!--    <td class={reportName}>{statistic}</td>-->
+
+<!--    <td id="gts-start-time" class="data-cell" data-url="{report_url}/summary.json">${start}</td>-->
+<!--    <td id="gts-duration-time" class="data-cell" data-url="{report_url}/summary.json">${duration}</td>-->
+
+<!--    <td><a target='_blank' href='{report_url}index.html'>Report</a></td>-->
+<!--    <td title="header=[Client Computer Information] body=[Name: Autotest124_BJ<br><br>IP Address:10.68.9.144]">-->
+<!--        <ul id="jenkins_list">-->
+<!--          <li class='jenkins_log'><a target='_blank' href='{build_job_url}console'>Log</a></li>-->
+<!--          <li class="jenkins_id"><a target='_blank' href="{build_job_url}">#132</a></li>-->
+<!--        </ul>-->
+<!--    </td>-->
+<!--    <td><a target='_blank' href='/query/history?dbid=1&col=android_s-s905y4-ap222_vmx_e2e-daily&limi=10'>History</a></td>-->
+<!--    <td title="header=[Comments] body=[]" class="comments_more">N/A</td>-->
+<!--    </tr>-->
+<!--    -->
+
+    
+
+    
+
+        </table>
+    </div>
+     
+</div>
+ 
+    <div class="footer">Powered by <a href="mailto:yongbo.shao@amlogic.com">Amlogic FAE SE AUT development team</a></div>
+
+<script>
+    const androidVersions = ['Android_S', 'Android_U'];
+    const testTypes = ['STS', 'GTS', 'VTS', 'TVTS', 'CTS'];
+
+    function generateDirectoryPath(version, testType) {
+      return `AllureReport/XTS_Test/${version}/${testType}/`;
+    }
+
+    function generateTableRowId(version, testType) {
+      return `${version}-${testType}`;
+    }
+
+    // 遍历不同的安卓版本和测试类型
+    for (const version of androidVersions) {
+      for (const testType of testTypes) {
+        const directory = generateDirectoryPath(version, testType);
+        const rowId = generateTableRowId(version, testType);
+
+        // 执行数据获取和渲染逻辑
+        fetchAndReplaceData(directory, rowId);
+      }
+    }
+
+    // 格式化日期为 "YYYY.MM.DD HH:mm:ss" 格式
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = padZero(date.getMonth() + 1);
+      const day = padZero(date.getDate());
+      const hours = padZero(date.getHours());
+      const minutes = padZero(date.getMinutes());
+      const seconds = padZero(date.getSeconds());
+      return `${year}.${month}.${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    function formatDuration(duration) {
+      const hours = Math.floor(duration / 3600);
+      const minutes = Math.floor((duration % 3600) / 60);
+      const seconds = duration % 60;
+      return `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+    }
+
+    // 在个位数前补零
+    function padZero(value) {
+      return value.toString().padStart(2, '0');
+    }
+
+    function fetchAndReplaceData(directory, rowId) {
+      fetch(`${directory}/last_report/summary.json`)
+        .then(response => response.json())
+        .then(jsonData => {
+          const projectName = jsonData.projectName;
+          const reportName = jsonData.reportName;
+          const buildJobUrl = jsonData.build_job_url;
+          const statistic = jsonData.statistic;
+          const chipset = jsonData.chipset;
+          const reportUrl = jsonData.report_url;
+	      const modifiedUrl = reportUrl.replace("/last_report", "/history");
+
+	      const time = jsonData.time;
+          const startTimestamp = time.start;
+          const startDate = new Date(startTimestamp * 1000);
+          const startFormatted = formatDate(startDate);
+
+          const stopTime = new Date(time.stop * 1000);
+          const duration = time.duration;
+          const buildJobNumber = buildJobUrl.match(/\/(\d+)\//)[1];
+
+          // 获取所有匹配的 tr 元素
+          const trElement = document.querySelector(`tr#${rowId}`);
+	      let additionalColumn = '';
+          // 检查 trElement 的 class 属性是否包含 '-GTS' 字符串
+          if (reportName === 'GTS') {
+            additionalColumn = '<td rowspan="5">Certification(XTS)</td>';
+          }
+
+          var htmlContent = "    <font color='#2828FF'>Pass:" + statistic.passed + "    </font><font color='red'>Failed:" + statistic.failed + "    </font><font color='gray'>module_done:" + statistic.module_done + "     </font><font color='orange'>module_total:" + statistic.module_total;
+          // 更新 tr 元素的内容
+
+          trElement.innerHTML = `
+            ${additionalColumn}
+            <td rowspan="1">${reportName}</td>
+            <td rowspan="1">${chipset}</td>
+            <td class="jenkins_status"><img src="{status_src}">{status_text}</td>
+            <td class="${reportName}">${htmlContent}</td>
+            <td id="sts-start-time" class="data-cell" data-url="${reportUrl}/summary.json">${startFormatted}</td>
+            <td id="sts-duration-time" class="data-cell" data-url="${reportUrl}/summary.json">${formatDuration(duration)}</td>
+            <td><a target='_blank' href=${reportUrl}>Report</a></td>
+            <td title="header=[Client Computer Information] body=[Name: Autotest124_BJ<br><br>IP Address:10.68.9.144]">
+                <ul id="jenkins_list">
+                  <li class='jenkins_log'><a target='_blank' href='${buildJobUrl}console'>Log</a></li>
+		  <li class="jenkins_id"><a target='_blank' href="${buildJobUrl}">#${buildJobNumber}</a></li>
+                </ul>
+            </td>
+	    <td><a target='_blank' href=${modifiedUrl}>History</a></td>
+            <td title="header=[Comments] body=[]" class="comments_more">N/A</td>
+          `;
+        });
+}
+</script>
+
+<script>
+  // 从服务器获取JSON数据
+  fetch('jenkins_status.json')
+    .then(response => response.json())
+    .then(jsonData => {
+      // 遍历 JSON 数据
+      jsonData.job_status.forEach(job => {
+        const name = job.name;
+        const status = job.status;
+        const location = job.location;
+        // 根据不同的状态设置 Jenkins 图标和文本
+        let statusSrc, statusText;
+        if (status === "SUCCESS") {
+          statusSrc = "jenkins_png/blue.png";
+          statusText = "SUCCESS";
+        } else if (status === "FAILURE") {
+          statusSrc = "jenkins_png/red.png";
+          statusText = "FAILURE";
+        } else if (status === "ABORTED") {
+          statusSrc = "jenkins_png/red.png";
+          statusText = "ABORTED";
+        } else if (status === "DISABLED"){
+          statusSrc = "jenkins_png/disabled.png";
+          statusText = "disabled";
+        } else if (status === null) {
+          statusSrc = "jenkins_png/blue_anime.gif";
+          statusText = "RUNNING";
+		} else {
+          statusSrc = "jenkins_png/error.png";
+          statusText = "ERROR";
+        }
+	function escapeClassName(className) {
+          const specialChars = '[.*+?^${}()|[\]\\]';
+          const escapedClassName = className.replace(/\\/g, '\\\\')
+                                             .replace(new RegExp(`[${specialChars}\\s]`, 'g'), '\\$&');
+          return escapedClassName;
+        }
+
+
+        // 对特殊字符和空格进行转义
+        const escapedName = escapeClassName(name);
+	// 获取所有匹配的 tr 元素
+        const trElements = Array.from(document.querySelectorAll(`tr[class="${escapedName}"]`));
+        trElements.forEach(trElement => {
+          const tdElement = trElement.querySelector('.jenkins_status');
+          if (tdElement) {
+            if (location === "ShenZhen") {
+                tdElement.innerHTML = `<img src="${statusSrc}">${statusText}`;
+            }
+          }
+        });
+      });
+    });
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

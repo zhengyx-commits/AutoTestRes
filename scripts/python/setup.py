@@ -17,6 +17,6 @@ setup(
     name="AATS",
     version="0.1",
     packages=find_packages(),
-    install_requires=['pytest==6.2.0'],
+    install_requires=['pytest==7.2.2'],
     tests_require=['pyserial', 'pytest-html']
 )

@@ -32,7 +32,7 @@ def test_Multi_PIP_HTTP_TS_H265_4KP60_1080P():
         multi.send_cmd(p_start_cmd)
         assert common_case.player_check.check_startPlay()[0], "start play failed"
         common_case.switch_pip_2_window()
-        #common_case.pause_resume_seek_stop()
+        common_case.pause_resume_seek_stop()
     else:
         http_TS_H265_4K_P60_final_urllist = get_conf_url("conf_http_url", "http_TS_H265_4K_P60")
         http_TS_H265_1080_final_urllist = get_conf_url("conf_http_url", "http_TS_H265_1080")
@@ -44,5 +44,5 @@ def test_Multi_PIP_HTTP_TS_H265_4KP60_1080P():
                 multi.send_cmd(start_cmd)
                 assert common_case.player_check.check_startPlay()[0], "start play failed"
                 common_case.switch_pip_2_window()
-                #common_case.pause_resume_seek_stop()
+                # common_case.pause_resume_seek_stop()
                 multi.stop_multiPlayer_apk()

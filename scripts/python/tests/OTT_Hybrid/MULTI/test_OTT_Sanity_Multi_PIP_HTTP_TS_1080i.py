@@ -4,6 +4,8 @@
 # @Author  : yongbo.shao
 import itertools
 
+import numpy
+
 from tests.OTT_Hybrid.MULTI import *
 from tests.OTT_Hybrid import *
 
@@ -27,11 +29,11 @@ def test_Multi_PIP_HTTP_TS_1080i():
             multi.send_cmd(start_cmd)
             assert common_case.player_check.check_startPlay()[0], "start play failed"
             common_case.switch_pip_2_window()
-            #common_case.pause_resume_seek_stop()
+            common_case.pause_resume_seek_stop()
             multi.stop_multiPlayer_apk()
     else:
-        urls = list(itertools.product(final_urllist, final_urllist))
-        # print(f"urls: {urls}")
+        # urls = list(itertools.product(final_urllist, final_urllist))
+        urls = numpy.stack([final_urllist, sorted(final_urllist, reverse=True)], 1).tolist()
         for url in urls:
             url = list(url)
             # print(f"url[0]:{url[0]}")
@@ -40,5 +42,5 @@ def test_Multi_PIP_HTTP_TS_1080i():
             multi.send_cmd(p_start_cmd)
             assert common_case.player_check.check_startPlay()[0], "start play failed"
             common_case.switch_pip_2_window()
-            #common_case.pause_resume_seek_stop()
+            common_case.pause_resume_seek_stop()
             multi.stop_multiPlayer_apk()

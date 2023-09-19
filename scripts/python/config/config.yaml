@@ -1,4 +1,34 @@
 # This is a config file instead of part of config.json
+server:
+  resource_server_sh: 'http://qa-sh.amlogic.com:8881/chfs/shared/Test_File/AUT/' # manage resource server for shanghai, need end with "/"
+  resource_server_other: 'http://xx' # manage resource server for other site
+
+ip: # device_ip_xx is for auto test running server, stream_ip_xx is for stream provider server
+  device_ip_sz: 192.168.1.246
+  stream_ip_sz: 192.168.1.247:8554
+  device_ip_sz_ref: 192.168.1.101  
+  stream_ip_sz_ref: 192.168.1.101:8554
+  device_ip_sh: 192.168.1.105
+  stream_ip_sh: 192.168.1.105:8554 # stream provider: for ott_hybrid, ott_hybrid_s_kpi project
+  device_ip_other: 192.168.1.103
+  stream_ip_other: 192.168.1.103:8554
+
+connect_info:
+  basic_uname: amlogic # 192.168.1.105, for ott_hybrid, ott_hybrid_s_kpi
+  basic_pwd: Linux2017
+  other_uname: xx # for other server
+  other_pwd: xx
+  sz_uname: amlogic
+  sz_pwd: Linux2020
+  sz_ref_uname: amlogic
+  sz_ref_pwd: Linux2017
+
+rtsp_path:
+  rtsp_sh: /home/amlogic/live555/mediaServer
+  rtsp_sz_ref: /home/amlogic/live555/live/mediaServer
+#  rtsp_sz: /home/amlogic/live/mediaServer
+  rtsp_other: /home/amlogic/live/mediaServer # replace actual path
+
 broadlink:
   ipaddr: 192.168.2.102
   host: 192.168.2.101
@@ -25,69 +55,51 @@ drm_support: true
 kpi_config:
   kpi_debug:
     flag: disable
-    name: vod_s_kpi
+    name: vod_s_t_kpi
     repeat_count: 100
     reference_time: 2
     reference_percentage: 1.1
+  youtube_cool_start_launch_time: 13
+  youtube_cool_start_config_result:
+    "1": launch_time
   vod_p_kpi_config_id:
-    "1": interceptKeyTi keyCode=19 down=true
-    "16": interceptKeyTi keyCode=19 down=false
+    "1": interceptKeyTi keyCode=23 down=true
     "2": Create new client
-    "3": setDataSource:159
-    "4": prepareAsync:317
+    "3": setDataSource:163
+    "4": prepareAsync:319
     "5": player_start:enter
-    "17": Open baseUrl
-    "18": tcp connect
-    "31": tcp connect
-    "19": process_line:HTTP
-    "20": hParse is null
-    "22": async download Start fetch
-    "23": tcp connect
-    "33": tcp connect
-    "24": process_line:HTTP
-    "25": tcp connect
-    "34": tcp connect
-    "26": process_line:HTTP
-    "27": hParse is null
-    "28": start fetch segment file
-    "29": tcp connect
-    "35": tcp connect
-    "30": process_line:HTTP
-    "6": FindStream info cost_time
-    "7": wait START/SEEK cmd cost_time
-    "8": 2_1_1 video codec init cost,open_time
-    "9": 2_1_1 video codec init cost,open_endtime
-    "10": 2_1_2 audio codec init cost,open_time
-    "11": 2_1_2 audio codec init cost,open_endtime
-    "12": first check in vpts
-    "13": 3_2 First I frame coming
-    "14": 3_3 First I frame decoded
-    "15": first_picture_time
+    "6": "M3uSession: Open baseUrl"
+    "7": add item to session,num:1
+    "8": mpegts_read_header
+    "9": FindStream info cost_time
+    "10": "fun:player_dec_init"
+    "11": 2_1_1 video codec init cost,open_time
+    "12": 2_1_1 video codec init cost,open_endtime
+    "13": 2_1_2 audio codec init cost,open_time
+    "14": 2_1_2 audio codec init cost,open_endtime
+    "15": decoder init cost_time
+#    "16": wait START/SEEK cmd cost_time
+    "17": first check in vpts
+    "18": 3_2 First I frame coming
+    "19": 3_3 First I frame decoded
+    "20": first_picture_time
   vod_p_kpi_config_result:
-    "17,18": tcp connect1
-    "18,19": HTTP response
-    "19,20": hPase null
-    "22,23": tcp connect2
-    "23,24": HTTP response2
-    "24,25": tcp connect3
-    "25,26": HTTP response3
-    "26,27": hPase
-    "27,28": segment
-    "28,29": tcp connect
-    "29,30": HTTP response4
-    "1,16": key
-    "16,2": key2create
+    "1,2": key2create
     "2,3": createPlayer
     "3,4": setDataSource
-    "5,6": parser_param
-    "6,7": waitStart
-    "8,9": video init
-    "10,11": audio init
-    "11,12": first check in
-    "12,13": 1st I frame
-    "13,14": decode
-    "14,15": display
-    "2,15": total
+    "4,5": amplayer thread
+    "5,6": 1st m3u8 begin
+    "6,7": 1st m3u8 end
+    "8,9": to find stream info
+    "9,10": gap2waitDuration
+    "11,12": video init
+    "13,14": audio init
+    "10,15": decoder init cost
+#    "16,17": first check in
+    "17,18": 1st I frame
+    "18,19": decode
+    "19,20": display
+    "1,20": total
   replay_exit_switch_config_id:
     "1": interceptKeyTi keyCode=4 down=false
     "2": "stop enter:"
@@ -106,7 +118,7 @@ kpi_config:
     "15": 2_1_2 audio codec init cost,open_time
     "16": 2_1_2 audio codec init cost,open_endtime
     "17": first check in vpts
-    "18": First I frame coming
+    "18": First I frame comming
     "19": First I frame decoded
     "20": 4_1 First DI scan coming
     "21": 4_2 First DI scan decoded
@@ -129,74 +141,86 @@ kpi_config:
     "20,21": di
     "21,22": display
     "1,22": total
-  vod_s_kpi:
-    "hlsv3_1080": 730
-    "http_4k_h264": 945
-    "http_1080i_h264": 799
-    "rtsp_1080p_h264": 1200
-  live_s_kpi:
-    "udp_4k_h264": 1654
-  vod_s_kpi_config_id:
-    "1": interceptKeyTq keycode=23
+  vod_s_t_kpi:
+    "hlsv3_1080": 950
+    "http_4kP30_h264": 945
+    "http_1080i_h264": 1500
+    "hls_1080i_h264": 950
+    "hlsv3_h265_4k": 1450
+    "rtsp_1080p_h264": 1370
+    "rtsp_4kP30_h264": 1870
+    "boot_up": 1000
+  live_s_t_kpi:
+    "udp_4kP30_h264": 1800
+    "udp_4kP30_h265": 1800
+    "udp_1080I_h264": 3300
+    "rtp_4kP60_h264": 1850
+    "rtp_4kP60_h265": 1850
+  vod_s_t_kpi_config_id:
+    "1": "onKeyDown: startPlay clicked"
     "2": 1_1 creat AmPlayer
     "3": 1_2 setDataSource
     "4": 1_3 prepare
-    "5": probe ok
+    "5": source_probe finish
     "6": 3_2_3 first TS
-    "7": First I frame coming
-    "8": First I frame decoded
-    "9": vc receive first frame
-    "10": vc get first frame
+    "7": First I frame com
+    "8": First I frame decoded.
+    "9": received_cnt=1,
+    "10": get:omx_index=0
     "11": first swap picture
-  vod_s_kpi_config_result:
+  vod_s_t_kpi_config_result:
     "1,2": key2create
     "2,3": player_init
     "3,4": parser_param
     "4,5": wait_data
-    "5,6": wait_i
-    "6,7": decoder
-    "7,8": first_I
+    "2,5": prepared
+    "5,6": 1st data
+    "6,7": 1st I
+    "7,8": decode
     "8,9": aa
     "1,5": di
     "5,10": vc
     "5,11": vf
+    "8,11": vpp
     "1,11": total
-  vod_s_seek:
-    "http_4k_h264": 1047
-    "hls_4k": 368
-  vod_s_seek_config_id:
+  vod_s_t_seek:
+    "http_4kP30_h264": 1040
+    "hls_4k": 1800
+  vod_s_t_seek_config_id:
     "1": "seekTo enter:"
     "2": AmPlayer seekTo
     "3": Call start
     "4": "ff_seek_frame pos:"
     "5": loop_seek end
-    "6": 3_2_3 first TS
-    "7": demux first write
-    "8": decoder write 0
-    "9": First I frame coming
+    "7": first write data to demux
+    "8": "First BufStart:"
+    "9": First I frame com
     "10": First I frame decoded
-    "12": vc get first frame
-  vod_s_seek_config_result:
+    "11": received_cnt=1,
+    "12": get:omx_index=0,
+    "13": "put: repeat_count =0, omx_index=0,"
+  vod_s_t_seek_config_result:
     "1,2": key2stop
     "2,3": stop
     "3,4": reinit
     "4,5": seek
-    "5,6": wait_data
-    "6,7": demux_ww
+#    "5,6": wait_data
+#    "6,7": demux_ww
     "7,8": decoder_ww
-    "9,10": decoder
-    "10,12": vpp
-    "1,12": total
+    "9,10": decode
+    "10,13": vpp
+    "1,13": total
     "1,4": stop2start
     "5,8": 1st data
     "8,9": 1st I
     "2,9": mw
     "9,12": pipeline
-  vod_s_switch_exit:
-    "udp_1080p": 2292
-  vod_s_switch_exit_config_id:
-    "1": interceptKeyTq keycode=
-    "2": AmPlayer stop
+  live_s_t_switch_exit:
+    "udp_1080p": 3670
+    "rtp_1080p": 3850
+  live_s_t_switch_exit_config_id:
+    "1": action=ACTION_DOWN, keyCode=KEYCODE_CHANNEL
+    "2": AM_KPI::Stage 7_1 stop
     "3": StopVideoDecoding in
     "4": StopVideoDecoding end response
     "5": StopAudioDecoding in
@@ -205,31 +229,75 @@ kpi_config:
     "8": 1_1 creat AmPlayer
     "9": 1_2 setDataSource
     "10": 1_3 prepare
-    "11": probe ok
+    "11": source_probe finish
     "12": 3_2_3 first TS
-    "13": demux first write
-    "14": decoder write 0
-    "15": First I frame coming
+    "13": first write data to demux
+    "14": 'First BufStart:'
+    "15": First I frame com
     "16": First I frame decoded
-    "18": vc receive first frame
-    "19": vc get first frame
-    "20": first swap picture
-  vod_s_switch_exit_config_result:
+    "18": received_cnt=1,
+    "19": get:omx_index=0,
+    "20": "put: repeat_count =0, omx_index=0,"
+  live_s_t_switch_exit_config_result:
     "1,2": key2stop
     "2,3": player_stop
     "3,4": video_stop
     "5,6": audio_stop
+    "2,7": stop
     "1,7": stop_all
     "7,8": stoped2create
     "8,9": player_init
+    "8,11": probe
     "10,11": parser_param
-    "11,12": wait_data
+    "11,12": 1st data
     "12,13": demux_ww
     "13,14": decoder_ww
     "14,15": wait_i
-    "15,16": decoder
+    "12,15": 1st I
+    "15,16": decode
     "16,20": vpp
     "1,20": total
+  rtsp_s_4kP30_h264_speed_to_start_config_id:
+    #"1": "AmCtcPlayer setParameter:set speed:2000"
+    #"2": "setPlaybackRate, rate: 2.000000"
+    #"3": "put: repeat_count =0, omx_index="
+    "4": "AmCtcPlayer setParameter:set speed:1000"
+    "5": "setPlaybackRate, rate: 1.000000"
+    "6": "put: repeat_count =0, omx_index="
+  rtsp_s_4kP30_h264_speed_to_start_config_result:
+    #"1,2": "set speed:2000 -> setPlaybackRate 2"
+    #"2,3": "setPlaybackRate 2 -> repeat_count"
+    #"3,4": "repeat_count -> set speed:1000"
+    "4,5": "set speed:1000 -> setPlaybackRate 1"
+    "5,6": "setPlaybackRate 1 -> repeat_count"
+    "4,6": "total"
+    #"1,6": total
+  vod_s_boot_up_kpi_config_id:
+    "1": "init: init first stage started!"
+    "2": "init: init second stage started!"
+    "3": boot_progress_start
+    "4": boot_progress_system_run
+    "5": boot_progress_pms_start
+    "6": boot_progress_pms_system_scan_start
+    "7": boot_progress_pms_data_scan_start
+    "8": boot_progress_pms_scan_end
+    "9": boot_progress_pms_ready
+    "10": boot_progress_ams_ready
+    "11": boot_progress_enable_screen
+    "12": wm_boot_animation_done
+  vod_s_boot_up_kpi_config_result:
+    "1,2": "kernel time"
+    "2,3": "2nd stage -> boot start"
+    "3,4": "boot start -> system run"
+    "4,5": "system run -> pms start"
+    "5,6": "pms start -> pms system scan"
+    "6,7": "pms system scan -> pms data scan"
+    "7,8": "pms data scan -> pms scan end"
+    "8,9": "pms scan end -> pms ready"
+    "9,10": "pms ready -> ams ready"
+    "10,11": "ams ready -> enable screen"
+    "11,12": "enable screen -> boot animation"
+    "1,12": "kernel -> android total"
   channel_switch_kpi_config_id:
     "1": interceptKeyTi keyCode=20 down=false
     "2": "] stop"
@@ -238,16 +306,16 @@ kpi_config:
     "5": "stream_es_release: p_para->scodec"
     "6": destructor pid =
     "7": Create new client
-    "8": "[ player_start:enter ]p="
+    "8": "[player_start:enter]p="
     "9": parse ok , prepare parameters
     "10": Init cost_time
     "11": wait START/SEEK cmd cost_time
     "12": player_decoder_init, enter--2
     "13": decoder init cost_time
-    "14": First I frame coming
+    "14": First I frame comming
     "15": First I frame decoded
-    "16": First DI scan coming
-    "17": First DI scan decoded
+#    "16": First DI scan coming
+#    "17": First DI scan decoded
     "18": "di->first_pic cost,first_picture_time"
     "19": normalReportHandler media_evt:MEDIA_GET_FIRST_PCR
   channel_switch_kpi_config_result:
@@ -265,52 +333,69 @@ kpi_config:
     "12,13": decoder_init
     "13,14": wait_first_I_frame
     "14,15": first_I_frm_decoded
-    "15,16": DI_get_1st_frm
-    "16,17": DI_output_1st_frm
-    "17,18": amvideo_output_1st
+#    "15,16": DI_get_1st_frm
+#    "16,17": DI_output_1st_frm
+    "15,18": amvideo_output_1st
     "1,18": total
-  vod_seek_config_id:
-    "1": interceptKeyTi keyCode=22 down=false
+# for right and left seek
+  vod_p_seek_config_id:
+    "1": "send key : [106 , 0]"
     "2": "] seekTo("
     "3": "stream_es_release: p_para->acodec"
     "4": "stream_es_release: p_para->vcodec"
     "5": video stream_type=
-    "6": "[ player_dec_reset ], end"
-    "7": first check in vpts
-    "8": 3_2 First I frame coming
-    "9": 3_3 First I frame decoded
-    "10": 4_1 First DI scan coming
-    "11": 4_2 First DI scan decoded
-    "12": 5_1 di->first_pic cost,first_picture_time
-  vod_seek_config_result:
-    "1,2": KeySeek
-    "3,4": releseAudio
-    "4,5": releseVideo
-    "5,6": InitCodec
-    "6,7": startFindStream
-    "7,8": wait_I
-    "8,9": decode
-    "10,11": DI
-    "11,12": display
-    "1,12": total
+    "6": first check in vpts
+    "7": 3_2 First I frame coming
+    "8": 3_3 First I frame decoded
+    "9": 4_1 First DI scan coming
+    "10": 4_2 First DI scan decoded
+    "11": 5_1 di->first_pic cost,first_picture_time
+    "12": interceptKeyTi keyCode=21 down=false
+    "13": "] seekTo("
+    "14": "stream_es_release: p_para->acodec="
+    "15": "stream_es_release: p_para->vcodec="
+    "16": video stream_type
+    "17": first check in vpts <
+    "18": Stage 3_2 First I frame coming
+    "19": Stage 3_3 First I frame decoded
+    "20": first_picture_time
+  vod_p_seek_config_result:
+    "1,2": rightKeySeek
+    "2,3": right_releseAudio
+    "3,4": right_releseVideo
+    "5,6": right_startFindStream
+    "6,7": right_wait_I
+    "7,8": right_decode
+    "9,10": right_DI
+    "10,11": right_display
+    "1,11": rightTotal
+    "12,13": leftKeySeek
+    "13,14": left_releseAudio
+    "14,15": left_releseVideo
+    "16,17": left_startFindStream
+    "17,18": left_wait_I
+    "18,19": left_decode
+    "19,20": left_display
+    "12,20": leftTotal
+    "1,20": total
   live_start_kpi_config_id:
     "1": interceptKeyTi keyCode=23 down=true
-    "2": "[ setKeyMode ]"
+    "2": "[setKeyMode]"
     "3": webview inited done
     "4": onPageStarted
     "5": onPageFinished
-    "6": surfaceCreated
+#    "6": surfaceCreated
     "7": Create new client
-    "8": "[ player_start:enter ]p="
+    "8": "[player_start:enter]p="
     "9": parse ok , prepare parameters
     "10": Init cost_time
     "11": wait START/SEEK cmd cost_time
     "12": player_decoder_init, enter--2
     "13": decoder init cost_time
-    "14": First I frame coming
+    "14": First I frame comming
     "15": First I frame decoded
-    "16": First DI scan coming
-    "17": First DI scan decoded
+#    "16": First DI scan coming
+#    "17": First DI scan decoded
     "18": di->first_pic cost,first_picture_time
     "19": normalReportHandler media_evt:MEDIA_GET_FIRST_PCR
   live_start_kpi_config_result:
@@ -318,8 +403,8 @@ kpi_config:
     "2,3": key_webinitdone
     "3,4": init_onPageStart
     "4,5": PageStart_PageFinish
-    "5,6": PageFinish_surfaceCreated
-    "6,7": surfaceCreated_Client
+#    "5,6": PageFinish_surfaceCreated
+    "5,7": surfaceCreated_Client
     "7,8": MediaPlayer_amplayer
     "8,9": amplayer_parseok
     "9,10": find_streamInfo
@@ -328,9 +413,9 @@ kpi_config:
     "12,13": decoder_init
     "13,14": wait_first_I_frame
     "14,15": first_I_frm_decoded
-    "15,16": DI_get_1st_frm
-    "16,17": DI_output_1st_frm
-    "17,18": amvideo_output_1st
+#    "15,16": DI_get_1st_frm
+#    "16,17": DI_output_1st_frm
+    "15,18": amvideo_output_1st
     "1,18": total
   replay_start_kpi_config_id:
     "1": interceptKeyTi keyCode=23 down=false
@@ -340,16 +425,16 @@ kpi_config:
     "5": "stream_es_release: p_para->scodec"
     "6": destructor pid =
     "7": Create new client
-    "8": "[ player_start:enter ]p="
+    "8": "[player_start:enter]p="
     "9": parse ok , prepare parameters
     "10": Init cost_time
     "11": wait START/SEEK cmd cost_time
     "12": player_decoder_init, enter--2
     "13": decoder init cost_time
-    "14": First I frame coming
+    "14": First I frame comming
     "15": First I frame decoded
-    "16": First DI scan coming
-    "17": First DI scan decoded
+#    "16": First DI scan coming
+#    "17": First DI scan decoded
     "18": di->first_pic cost,first_picture_time
     "19": normalReportHandler media_evt:MEDIA_GET_FIRST_PCR
   replay_start_kpi_config_result:
@@ -367,7 +452,168 @@ kpi_config:
     "12,13": decoder_init
     "13,14": wait_first_I_frame
     "14,15": first_I_frm_decoded
-    "15,16": DI_get_1st_frm
-    "16,17": DI_output_1st_frm
-    "17,18": amvideo_output_1st
+#    "15,16": DI_get_1st_frm
+#    "16,17": DI_output_1st_frm
+    "15,18": amvideo_output_1st
     "1,18": total
+# only for left or right seek
+  vod_p_seek1_config_id:
+    "1": interceptKeyTi keyCode=21 down=false
+#    "1": "send key : [106 , 0]"
+    "2": "] seekTo("
+    "3": "stream_es_release: p_para->acodec"
+    "4": "stream_es_release: p_para->vcodec"
+    "5": video stream_type=
+    "6": "[player_dec_reset], end"
+    "7": first check in vpts
+    "8": 3_2 First I frame coming
+    "9": 3_3 First I frame decoded
+    "10": 4_1 First DI scan coming
+    "11": 4_2 First DI scan decoded
+    "12": 5_1 di->first_pic cost,first_picture_time
+  vod_p_seek1_config_result:
+    "1,2": KeySeek
+    "3,4": releseAudio
+    "4,5": releseVideo
+    "5,6": InitCodec
+    "6,7": startFindStream
+    "7,8": wait_I
+    "8,9": decode
+    "10,11": DI
+    "11,12": display
+    "1,12": total
+  live_p_switch_channel_kpi_config_id:
+    "1": interceptKeyTi keyCode=19 down=false
+    "2": "AmlogicPlayer: stop"
+    "3": wait for play end
+    "4": player_para_release, begin
+    "5": player_para_release, over
+    "6": destructor pid =
+    "7": Create new client
+    "8": setDataSource:163
+    "9": prepareAsync:319
+    "10": player_start:enter
+    "11": "M3uSession: Open baseUrl"
+    "12": add item to session
+    "13": first ts start download
+    "14": mpegts_read_header
+    "15": wait START/SEEK cmd cost_time
+    "16": 2_1_1 video codec init cost,open_time
+    "17": 2_1_1 video codec init cost,open_endtime
+    "18": 2_1_2 audio codec init cost,open_time
+    "19": 2_1_2 audio codec init cost,open_endtime
+    "20": decoder init cost_time
+    "21": first check in vpts
+    "22": First I frame coming
+    "23": First I frame decoded
+    "24": first_picture_time
+  live_p_switch_channel_kpi_config_result:
+    "1,2": key2stop
+    "2,3": out first cycle
+    "3,4": startParaRelease
+    "4,5": endParaRelease
+    "5,6": destructorPid
+    "6,7": stop2create
+    "7,8": createPlayer
+    "8,9": setDataSource
+    "9,10": amplayer thread
+    "10,11": 1st m3u8 begin
+    "11,12": 1st m3u8 end
+    "12,13": start download data
+    "13,14": mpegts_read_header
+    "14,15": to wait start
+    "16,17": video init
+    "18,19": audio init
+    "15,20": decoder init cost
+    "20,21": first check in
+    "21,22": 1st I frame
+    "22,23": decode
+    "23,24": display
+    "1,24": total
+  live_p_kpi_config_id:
+    #    "1": commands.input.Input tap
+    "1": interceptKeyTi keyCode=23 down=false
+    "2": Create new client
+    "3": setDataSource:163
+    "4": prepareAsync:319
+    "5": player_start:enter
+    "6": "M3uSession: Open baseUrl"
+    "7": add item to session,num:1
+    "8": mpegts_read_header
+    "9": FindStream info cost_time
+    "10": "fun:player_dec_init"
+    "11": 2_1_1 video codec init cost,open_time
+    "12": 2_1_1 video codec init cost,open_endtime
+    "13": 2_1_2 audio codec init cost,open_time
+    "14": 2_1_2 audio codec init cost,open_endtime
+    "15": decoder init cost_time
+    "16": wait START/SEEK cmd cost_time
+    "17": first check in vpts
+    "18": 3_2 First I frame coming
+    "19": 3_3 First I frame decoded
+    "20": first_picture_time
+  live_p_kpi_config_result:
+    "1,2": key2create
+    "2,3": createPlayer
+    "3,4": setDataSource
+    "4,5": amplayer thread
+    "5,6": 1st m3u8 begin
+    "6,7": 1st m3u8 end
+    "8,9": to find stream info
+    "9,10": gap2waitDuration
+    "11,12": video init
+    "13,14": audio init
+    "10,15": decoder init cost
+    "16,17": first check in
+    "17,18": 1st I frame
+    "18,19": decode
+    "19,20": display
+    "1,20": total
+  live_p_replay_kpi_config_id:
+    "1": interceptKeyTi keyCode=23 down=false
+    "2": "AmlogicPlayer: stop"
+    "3": wait for play end
+    "4": player_para_release, begin
+    "5": player_para_release, over
+    "6": destructor pid =
+    "7": Create new client
+    "8": setDataSource:163
+    "9": prepareAsync:319
+    "10": player_start:enter
+    "11": "M3uSession: Open baseUrl"
+    "12": add item to session
+    "13": first ts start download
+    "14": mpegts_read_header
+    "15": wait START/SEEK cmd cost_time
+    "16": 2_1_1 video codec init cost,open_time
+    "17": 2_1_1 video codec init cost,open_endtime
+    "18": 2_1_2 audio codec init cost,open_time
+    "19": 2_1_2 audio codec init cost,open_endtime
+    "20": decoder init cost_time
+    "21": first check in vpts
+    "22": First I frame coming
+    "23": First I frame decoded
+    "24": first_picture_time
+  live_p_replay_kpi_config_result:
+    "1,2": key2stop
+    "2,3": out first cycle
+    "3,4": startParaRelease
+    "4,5": endParaRelease
+    "5,6": destructorPid
+    "6,7": stop2create
+    "7,8": createPlayer
+    "8,9": setDataSource
+    "9,10": amplayer thread
+    "10,11": 1st m3u8 begin
+    "11,12": 1st m3u8 end
+    "12,13": start download data
+    "13,14": mpegts_read_header
+    "14,15": to wait start
+    "16,17": video init
+    "18,19": audio init
+    "15,20": decoder init cost
+    "20,21": first check in
+    "21,22": 1st I frame
+    "22,23": decode
+    "23,24": display
+    "1,24": total

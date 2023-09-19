@@ -23,10 +23,16 @@ class UiautomatorTool:
     '''
 
     def __init__(self, serialnumber, type="u2"):
-        if type == "u2":
-            self.d2 = u2.connect(serialnumber)
+        self.serialnumbers = []
+        if not isinstance(serialnumber, list):
+            self.serialnumbers.append(serialnumber)
         else:
-            self.d1 = Device(serialnumber)
+            self.serialnumbers = serialnumber
+        for device_id in self.serialnumbers:
+            if type == "u2":
+                self.d2 = u2.connect(device_id)
+            else:
+                self.d1 = Device(device_id)
         # logging.debug(f'device info {self.d.info}')
 
     def __new__(cls, *args, **kwargs):

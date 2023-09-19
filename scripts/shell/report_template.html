@@ -1,0 +1,366 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        <title>[REPLACE_STR] Automated Test Report</title>
+        <meta name="generator" content="HTMLTestRunner 1.0.0"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style type="text/css" media="screen">
+body        { font-family: verdana, arial, helvetica, sans-serif; font-size: 80%; }
+.body_bg {
+    margin:0 auto;
+    width:80%;
+    height:auto;
+    border:1px solid #000000;
+}
+
+table       { font-size: 100%; }
+pre         { }
+
+/* -- heading ---------------------------------------------------------------------- */
+h1 {
+    font-size: 24pt;
+    color: #0066CC;
+    text-align: center;
+}
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+    margin-left: 2ex;
+}
+
+.heading .attribute {
+    margin-top: 1ex;
+    margin-bottom: 0;
+}
+
+.heading .description {
+    margin-top: 2ex;
+    margin-bottom: 2ex;
+}
+
+#status_table {
+    width: 30%;
+    margin-left: 5px;
+    border-collapse: collapse;
+    border: 1px solid #777;
+    background: #B2DC3F;
+}
+
+#status_table td {
+    border: 1px dotted #777;
+    padding: 2px;
+}
+
+.status_key {
+    font-weight: bolder;
+}
+
+tr.status_row{
+    background-color: red;
+    color: #FFF;
+    font-weight: bolder;
+}
+
+tr.status_row_hover:hover {
+    background-color: red;
+    color: #FFF;
+    font-weight: bolder;
+}
+
+
+/* -- css div popup ------------------------------------------------------------------------ */
+a.popup_link {
+    text-decoration: none;
+}
+
+a.popup_link:hover {
+    color: red;
+}
+
+.popup_window {
+    display: none;
+    position: relative;
+    left: 0px;
+    top: 0px;
+    /*border: solid #627173 1px; */
+    padding: 10px;
+    font-family: "Lucida Console", "Courier New", Courier, monospace;
+    text-align: left;
+    font-size: 8pt;
+}
+
+/* -- report ------------------------------------------------------------------------ */
+
+#summary_table {
+    width: 30%;
+    margin-left: 5px;
+    border-collapse: collapse;
+    border: 1px solid #777;
+}
+
+#summary_table td {
+    border: 1px dotted #777;
+    padding: 2px;
+}
+
+#result_table {
+    width: 99%;
+    margin: 20px 5px 5px 5px;
+    border-collapse: collapse;
+    border: 1px solid #777;
+}
+
+#header_title_row {
+    background-color: #15A379;
+}
+.table_title {
+    font-size: 13pt;
+    color:white;
+    font-weight: bold;
+    text-align:center;
+}
+.show_detail {
+    font-size: 10pt;
+    text-align:right;
+    color:white;
+}
+
+.show_detail a{
+    text-decoration:none;
+}
+
+.show_detail a:hover{
+    background-color:#FFF;
+}
+
+.show_detail a:active{
+    background-color:#c60;
+}
+
+a.list_summary{
+    color:#000;
+    background-color:#B2FF99;
+}
+
+a.all_fail{
+    color:#000;
+    background-color:#c60;
+}
+
+a.all_case{
+    color:#000;
+    background-color:#B2DC3F;
+}
+
+a.show_detail_href{
+    color:#000;
+}
+
+a.show_detail_href:hover{
+    background-color:#B2DC3F;
+}
+
+a.show_detail_href:active{
+    background-color:#c60;
+}
+
+#header_row {
+    font-weight: bold;
+    background-color: #B2DC3F;
+    text-align: center;
+}
+
+#result_table td {
+    border: 1px dotted #777;
+    padding: 2px;
+}
+
+#total_row  {
+    font-weight: bold;
+}
+
+.passModule{
+    background-color: #6c6;
+    text-align: center;
+}
+
+.failModule{
+    background-color: #c60;
+    text-align: center;
+}
+
+.errorModule{
+    background-color: #c00;
+    text-align: center;
+}
+
+.passCase{
+    color: #6c6;
+}
+
+.failCase{
+    color: #c60;
+    font-weight: bold;
+}
+
+.errorCase{
+    color: #c00;
+    font-weight: bold;
+}
+
+.hiddenRow{
+    display: none;
+}
+
+.testcase{
+    margin-left: 2em;
+}
+
+.caseresult{
+    width: 100px;
+    float: left;
+    margin-left: 3em;
+}
+
+.loopresult {
+    width: 98%;
+    text-align: right;
+}
+
+.moduleStyle {
+    text-align: left;
+}
+
+tr.passModule:hover{
+    background-color: #47C247;
+    color:white;
+}
+
+tr.failModule:hover{
+    background-color: #CC3300;
+    color:white;
+}
+
+tr.errorModule:hover{
+    background-color: red;
+    color:white;
+}
+
+/* -- ending ---------------------------------------------------------------------- */
+#ending {
+}
+
+</style>
+
+</head>
+<body>
+<div class="body_bg">
+
+<div class='heading'>
+<h1>[REPLACE_STR] Automated Test Report</h1>
+<p class='description'><strong>Test Description:</strong> [REPLACE_STR]</p>
+<p class='attribute'><strong>Project:</strong> [REPLACE_STR]</p>
+<p class='attribute'><strong>Platform:</strong> [REPLACE_STR]</p>
+<p class='attribute'><strong>Image version:</strong> [REPLACE_STR]</p>
+<p class='attribute'><strong>Image URL:</strong> [REPLACE_STR]</p>
+<p class='attribute'><strong>Automated FW version:</strong> unknown</p>
+<p class='attribute'><strong>Patchsets:</strong> [REPLACE_STR]</p>
+<p class='attribute'><strong>Kernel version:</strong> unknown</p>
+<p class='attribute'><strong>Build_ID:</strong> [REPLACE_STR]</p>
+<p class='attribute'><strong>Start time:</strong> [REPLACE_STR]</p>
+<p class='attribute'><strong>Duration:</strong> [REPLACE_STR]</p>
+<p class='attribute'><strong>Tests passed:</strong> 0</p>
+<p class='attribute'><strong>Tests failed:</strong> 0</p>
+<p class='attribute'><strong>Tests error:</strong> 0</p>
+<p class='attribute'><strong>Tests total:</strong> Modules:0 / Cases:0</p>
+<h3><font color='red'>Pre-Test Stage: Running...</font></h3>
+</div>
+
+<p>
+<table id='summary_table'>
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+
+<tr id='header_title_row'>
+    <td colspan='6'>
+        <div class="table_title">
+            Test Summary
+        </div>
+    </td>
+</tr>
+    <tr id='header_row'>
+    <td>Module</td>
+    <td>Pass</td>
+    <td>Fail</td>
+    <td>Error</td>
+    <td>Total</td>
+    <td>Pass Ratio</td>
+</tr>
+
+<tr id='header_row'>
+    <td>Total</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0%</td>
+</tr>
+</table>
+
+<p>
+
+<table id='result_table'>
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+
+<tr id='header_title_row'>
+    <td colspan='6'>
+        <div class="table_title">
+            Test Result List
+        </div>
+        <div class="show_detail">
+            Show
+            <a href='javascript:showCase(0)' class='list_summary'>Summary</a>
+            <a href='javascript:showCase(1)' class='all_fail'>Failed</a>
+            <a href='javascript:showCase(2)' class='all_case'>All</a>
+        </div>
+    </td>
+</tr>
+
+<tr id='header_row'>
+    <td class='moduleStyle'>Module.SubModule.TestCase</td>
+    <td>Pass</td>
+    <td>Fail</td>
+    <td>Error</td>
+    <td>Total</td>
+    <td>View</td>
+</tr>
+
+<tr id='header_row'>
+    <td class='moduleStyle'>Total</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>&nbsp;</td>
+</tr>
+</table>
+
+<div id='ending'>&nbsp;</div>
+</div>
+</body>
+</html>

@@ -80,10 +80,20 @@ else
     echo Linux2017|sudo -S sudo ${WORKSPACE}/AutoTestRes/bin/update/update scan
 fi
 
-if [ ! -f ${WORKSPACE}/AutoTestRes/image/${Image_File_Name} ]; then
-    echo "Test image file not found @ ${WORKSPACE}/AutoTestRes/image/${Image_File_Name}" >> ${WORKSPACE}/AutoTestRes/bin/update/upgradeDutStatuslLog.txt
-    exit 0
-fi
+case "$WORKSPACE" in
+    *_CTS*|*_GTS*|*_TVTS*|*_VTS*|*_STS*|*_NTS*)
+    if [ ! -f ${Image_File_Name} ]; then
+        echo "Test image file not found @ ${Image_File_Name}" >> ${WORKSPACE}/AutoTestRes/bin/update/upgradeDutStatuslLog.txt
+        exit 0
+    fi
+    ;;
+    *)
+    if [ ! -f ${WORKSPACE}/AutoTestRes/image/${Image_File_Name} ]; then
+        echo "Test image file not found @ ${WORKSPACE}/AutoTestRes/image/${Image_File_Name}" >> ${WORKSPACE}/AutoTestRes/bin/update/upgradeDutStatuslLog.txt
+        exit 0
+    fi
+    ;;
+esac
 
 i=1
 while [ $i -lt 4 ]
@@ -92,8 +102,17 @@ do
 
     if [[ ${UPDATE_TOOL} =~ 'adnl' ]]; then
         if [[ ! -z $(lsusb | grep 1b8e:c004) ]]; then
-            echo "${WORKSPACE}/AutoTestRes/bin/update/adnl_burn_pkg -p ${WORKSPACE}/AutoTestRes/image/${Image_File_Name}"
-            echo Linux2017|sudo -S ${WORKSPACE}/AutoTestRes/bin/update/adnl_burn_pkg -p ${WORKSPACE}/AutoTestRes/image/${Image_File_Name} -r 1 | tee -a ${WORKSPACE}/AutoTestRes/bin/update/tmpUpgradeLog.txt
+            if [[ $WORKSPACE =~ (_CTS|_VTS|_GTS|_TVTS|_NTS|_STS) ]]; then
+                echo "${WORKSPACE}/AutoTestRes/bin/update/adnl_burn_pkg -p ${Image_File_Name}"
+                echo Linux2017|sudo -S ${WORKSPACE}/AutoTestRes/bin/update/adnl_burn_pkg -p ${Image_File_Name} -r 1 | tee -a ${WORKSPACE}/AutoTestRes/bin/update/tmpUpgradeLog.txt
+            else
+                echo "${WORKSPACE}/AutoTestRes/bin/update/adnl_burn_pkg -p ${WORKSPACE}/AutoTestRes/image/${Image_File_Name}"
+                if [[ ${WORKSPACE} =~ "Nagratnocs" ]]; then
+                    echo Linux2017|sudo -S ${WORKSPACE}/AutoTestRes/bin/update/adnl_burn_pkg -b 0 -p ${WORKSPACE}/AutoTestRes/image/${Image_File_Name} -r 1 | tee -a ${WORKSPACE}/AutoTestRes/bin/update/tmpUpgradeLog.txt
+                else
+                    echo Linux2017|sudo -S ${WORKSPACE}/AutoTestRes/bin/update/adnl_burn_pkg -p ${WORKSPACE}/AutoTestRes/image/${Image_File_Name} -r 1 | tee -a ${WORKSPACE}/AutoTestRes/bin/update/tmpUpgradeLog.txt
+                fi
+            fi
             adnl_burnning_log=$(cat ${WORKSPACE}/AutoTestRes/bin/update/tmpUpgradeLog.txt)
             if [[ ${adnl_burnning_log} =~ 'burn successful^_^' ]]; then
                 echo "Upgrade image successful" >> ${WORKSPACE}/AutoTestRes/bin/update/upgradeDutStatuslLog.txt
@@ -101,7 +120,7 @@ do
                 break
             fi
         else
-            echo "INFO: Debug is not available!"
+            echo "INFO: Debug is not avaliable!"
         fi
         rm ${WORKSPACE}/AutoTestRes/bin/update/tmpUpgradeLog.txt
     else

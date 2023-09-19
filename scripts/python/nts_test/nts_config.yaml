@@ -1,0 +1,51 @@
+test_account:
+  name: "xiaoliang.wang@amlogic.com"
+  pwd: "Linux2017!"
+
+device_auth_code:
+  device: None
+
+elements:
+  login:
+    username_path: user-identifier
+    continue_btn: btn-continue
+    password_path: field-password
+    login_btn: btn-login
+  select_platform:
+    wait_text: "My Devices"
+    wait_path: //*[@id="dataview-1190"]/div/div[1]
+    platform: /html/body/div[6]/div[2]/div/div/div/div[3]/div[3]/div/div[2]/table/tbody/tr/td[1]/div/div
+    platform_path: //*[@id="gridview-1195"]/div[2]/table[@id="gridview-1195-record-22"]/tbody/tr
+    platform_CSS: div.x-grid-item-container>table
+    cancel: wizard-cancel-btnInnerEl
+    select_device: button-1053-btnInnerEl
+    platform1: //*[@id="gridview-1212-record-25"]/tbody/tr/td[1]/div/div
+    next_btn: wizard-next-btnEl
+  manager:
+    wait_path: //*[@id="devicemanager-btnInnerEl"]
+    wait_text: "HW Manager"
+    HWManager: //*[@id="devicemanager-btnInnerEl"]
+    my_devices: //*[@id="Hawkins-TabbedInterface-10-tab-myDevices"]
+    status: //*[contains(@id, 'Hawkins-TabbedInterface-')]/div/div/div/div[2]/table/tbody/tr[10]/td[2]
+  test_plan:
+    wait_path: //*[@id="button-1165-btnInnerEl"]
+    wait_text: PDM Project
+    filter: button-1080-btnInnerEl
+    none: menucheckitem-1082-textEl
+    auto: menucheckitem-1083-textEl
+    run: //*[@id="button-1171-btnInnerEl"]/div/i
+    select: testSelectionItems-1093-btnEl
+    select_all: menuitem-1095-itemEl
+#    send_email: //*[@id="checkboxfield-1267-bodyEl"]/div
+    send_email: //input[contains(@id,"checkboxfield-") and @type="button"]
+    run_all: //span[contains(@id,"button-") and text()="Run"]
+#    cancel: button-1275-btnEl
+    cancel: //span[contains(@id,"button-") and text()="Cancel"]
+  retry:
+    test_plan: //*[@id="tab-1174-btnInnerEl"]
+    pending: //*[@id="button-1067-btnInnerEl"]
+    select: testSelectionItems-1093-btnEl
+    select_all: menuitem-1095-itemEl
+    run_all: //*[@id="button-1171-btnInnerEl"]/div/i
+
+

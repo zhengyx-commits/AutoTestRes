@@ -2,9 +2,7 @@ from lib.common.system.ADB import ADB
 from tests.OTT_Hybrid.MULTI import *
 from tests.OTT_Hybrid import *
 
-g_conf_device_id = pytest.config['device_id']
-multi = MultiPlayer(g_conf_device_id)
-playerCheck = PlayerCheck()
+playerCheck = PlayerCheck_Iptv()
 adb = ADB()
 
 
@@ -40,3 +38,4 @@ def test_HLSV5_TS_H265_4k():
         stop_cmd = multi.STOP_CMD
         multi.send_cmd(stop_cmd)
         assert playerCheck.check_stopPlay()[0], "stop playback failed"
+        multi.stop_multiPlayer_apk()

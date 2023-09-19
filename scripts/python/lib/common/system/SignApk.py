@@ -90,7 +90,7 @@ class SignApk:
 
     def __init__(self):
         self.res_manager = ResManager()
-        self._signature_path = self.res_manager.get_target("signature/")
+        self._signature_path = self.res_manager.get_target(path="signature/", source_path="signature/")
         self._root_path = os.getcwd()
         self._tools_path = '{}/tools/signapk.jar '.format(self._root_path)
         self.cmd = 'java -jar {}'.format(self._tools_path)

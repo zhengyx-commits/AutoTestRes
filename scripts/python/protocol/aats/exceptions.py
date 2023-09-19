@@ -68,7 +68,7 @@ class MultiPlayerAdbServerRestartedException(MultiPlayerRuntimeError):
     """
     Raised when a ping response indicates the device restarted during
     the execution of an endpoint. Usually means a stackoverflow or segfault
-    occurred.
+    ocurred.
     """
     pass
 

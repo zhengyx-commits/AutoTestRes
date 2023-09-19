@@ -1,0 +1,14 @@
+# for compatibility test
+conf_excel:
+  headers: ['index', 'video','version', 'pipline_type', 'start', 'pause', 'resume', 'seek', 'stop', 'pass', 'status']
+
+conf_batch:
+  batch_size: 5
+  batch_total_video: 50
+
+conf_version:
+  number: 1
+
+conf_resource_server:
+  resource_url: "http://qa-sz.amlogic.com:8881/chfs/shared/AUT/qa_test"
+

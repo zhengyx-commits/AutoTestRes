@@ -15,8 +15,8 @@ from . import config_yaml
 
 class SeekFun(ADB):
     LOADING_TAG = ['PlayerBuffering buffering', 'need_start=1']
-    POSITION_TAG = ',current_ms:'
-    POSITION_RE = r',current_ms:\s*-?(\d+),'
+    POSITION_TAG_CMCC = ['curtime=', ' (ms:']
+    POSITION_TAG_CMCC_RE = r' \(ms:(.*?)\) fulltime'
     LOGCAT_FILE = 'logcat.log'
     VIDEOPLAYER_POSITION_TAG = '[getCurrentPosition]'
     VIDEOPLAYER_POSITION_RE = r'position : (\d+) msec'
@@ -38,8 +38,6 @@ class SeekFun(ADB):
         self.press_event = ''
         self.position_list = []
         self.res = ''
-        # self.seek_type = pytest.config.get("seek_press_event", {}).get("seek_type", '')
-        # self.press_event = pytest.config.get("seek_press_event", {}).get("event", '')
         self.config_yaml = config_yaml()
         self.p_conf_seek = self.config_yaml.get_note('conf_seek')
         self.p_conf_seek_type = self.p_conf_seek['seek_press_event']['seek_type']
@@ -76,8 +74,8 @@ class SeekFun(ADB):
             self.process_switch(direction)
             self.keyevent('KEYCODE_DPAD_CENTER')
             self.check_seek_position(position_tag=self.OTT_ONLINE_PLAY_POSITION_TAG,
-                                          position_re=self.OTT_ONLINEPALY_POSITION_RE,
-                                          logcat_tag=self.LOGCAT_TAG_OTT_ONLINEPALY)
+                                     position_re=self.OTT_ONLINEPALY_POSITION_RE,
+                                     logcat_tag=self.LOGCAT_TAG_OTT_ONLINEPALY)
             if self.get_position_direction() == direction:
                 logging.info(f'Process bar direction: {direction}')
 
@@ -94,8 +92,8 @@ class SeekFun(ADB):
             # start longPress
             self.process_switch(direction)
             self.check_seek_position(position_tag=self.VIDEOPLAYER_POSITION_TAG,
-                                          position_re=self.VIDEOPLAYER_POSITION_RE,
-                                          logcat_tag=self.LOGCAT_TAG_VIDEOPLAYER)
+                                     position_re=self.VIDEOPLAYER_POSITION_RE,
+                                     logcat_tag=self.LOGCAT_TAG_VIDEOPLAYER)
             if self.get_position_direction() == direction:
                 logging.info(f'Process bar direction: {direction}')
         elif direction == 'stop':
@@ -127,13 +125,14 @@ class SeekFun(ADB):
             line = logcat.stdout.readline()
             if 'unexpected EOF!' in line:
                 raise ValueError('logcat buffer crash ,no data in file')
-            if position_tag in line:
+            if position_tag[0] and position_tag[1] in line:
                 if not start:
                     start = count_time(line[6:14].split(':'))
                     logging.info(f'start {start}')
                     logging.info(line[6:14])
                 logging.info(line)
                 self.position_list.append(int(re.findall(position_re, line, re.S)[0]))
+                logging.info(f'position_list:{self.position_list}')
                 if count_time(line[6:14].split(':')) - start > 50:
                     logging.info(f"end {count_time(line[6:14].split(':'))}")
                     os.kill(logcat.pid, signal.SIGTERM)
@@ -193,8 +192,10 @@ class SeekFun(ADB):
         logging.info(f'end tap {time.asctime()}')
         time.sleep(10)
         logging.info(time.asctime())
-        self.check_seek_position(position_tag or self.POSITION_TAG, position_re or self.POSITION_RE)
-        logging.info(self.get_position_direction())
+        self.check_seek_position(position_tag or self.POSITION_TAG_CMCC, position_re or self.POSITION_TAG_CMCC_RE)
+        logging.info(f'get_position_direction:{self.get_position_direction()}')
         if self.get_position_direction() == direction:
             logging.info(f'Process bar direction: {direction_dict[direction][0]}')
             return True
+        else:
+            return False

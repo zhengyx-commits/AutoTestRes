@@ -31,6 +31,7 @@ WIFI_OFF = "svc wifi disable"
 NETWORK_ELEMENT = "Network & Internet"
 WIFI_CONNECT_WAIT_TIMEOUT = 30
 ENTER_NETWORK_STR = "Enter Network"
+FACTORY_RESET_ACTIVITY_NAME = '.device.storage.ResetActivity'
 
 
 class TvSettingApp(ADB):
@@ -41,11 +42,7 @@ class TvSettingApp(ADB):
     _instance = None  # used to create singleton object at upper layers
 
     def __init__(self):
-        # device_config = pytest.config.get('device', {})
-        # self.sn = device_config.get('device_id', '1234567890')
-        self.sn = pytest.config['device_id']
-        # print(self.sn)
-        ADB.__init__(self, self.sn, "TvSettingApp", logdir=pytest.result_dir, stayFocus=False)
+        ADB.__init__(self, name="TvSettingApp", unlock_code="", logdir=pytest.result_dir, stayFocus=False)
         self.app_name = TV_SETTING_APP
         self._path = os.getcwd()
         self.apk_exist = self.check_tvsetting_apk_exist()

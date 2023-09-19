@@ -26,8 +26,10 @@ class AATSBuildConfig:
     aats_test_cases_config = OrderedDict()
     aats_test_cases_full_config = OrderedDict()
     aats_test_cases = OrderedDict()
+    aats_test_cases_project = OrderedDict()
 
-    def __init__(self):
+    def __init__(self, args):
+        self.args = args
         self.module_source_map = OrderedDict()
         self.module_project_map = OrderedDict()
         self.module_group_map = OrderedDict()
@@ -46,11 +48,18 @@ class AATSBuildConfig:
         self.testcases_json_file = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), path)
         self._load_test_cases(self.testcases_json_file)
+        # print("self.module_project_map", self.module_project_map)
+        # print("self.aats_test_cases_full_config", self.aats_test_cases_full_config)
         self.tests_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), AATS_TESTS_DIR_NAME)
 
-        for k, v in self.aats_test_cases_full_config.items():
-            self.aats_test_cases[k] = v['pytest_args']
+        # for k, v in self.aats_test_cases_full_config.items():
+        #     self.aats_test_cases[k] = v['pytest_args']
+
+        if self.module_project_map:
+            for k, v in self.module_project_map.items():
+                self.aats_test_cases_project[k] = v
+
         if prj == 'tv_amazon':
             self.aats_test_cases_full_config = dict(sorted(self.aats_test_cases_full_config.items(),
                                                            key=lambda x: x[1]['group'][0]))
@@ -59,7 +68,19 @@ class AATSBuildConfig:
                                                            key=lambda x: x[1]['author'][0]))
 
         for k, v in self.aats_test_cases_full_config.items():
-            self.aats_test_cases_config[k] = v['pytest_args']
+            if self.args.project:
+                if 'project' in v:
+                    if (self.args.project in v['project']) and (k in list(self.aats_test_cases_project.keys())):
+                        self.aats_test_cases_config[k] = v['pytest_args']
+                        self.aats_test_cases[k] = v['pytest_args']
+                else:
+                    pass
+            else:
+                # if 'project' not in v:
+                self.aats_test_cases_config[k] = v['pytest_args']
+                self.aats_test_cases[k] = v['pytest_args']
+
+        # print("run aats_test_cases", len(self.aats_test_cases))
 
     def _load_test_cases(self, config_file):
 

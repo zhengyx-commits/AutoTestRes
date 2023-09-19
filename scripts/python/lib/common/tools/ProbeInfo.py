@@ -3,6 +3,7 @@ import re
 import subprocess
 import threading
 import time
+from lib import get_device
 from lib.common.system.Permission import Permission
 from lib.common.system.ADB import ADB
 from util.Decorators import stop_thread
@@ -42,10 +43,11 @@ class ProbeInfo(ADB):
 
     def probe_info_logcat(self):
         logcat_file = open(self.logdir + '/info.log', 'w')
-        cmd = 'adb -s ' + self.serialnumber + ' shell logcat -s amlsource | grep ReportProbe'
-        log = subprocess.Popen(cmd.split(), stdout=logcat_file)
-        time.sleep(3)
-        self.stop_save_logcat(log, logcat_file)
+        for serialnumber in get_device():
+            cmd = 'adb -s ' + serialnumber + ' shell logcat -s amlsource | grep ReportProbe'
+            log = subprocess.Popen(cmd.split(), stdout=logcat_file)
+            time.sleep(3)
+            self.stop_save_logcat(log, logcat_file)
         # with open(logcat_file.name, 'r') as f:
         #     result = f.read()
         # return result
@@ -93,7 +95,6 @@ class ProbeInfo(ADB):
         rc, output = self.run_terminal_cmd("ffprobe " + self.logdir + '/' + video_file, output_stderr=True)
         for line in output:
             linestr = line.decode('utf-8')
-            logging.info(f"linestr: {linestr}")
             if 'Video:' in linestr:
                 encode_type_str = re.findall(r'Video: (\w+)', linestr)[0].upper()
                 self.video_info.append(encode_type_str)

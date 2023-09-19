@@ -1,5 +1,5 @@
 import logging
-
+import pytest
 import uiautomator2 as u2
 
 from lib.common.system.ADB import ADB
@@ -23,7 +23,12 @@ class Permission:
             if uiautomator_type == "u1":
                 self.adb.u(type=uiautomator_type).d1(text=text).click()
             else:
-                self.adb.u().d2(text=text).click()
+                if isinstance(pytest.serialnumber, list):
+                    devices_instance_list = self.adb.u()
+                    for device_instance in devices_instance_list:
+                        device_instance.d2(text=text).click()
+                else:
+                    self.adb.u().d2(text=text).click()
         except u2.exceptions.UiObjectNotFoundError as e:
             logging.warning(e)
         except OSError as e:

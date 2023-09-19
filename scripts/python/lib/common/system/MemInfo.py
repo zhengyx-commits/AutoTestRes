@@ -21,7 +21,7 @@ from lib.common.system.ADB import ADB
 
 class MemInfo(ADB):
     '''
-    memory count test lib
+    memmory count test lib
 
     Attributes:
         DUMP_MEMINFO_COMMAND : dumpsys command
@@ -57,7 +57,7 @@ class MemInfo(ADB):
 
     def get_mem_info(self):
         '''
-        get memory info, pagetrace info, write to memInfo.log
+        get memmory info, pagetrace info, write to memInfo.log
         @return: None
         '''
         while True:

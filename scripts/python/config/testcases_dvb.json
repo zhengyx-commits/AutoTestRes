@@ -1,0 +1,580 @@
+{
+    "testcases": [
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB_CHECK_TEST",
+            "path": "tests/DVB/test_DVB_dvb_check_test.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_042_SWITCH_CHANNEL_CRASH",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_042_Switch_Channel_Crash.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_044_SWITCH_CHANNEL_AVSYNC",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_044_Switch_Channel_Avsync.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_008_SWITCH_CHANNEL_TIME_SF_SD_TO_SD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_008_Switch_Channel_Time_Same_Frequency_SD_To_SD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_009_SWITCH_CHANNEL_TIME_CF_SD_TO_SD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_009_Switch_Channel_Time_Cross_Frequency_SD_To_SD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_010_SWITCH_CHANNEL_TIME_SF_SD_TO_HD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_010_Switch_Channel_Time_Same_Frequency_SD_To_HD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_011_SWITCH_CHANNEL_TIME_CF_SD_TO_HD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_011_Switch_Channel_Time_Cross_Frequency_SD_To_HD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_012_SWITCH_CHANNEL_TIME_SF_HD_TO_HD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_012_Switch_Channel_Time_Same_Frequency_HD_To_HD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_013_SWITCH_CHANNEL_TIME_CF_HD_TO_HD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_013_Switch_Channel_Time_Cross_Frequency_HD_To_HD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_003_PROGRAM_PLAYBACK_ENC_TO_ENC",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_003_Program_Playback_Encryption_To_Encryption.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_004_PROGRAM_PLAYBACK_ENC_TO_FREE",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_004_Program_Playback_Encryption_To_Free.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_013_PROGRAM_PLAYBACK_YOUTUBE_TO_DTV",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_013_Program_Playback_YouTube_To_DTV.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_014_PROGRAM_PLAYBACK_NETFLIX_TO_DTV",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_014_Program_Playback_Netflix_To_DTV.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_015_PROGRAM_PLAYBACK_MULTI-MEDIA_TO_DTV",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_015_Program_Playback_Multi-Media_To_DTV.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_021_SWITCH_CHANNEL_CRASH_FIVE_SECOND",
+            "path": "tests/DVB/stress/test_DVB_Sanity_Func_021_Switch_Channel_Crash_Five_Second.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_038_SWITCH_CHANNEL_BLACK_SCREEN_MODE",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_038_Switch_Channel_Black_Screen_Mode.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_039_SWITCH_CHANNEL_STATIC_FRAME_MODE",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_039_Switch_Channel_Static_Frame_Mode.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_040_SWITCH_TO_PLAYER_BLACK_SCREEN_MODE",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_040_Switch_To_Player_Black_Screen_Mode.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_041_SWITCH_TO_PLAYER_STATIC_FRAME_MODE",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_041_Switch_To_Player_Static_Frame_Mode.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_018_PLUG_SIGNAL_MPEG_4K",
+            "path": "tests/DVB/stress/test_DVB_Sanity_Func_018_Plug_Signal_MPEG_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_019_PLUG_SIGNAL_H264_4K",
+            "path": "tests/DVB/stress/test_DVB_Sanity_Func_019_Plug_Signal_H264_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_020_PLUG_SIGNAL_H265_4K",
+            "path": "tests/DVB/stress/test_DVB_Sanity_Func_020_Plug_Signal_H265_4k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_100_DI_SWITCH_CHANNEL_1080P_1080I",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_100_Di_Switch_Channel_1080p_1080i.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_097_VIDEO_DECODE_MPEG",
+            "path": "tests/DVB/decode/test_DVB_Sanity_Func_097_Video_Decode_Mpeg.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_098_VIDEO_DECODE_H264",
+            "path": "tests/DVB/decode/test_DVB_Sanity_Func_098_Video_Decode_H264.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_099_VIDEO_DECODE_H265",
+            "path": "tests/DVB/decode/test_DVB_Sanity_Func_099_Video_Decode_H265.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_043_SWITCH_CHANNEL_FREE_TO_ENCRYPTION",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_043_Switch_Channel_Free_To_Encryption.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_15_DVB_C_PROGRAM_RECORDING",
+            "path": "tests/DVB/PVR/test_DVB_Func15_DVB-C_program_recording.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_16_DVB_C_RECORDING_SWITCH_CHANNEL",
+            "path": "tests/DVB/PVR/test_DVB_Func16_DVB-C_recording_switch_channel.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_18_DVB_C_PLAY_MULTI_LANGUAGE_PROGRAM",
+            "path": "tests/DVB/PVR/test_DVB_Func18_DVB-C_play_multi_language_program.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_19_DVB_PLAY_MULTI_SUBTITLE_PROGRAM",
+            "path": "tests/DVB/PVR/test_DVB_Func19_DVB-C_play_multi_subtitle_program.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_20_DVB_C_LOOKBACK_MPEG_PROGRAM",
+            "path": "tests/DVB/PVR/test_DVB_Func20_DVB-C_lookback_mpeg_program.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_21_DVB_C_LOOKBACK_H264_PROGRAM",
+            "path": "tests/DVB/PVR/test_DVB_Func21_DVB-C_lookback_h264_program.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_22_DVB_C_LOOKBACK_H265_PROGRAM",
+            "path": "tests/DVB/PVR/test_DVB_Func22_DVB-C_lookback_h265_program.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_23_DVB_C_LOOKBACK_H264_4K_PROGRAM",
+            "path": "tests/DVB/PVR/test_DVB_Func23_DVB-C_lookback_h265_4k_program.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_24_DVB_C_SWITCH_CHANNEL",
+            "path": "tests/DVB/PVR/test_DVB_Func24_DVB-C_switch_channel.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_26_DVB_C_DISPLAY_THE_DEFAULT_AUDIO_TRACK_DURING_PLAYBACK",
+            "path": "tests/DVB/PVR/test_DVB_Func26_DVB-C_display_the_default_audio_track_during_playback.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_27_DVB_C_DISPLAY_THE_DEFAULT_SUBTITLE_DURING_PLAYBACK",
+            "path": "tests/DVB/PVR/test_DVB_Func27_DVB-C_display_the_default_subtitle_during_playback.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_29_DVB_C_RECORDING_PLAYBACK",
+            "path": "tests/DVB/PVR/test_DVB_Func29_DVB-C_recording_playback.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_30_DVB_C_RECORDING_PLAYBACK_WITH_HOTPLUG",
+            "path": "tests/DVB/PVR/test_DVB_Func30_DVB-C_recording_playback_with_hotplug.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_33_DVB_C_PAUSE_AND_PLAYBACK",
+            "path": "tests/DVB/timeshift/test_DVB_Func33_DVB-C_pause_and_playback.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_35_DVB_C_PLAYBACK_AND_SEEK",
+            "path": "tests/DVB/timeshift/test_DVB_Func35_DVB-C_playback_and_seek.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_36_DVB_C_TIMESHIFT_PLAYBACK",
+            "path": "tests/DVB/timeshift/test_DVB_Func36_DVB-C_timeshift_playback.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_45_DVB_C_AVSYNC",
+            "path": "tests/DVB/timeshift/test_DVB_Func45_DVB-C_avsync.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_STAB_16_DVB_C_RECORDING_INTO_PORTABLE_HARD_DISK",
+            "path": "tests/DVB/timeshift/test_DVB_Stab16_DVB-C_recording_into_portable_hard_disk.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_STAB_17_DVB_C_RECORDING_AND_PLAYBACK",
+            "path": "tests/DVB/PVR/test_DVB_Stab17_DVB-C_recording_and_playback.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_46_DECODER_4K_PLAYBACK",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_46_Decoder_4K_Playback.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_115_STANDBY",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_115_Standby.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_136_HD_START_KPI",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_136_HD_Start_KPI.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_160_STANDBY_REBOOT",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_160_Standby_Reboot.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_137_UHD_START_KPI",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_137_UHD_Start_KPI.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#MULTI",
+            "name": "AATS_DVB_FUNC_156_CAS_STRESS_PLAYBACK",
+            "path": "tests/DVB/stress/test_DVB_Sanity_Func_156_CAS_Stress_Playback.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#MULTI",
+            "name": "AATS_DVB_FUNC_159_STRESS_PLAYBACK",
+            "path": "tests/DVB/stress/test_DVB_Sanity_Func_159_Stress_Playback.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_154_CAS_REPEAT_STANDBY",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_154_Repeat_Standby.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_155_CAS_REPEAT_REBOOT",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_155_CAS_repeat_Reboot.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_049_SWITCH_ASPECT_RATIO_16_9",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_049_Switch_Aspect_Ratio_16_9.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_050_SWITCH_ASPECT_RATIO_4_3",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_050_Switch_Aspect_Ratio_4_3.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_063_064_SWITCH_TELETEXT_SWITCH_PAGE",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_063_064_Switch_Teletext_Switch_Page.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_065_SWITCH_TELETEXT_INTERRUPT_SIGNAL",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_065_Switch_Teletext_INTERRUPT_SIGNAL.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_067_SWITCH_SUBTITLE_SCTE27",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_067_Switch_Subtitle_SCTE27.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_069_071_SWITCH_SUBTITLE_CC_MULTI_LINE",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_069_071_Switch_Subtitle_CC_Multi_Line.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_070_SWITCH_SUBTITLE_DVB_TEXT",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_070_Switch_Subtitle_DVB_TEXT.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_STAB_08_SWITCH_CHANNEL",
+            "path": "tests/DVB/stress/test_DVB_Sanity_Stab_08_Stress_Test_Switch_Channel.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_095_AUDIO_TRACK",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_095_Audio_Track.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        }
+    ]
+}

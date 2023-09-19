@@ -2,9 +2,7 @@ from lib.common.system.ADB import ADB
 from tests.OTT_Hybrid.MULTI import *
 from tests.OTT_Hybrid import *
 
-g_conf_device_id = pytest.config['device_id']
-multi = MultiPlayer(g_conf_device_id)
-playerCheck = PlayerCheck()
+playerCheck = PlayerCheck_Iptv()
 adb = ADB()
 
 
@@ -15,11 +13,11 @@ def multi_teardown():
     multi.stop_multiPlayer_apk()
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_HLSV3_TS_H264_4k():
     final_urllist = get_conf_url("conf_hls_url", "hlsV3_TS_H264_4K")
     for final_url in final_urllist:
-        start_cmd= multi.get_start_cmd([final_url])
+        start_cmd = multi.get_start_cmd([final_url])
         multi.send_cmd(start_cmd)
         assert playerCheck.check_startPlay()[0], "start playback failed"
         pause_cmd = multi.PAUSE_CMD

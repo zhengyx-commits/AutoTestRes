@@ -3,6 +3,9 @@
 # @Time    : 2022/4/22
 # @Author  : jianhua.huang
 import itertools
+
+import numpy
+
 from tests.OTT_Hybrid.MULTI import *
 from tests.OTT_Hybrid import *
 
@@ -17,6 +20,7 @@ def multi_teardown():
 
 
 # @pytest.mark.skip
+@pytest.mark.flaky(reruns=3)
 def test_PIP_Switch_Window_HTTP_TS_H265_1080P():
     # url = get_conf_url("conf_http_url", "http_TS_H265_1080")
     # if url:
@@ -32,15 +36,10 @@ def test_PIP_Switch_Window_HTTP_TS_H265_1080P():
             common_case.switch_pip_2_window()
             multi.stop_multiPlayer_apk()
     else:
-        urls = list(itertools.product(finalurl_list, finalurl_list))
-        # print(f"urls: {urls}")
+        urls = list(zip(finalurl_list, sorted(finalurl_list, reverse=True)))
         for url in urls:
-            url = list(url)
-            # print(f"url[0]:{url[0]}")
-            # print(f"url[1]:{url[1]}")
             p_start_cmd = multi.get_start_cmd([url[0], url[1]])
             multi.send_cmd(p_start_cmd)
             assert common_case.player_check.check_startPlay()[0], "start play failed"
             common_case.switch_pip_2_window()
             multi.stop_multiPlayer_apk()
-

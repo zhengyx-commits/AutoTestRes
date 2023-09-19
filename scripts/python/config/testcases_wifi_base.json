@@ -2,8 +2,8 @@
     "testcases": [
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_SPECIAL_SSID",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_special_ssid.py",
+            "name": "AATS_WIFI_03_OPEN_WIFI",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_003_open_wifi.py",
             "resource": [
                 "media_sys"
             ],
@@ -11,8 +11,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_CONCEAL_SSID",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_conceal_ssid.py",
+            "name": "AATS_WIFI_05_CLOSE_WIFI",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_005_close_wifi.py",
             "resource": [
                 "media_sys"
             ],
@@ -20,8 +20,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_11N",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_11n.py",
+            "name": "AATS_WIFI_07_SCAN_ABLE",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_007_scan_able.py",
             "resource": [
                 "media_sys"
             ],
@@ -29,8 +29,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_LEGCY",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_legcy.py",
+            "name": "AATS_WIFI_08_HIDE_PASSWD",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_008_hide_passwd.py",
             "resource": [
                 "media_sys"
             ],
@@ -38,8 +38,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_40MHZ",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_40mhz.py",
+            "name": "AATS_WIFI_09_SWITCH_BAND",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_009_switch_band.py",
             "resource": [
                 "media_sys"
             ],
@@ -47,8 +47,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_20MHZ",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_20mhz.py",
+            "name": "AATS_WIFI_10_FORGET_NETWORK",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_010_forget_network.py",
             "resource": [
                 "media_sys"
             ],
@@ -56,8 +56,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_1CHANNEL",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_1channel.py",
+            "name": "AATS_WIFI_11_CANCEL_FORGET_NETWORK",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_011_cancel_forget_network.py",
             "resource": [
                 "media_sys"
             ],
@@ -65,8 +65,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_6CHANNEL",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_6channel.py",
+            "name": "AATS_WIFI_12_RECONNECT_FORGETTED",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_012_reconnect_forgetted.py",
             "resource": [
                 "media_sys"
             ],
@@ -74,8 +74,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_11CHANNEL",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_11channel.py",
+            "name": "AATS_WIFI_13_SHOW_ALL_AND_LESS",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_013_show_all_and_less.py",
             "resource": [
                 "media_sys"
             ],
@@ -83,8 +83,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_WPA2_AES_NO_PMF",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_wpa2_aes_no_pmf.py",
+            "name": "AATS_WIFI_14_SSID_INPUT",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_014_ssid_input.py",
             "resource": [
                 "media_sys"
             ],
@@ -92,8 +92,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_WPA2_AES_PMF",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_wpa2_aes_pmf.py",
+            "name": "AATS_WIFI_15_CONNECT_OPEN",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_015_connect_open.py",
             "resource": [
                 "media_sys"
             ],
@@ -101,8 +101,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_WPA2_AES_PMF_NO_MANDATORY",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_wpa2_aes_pmf_no_mandatory.py",
+            "name": "AATS_WIFI_16_CONNECT_WPA_WPA2",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_016_connect_wpa_wpa2.py",
             "resource": [
                 "media_sys"
             ],
@@ -110,8 +110,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_WPA2_TKIP_AES",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_wpa2_tkip_aes.py",
+            "name": "AATS_WIFI_17_CONNECT_WPA3",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_017_connect_wpa3.py",
             "resource": [
                 "media_sys"
             ],
@@ -119,8 +119,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_WPA3_AES",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_wpa3_aes.py",
+            "name": "AATS_WIFI_18_CONNECT_SSID_CHAR_NUMBER",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_018_connect_ssid_with_char_and_number.py",
             "resource": [
                 "media_sys"
             ],
@@ -128,8 +128,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_WPA3_AES_PMF_NO_MANDATORY",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_wpa3_aes_pmf_no_mandatory.py",
+            "name": "AATS_WIFI_19_CONNECT_2G_SPECIAL_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_019_connect_2g_special_ssid.py",
             "resource": [
                 "media_sys"
             ],
@@ -137,8 +137,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_2G_WPA3_AES_PMF",
-            "path": "tests/WIFI/test_Wifi_Connect_2g_wpa3_aes_pmf.py",
+            "name": "AATS_WIFI_20_CONNECT_SSID_BLANK",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_020_connect_ssid_with_blank.py",
             "resource": [
                 "media_sys"
             ],
@@ -146,8 +146,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_SPECIAL_SSID",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_special_ssid.py",
+            "name": "AATS_WIFI_21_CONNECT_2G_CONCEAL_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_021_connect_2g_conceal_ssid.py",
             "resource": [
                 "media_sys"
             ],
@@ -155,8 +155,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_CONCEAL_SSID",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_conceal_ssid.py",
+            "name": "AATS_WIFI_22_CONNECT_WIRELESS_AUTO",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_022_connect_wireless_auto.py",
             "resource": [
                 "media_sys"
             ],
@@ -164,8 +164,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_AX",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_ax.py",
+            "name": "AATS_WIFI_23_CONNECT_WIRELESS_AX",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_023_connect_wireless_ax.py",
             "resource": [
                 "media_sys"
             ],
@@ -173,8 +173,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_N_AC_AX_MIXED",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_n_ac_ax_mixed.py",
+            "name": "AATS_WIFI_24_CONNECT_2G_11N",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_024_connect_2g_11n.py",
             "resource": [
                 "media_sys"
             ],
@@ -182,8 +182,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_LEGCY",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_legcy.py",
+            "name": "AATS_WIFI_25_CONNECT_2G_LEGCY",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_025_connect_2g_legcy.py",
             "resource": [
                 "media_sys"
             ],
@@ -191,8 +191,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_80MHZ",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_80mhz.py",
+            "name": "AATS_WIFI_26_CONNECT_2G_40MHZ",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_026_connect_2g_40mhz.py",
             "resource": [
                 "media_sys"
             ],
@@ -200,8 +200,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_40MHZ",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_40mhz.py",
+            "name": "AATS_WIFI_27_CONNECT_2G_20MHZ",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_027_connect_2g_20mhz.py",
             "resource": [
                 "media_sys"
             ],
@@ -209,8 +209,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_20MHZ",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_20mhz.py",
+            "name": "AATS_WIFI_28_CONNECT_2G_1CHANNEL",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_028_connect_2g_1channel.py",
             "resource": [
                 "media_sys"
             ],
@@ -218,8 +218,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_161CHANNEL",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_161channel.py",
+            "name": "AATS_WIFI_29_CONNECT_2G_6CHANNEL",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_029_connect_2g_6channel.py",
             "resource": [
                 "media_sys"
             ],
@@ -227,8 +227,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_36CHANNEL",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_36channel.py",
+            "name": "AATS_WIFI_30_CONNECT_2G_11CHANNEL",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_030_connect_2g_11channel.py",
             "resource": [
                 "media_sys"
             ],
@@ -236,8 +236,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_52CHANNEL",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_52channel.py",
+            "name": "AATS_WIFI_31_CONNECT_2G_WPA2_AES_NO_PMF",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_031_connect_2g_wpa2_aes_no_pmf.py",
             "resource": [
                 "media_sys"
             ],
@@ -245,8 +245,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_WPA2_AES_NO_PMF",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_wpa2_aes_no_pmf.py",
+            "name": "AATS_WIFI_32_CONNECT_2G_WPA2_AES_PMF",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_032_connect_2g_wpa2_aes_pmf.py",
             "resource": [
                 "media_sys"
             ],
@@ -254,8 +254,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_WPA2_AES_PMF",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_wpa2_aes_pmf.py",
+            "name": "AATS_WIFI_33_CONNECT_2G_WPA2_AES_PMF_NO_MANDATORY",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_033_connect_2g_wpa2_aes_pmf_no_mandatory.py",
             "resource": [
                 "media_sys"
             ],
@@ -263,8 +263,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_WPA2_AES_PMF_NO_MANDATORY",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_wpa2_aes_pmf_no_mandatory.py",
+            "name": "AATS_WIFI_34_CONNECT_2G_WPA2_TKIP_AES",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_034_connect_2g_wpa2_tkip_aes.py",
             "resource": [
                 "media_sys"
             ],
@@ -272,8 +272,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_WPA2_TKIP_AES",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_wpa2_tkip_aes.py",
+            "name": "AATS_WIFI_35_CONNECT_2G_WPA3_AES",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_035_connect_2g_wpa3_aes.py",
             "resource": [
                 "media_sys"
             ],
@@ -281,8 +281,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_WPA3_AES",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_wpa3_aes.py",
+            "name": "AATS_WIFI_36_CONNECT_2G_WPA3_AES_PMF_NO_MANDATORY",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_036_connect_2g_wpa3_aes_pmf_no_mandatory.py",
             "resource": [
                 "media_sys"
             ],
@@ -290,8 +290,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_WPA3_AES_PMF_NO_MANDATORY",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_wpa3_aes_pmf_no_mandatory.py",
+            "name": "AATS_WIFI_37_CONNECT_2G_WPA3_AES_PMF",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_037_connect_2g_wpa3_aes_pmf.py",
             "resource": [
                 "media_sys"
             ],
@@ -299,8 +299,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CONNECT_5G_WPA3_AES_PMF",
-            "path": "tests/WIFI/test_Wifi_Connect_5g_wpa3_aes_pmf.py",
+            "name": "AATS_WIFI_38_CONNECT_2G_ENCRYPTION_WEP_64",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_038_connect_2g_encryption_wep_64.py",
             "resource": [
                 "media_sys"
             ],
@@ -308,8 +308,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_FORGET_NETWORK",
-            "path": "tests/WIFI/test_Wifi_Forget_Network.py",
+            "name": "AATS_WIFI_39_CONNECT_2G_ENCRYPTION_WEP_128",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_039_connect_2g_encryption_wep_128.py",
             "resource": [
                 "media_sys"
             ],
@@ -317,8 +317,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CANCEL_FORGET_NETWORK",
-            "path": "tests/WIFI/test_Wifi_Cancel_Forget_NetWork.py",
+            "name": "AATS_WIFI_40_CONNECT_5G_SPECIAL_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_040_connect_5g_special_ssid.py",
             "resource": [
                 "media_sys"
             ],
@@ -326,8 +326,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_OPEN_WIFI",
-            "path": "tests/WIFI/test_Wifi_Open_Wifi.py",
+            "name": "AATS_WIFI_41_CONNECT_5G_CONCEAL_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_041_connect_5g_conceal_ssid.py",
             "resource": [
                 "media_sys"
             ],
@@ -335,8 +335,8 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_CLOSE_WIFI",
-            "path": "tests/WIFI/test_Wifi_Close_Wifi.py",
+            "name": "AATS_WIFI_42_CONNECT_5G_WIRELESS_AUTO",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_042_connect_5g_wireless_auto.py",
             "resource": [
                 "media_sys"
             ],
@@ -344,8 +344,350 @@
         },
         {
             "group": "SYSTEM#WIFI",
-            "name": "AATS_WIFI_SCAN_ABLE",
-            "path": "tests/WIFI/test_Wifi_Scan_Able.py",
+            "name": "AATS_WIFI_43_CONNECT_5G_AX",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_043_connect_5g_ax.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_44_CONNECT_5G_N_AC_AX_MIXED",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_044_connect_5g_n_ac_ax_mixed.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_45_CONNECT_5G_LEGCY",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_045_connect_5g_legcy.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_46_CONNECT_5G_80MHZ",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_046_connect_5g_80mhz.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_47_CONNECT_5G_40MHZ",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_047_connect_5g_40mhz.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_48_CONNECT_5G_20MHZ",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_048_connect_5g_20mhz.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_49_CONNECT_5G_161CHANNEL",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_049_connect_5g_161channel.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_50_CONNECT_5G_36CHANNEL",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_050_connect_5g_36channel.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_51_CONNECT_5G_52CHANNEL",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_051_connect_5g_52channel.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_52_CONNECT_5G_WPA2_AES_NO_PMF",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_052_connect_5g_wpa2_aes_no_pmf.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_53_CONNECT_5G_WPA2_AES_PMF",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_053_connect_5g_wpa2_aes_pmf.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_54_CONNECT_5G_WPA2_AES_PMF_NO_MANDATORY",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_054_connect_5g_wpa2_aes_pmf_no_mandatory.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_55_CONNECT_5G_WPA2_TKIP_AES",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_055_connect_5g_wpa2_tkip_aes.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_56_CONNECT_5G_WPA3_AES",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_056_connect_5g_wpa3_aes.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_57_CONNECT_5G_WPA3_AES_PMF_NO_MANDATORY",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_057_connect_5g_wpa3_aes_pmf_no_mandatory.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_58_CONNECT_5G_WPA3_AES_PMF",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_058_connect_5g_wpa3_aes_pmf.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_59_CONNECT_5G_ENCRYPTION_WEP_64",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_059_connect_5g_encryption_wep_64.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_60_CONNECT_5G_ENCRYPTION_WEP_128",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_060_connect_5g_encryption_wep_128.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_61_CONNECT_SINGLE_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_061_connect_single_ssid.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_62_SMART_CONNECT",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_062_smart_connect.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_63_HOT_SPOT_CONTROL",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_063_hot_spot_control.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_64_HOT_SPOT_LONG_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_064_hot_spot_long_ssid.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_65_HOT_SPOT_SINGLE_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_065_hot_spot_single_ssid.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_66_HOT_SPOT_CHINESE_CHARACTER_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_066_hot_spot_chinese_character_ssid.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_67_HOT_SPOT_BLANK_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_067_hot_spot_blank_ssid.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_68_HOT_SPOT_SPECIAL_CHAR_SSID",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_068_hot_spot_special_char_ssid.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_69_HOT_SPOT_LONG_PASSWD",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_069_hot_spot_long_passwd.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_70_HOT_SPOT_BLANK_PASSWD",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_070_hot_spot_blank_passwd.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_71_HOT_SPOT_SPECIAL_PASSWD",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_071_hot_spot_special_passwd.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_72_HOT_SPOT_OPEN",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_072_hot_spot_open.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_73_HOT_SPOT_WPA2",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_073_hot_spot_wpa2.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_74_HOT_SPOT_2G",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_074_hot_spot_2G.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_75_HOT_SPOT_5G",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_075_hot_spot_5G.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_76_HOT_SPOT_AUTO_CLOSE",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_076_hot_spot_auto_close.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_77_HOT_SPOT_SCC_77",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_077_hot_spot_scc.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_78_HOT_SPOT_SCC_78",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_078_hot_spot_scc.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_79_HOT_SPOT_MCC_79",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_079_hot_spot_mcc.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_80_HOT_SPOT_MCC_80",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_080_hot_spot_mcc.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "chao.li"
+        },
+        {
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_WIFI_81_ON_OFF_STRESS",
+            "path": "tests/WIFI/Wifi_base/test_Wifi_Func_081_wifi_onoff_stree.py",
             "resource": [
                 "media_sys"
             ],

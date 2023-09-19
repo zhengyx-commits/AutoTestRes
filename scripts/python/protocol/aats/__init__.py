@@ -37,8 +37,14 @@ class AATS(object):
         logging.debug(params)
         return AATSADBTarget.get_target(device_id, adbpath=adbpath)
 
+    @staticmethod
+    def get_adb_targets(device_ids, adbpath=None):
+        params = dict(target=AATSADBTarget.__name__, device_id=device_ids, adbpath=adbpath)
+        logging.debug(params)
+        return AATSADBTarget.get_targets(adbpath=adbpath)
 
-def get_device_object(device_conf):
+
+def get_device_object(connect_type, device_conf, multi_instance=None):
     """
     :param device_conf:
     :return:
@@ -54,32 +60,28 @@ def get_device_object(device_conf):
     "ssh"
     =====================================================================================================
     """
-    connect_type = "adb"
-    device_id = device_conf['device_id']
-    serial_port = device_conf['serial_port']
-    # baudrate = device_conf.get('baudrate', 115200)
-    # ipaddr = device_conf.get('ipaddr', "")
-    # sshport = device_conf.get('sshport', 22)
-
-    target = None
-
     logging.info(f"[get_device_object]connect_type:{connect_type}\n")
-    # if connect_type.startswith('adb'):
-    target = AATS.get_adb_target(device_id)
-    # elif connect_type.startswith('serial'):
-    #     target = AATS.get_serial_target(serial_port, baudrate)
-    #     if not target:
-    #         raise AATSDeviceNotFoundError("No aats enabled device at: %s" % serial_port)
-    #     # Send newline to clear out any previously sent input
-    #     target._serial_device.write(b'\n')
-    #     # For some reason, it's taking a second to
-    #     # clear out pre-existing input
-    #     # without this, the output of the next command executed through
-    #     # .shell includes garbage output
-    #     time.sleep(1)
-    #     target._read()
-    # else:
-    #     target = AATS.get_adb_target(device_id)
+    target = None
+    if connect_type.startswith('adb'):
+        device_id = device_conf['device_id']
+        if len(multi_instance) == 0:
+            target = AATS.get_adb_target(device_id)
+        else:
+            target = AATS.get_adb_targets(device_id)
+    else:
+        serial_port = device_conf['serial_port']
+        baudrate = device_conf['baudrate']
+        target = AATS.get_serial_target(serial_port, baudrate)
+        if not target:
+            raise AATSDeviceNotFoundError("No aats enabled device at: %s" % serial_port)
+        # Send newline to clear out any previously sent input
+        target._serial_device.write(b'\n')
+        # For some reason, it's taking a second to
+        # clear out pre-existing input
+        # without this, the output of the next command executed through
+        # .shell includes garbage output
+        time.sleep(1)
+        target._read()
 
     if not target:
         raise AATSDeviceNotFoundError("No target device found.")

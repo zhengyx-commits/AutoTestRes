@@ -1,11 +1,12 @@
 import logging
 import pytest
-from lib.common.checkpoint.PlayerCheck import PlayerCheck
+from lib.common.checkpoint.PlayerCheck_Base import PlayerCheck_Base
+from lib.common.checkpoint.PlayerCheck_Iptv import PlayerCheck_Iptv
 from lib.common.system.ADB import ADB
 import re
 from . import *
 
-playerCheck = PlayerCheck()
+playerCheck = PlayerCheck_Iptv()
 adb = ADB()
 video, play_command = play_cmd(p_conf_track_path['path'])
 
@@ -21,13 +22,10 @@ def switch_audio_track_setup_teardown():
 # @pytest.mark.skip
 def test_audioTrack():
     audio_track_num = 2
-    # assert p_conf_uuid in localPlayer.getUUIDs()
+    assert p_conf_uuid in localPlayer.getUUIDs()
     logging.info(play_command)
     localPlayer.run_shell_cmd(play_command)
     localPlayer.run_shell_cmd("logcat -c")
-    # audio_track = playerCheck.check_audioChannelnum()
-    # for key, value in audio_track[1].items():
-    #     audio_track_num = re.findall(r".* Audio numChannels: (\d)", value)[0]
     logging.info(f"audio_track_num: {audio_track_num}")
     time.sleep(10)
     if int(audio_track_num) >= 2:

@@ -2,7 +2,7 @@ import logging
 import pytest
 import time
 from lib.common.tools.ProbeInfo import ProbeInfo
-from . import p_conf_local_playback, p_conf_uuid, app_name, localPlayer
+from . import p_conf_local_playback, p_conf_uuid, app_name, localPlayer, set_iptv_path
 
 info = ProbeInfo()
 
@@ -16,6 +16,7 @@ play_command = 'am start -n com.droidlogic.videoplayer/.VideoPlayer -d file:/sto
 
 @pytest.fixture(scope='function', autouse=True)
 def probe_setup_teardown():
+    set_iptv_path()
     info.clear_logcat()
     info.pull("/storage/" + p_conf_uuid + p_conf_probe_infoPath + video, info.logdir)
     info.root()
@@ -28,12 +29,12 @@ def probe_setup_teardown():
 
 # @pytest.mark.skip
 def test_probeinfo():
-    info.start_logcat_thread()
+    # info.start_logcat_thread()
     info.run_shell_cmd(play_command)
+    info.start_logcat_thread()
     time.sleep(30)
-    info.stop_logcat_thread()
-    video_info = info.get_video_info(video_file=video)
-    logging.info(f"video_info: {video_info}")
+    # info.stop_logcat_thread()
+    info.get_video_info(video_file=video)
     time.sleep(3)
     info.check_probe_info()
     info.check_probe_decodedata(status='video_play')

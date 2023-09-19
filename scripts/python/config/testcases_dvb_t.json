@@ -1,0 +1,40 @@
+{
+    "testcases": [
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-T_AUTO_SEARCH",
+            "path": "tests/DVB/dvbtScan/test_DVB_Sanity_Func_DVB-T_Auto_Search.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-T_AUTO_SEARCH_NIT",
+            "path": "tests/DVB/dvbtScan/test_DVB_Sanity_Func_DVB-T_Auto_Search_NIT.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-T_MANUAL_SEARCH_BY_FREQ",
+            "path": "tests/DVB/dvbtScan/test_DVB_Sanity_Func_DVB-T_Manual_Search_By_Freq.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_DVB-T_MANUAL_SEARCH_BY_ID",
+            "path": "tests/DVB/dvbtScan/test_DVB_Sanity_Func_DVB-T_Manual_Search_By_Id.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        }
+    ]
+}

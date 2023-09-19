@@ -79,7 +79,7 @@ class AATSTarget(with_metaclass(ABCMeta, object)):
     """
     Base class for AATS target communicators. This class contains the AATS logic
     for composing requests to the target and interpretting the response. The
-    acceptable variant of descendants will implement the specifics of communicating over a given
+    descendents will implement the specifics of communicating over a given
     protocol (ADB, serial)
     """
 

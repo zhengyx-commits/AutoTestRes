@@ -16,6 +16,7 @@ import logging
 import os
 import re
 import time
+from collections import Counter
 
 import pytest
 from past.builtins import basestring
@@ -23,7 +24,6 @@ from past.builtins import basestring
 from lib.common import config_yaml
 from lib.common.system.ADB import ADB
 from util.errors import Errors
-from collections import Counter
 
 
 class Wifi(ADB):
@@ -393,26 +393,37 @@ class WifiTestApk(ADB):
     SETTING_NAME_TUPLE = ('com.google.android.permissioncontroller',
                           'com.android.permissioncontroller.permission.ui.ManagePermissionsActivity ')
 
+    SETTING_ACTIVITY_TUPLE = 'com.android.tv.settings', '.MainSettings'
+    MORE_SETTING_ACTIVITY_TUPLE = 'com.droidlogic.tv.settings', '.more.MorePrefFragmentActivity'
+
     # iperf 相关命令
     IPERF_SERVER = 'iperf -s -w 4m -i 1'
     IPERF_CLIENT_REGU = 'iperf -c {} -w 4m -i 1 -t 60 -P{}'
+    IPERF_MULTI_SERVER = 'iperf -s -w 4m -i 1 {}&'
+    IPERF_MULTI_CLIENT_REGU = './data/iperf -c {} -w 4m -i 1 -t 60 -p {}'
+
     IPERF3_SERVER = 'iperf3 -s -i 1&'
     IPERF3_CLIENT_TCP_REGU = 'iperf3 -c {} -t 60 -P {}'
     IPERF3_CLIENT_UDP_REGU = 'iperf3 -c {} -i 1 -t 60 -u -b 120M -l63k -P {}'
 
     IPERF3_KILL = '[ -n "`ps -A|grep iperf`" ] && killall -9 iperf3 || echo no'
-    IPERF_KILL = '[ -n "`ps -A|grep iperf`" ] && killall -9 iperf || echo no'
-    RSSI = 'iw wlan0 link'
+    # IPERF_KILL = '[ -n "`ps -A|grep iperf`" ] && killall -9 iperf || echo no'
+    IPERF_KILL = 'killall -9 iperf'
+    IW_LINNK_COMMAND = 'iw wlan0 link'
+
     CMD_WIFI_CONNECT = 'cmd wifi connect-network {} {} {}'
     CMD_WIFI_CONNECT_OPEN = 'cmd wifi connect-network {} open'
+    CMD_WIFI_HIDE = ' -h'
+
     WIFI_CONNECT_PACKAGE = 'com.example.wifiConnect'
     WIFI_CONNECT_ACTIVITY = f'am start -n {WIFI_CONNECT_PACKAGE}/.MainActivity'
     WIFI_CONNECT_COMMAND_REGU = 'am start -n com.example.wifiConnect/.MainActivity -e ssid {}'
     WIFI_CONNECT_PASSWD_REGU = ' -e passwd {}'
+    WIFI_CONNECT_HIDE_SSID_REGU = ' --ez hide_ssid true -e type {}'
     WIFI_DISCONNECT_COMMAND = WIFI_CONNECT_ACTIVITY + ' --ez disconnect true'
     WIFI_CHANGE_STATUS_REGU = ' -e wifi_status {}'
     WIFI_FORGET_WIFI_STR = ' --ez forget true'
-    CMD_WIFI_LIST_NETWORK = 'cmd wifi list-networks'
+    CMD_WIFI_LIST_NETWORK = "cmd wifi list-networks |grep -v Network |awk '{print $1}'"
     CMD_WIFI_FORGET_NETWORK = 'cmd wifi forget-network {}'
 
     MCS_RX_GET_COMMAND = 'iwpriv wlan0 get_last_rx'
@@ -420,6 +431,9 @@ class WifiTestApk(ADB):
     MCS_TX_GET_COMMAND = 'iwpriv wlan0 get_rate_info'
     MCS_TX_KEEP_GET_COMMAND = "'for i in `seq 1 10`;do iwpriv wlan0 get_rate_info;sleep 6;done ' & "
     POWERRALAY_COMMAND_FORMAT = './tools/powerRelay /dev/tty{} -all {}'
+
+    GET_COUNTRY_CODE = 'iw reg get'
+    SET_COUNTRY_CODE_FORMAT = 'iw reg set {}'
 
     def __init__(self):
         ADB.__init__(self, 'wifi', unlock_code="", stayFocus=False)
@@ -553,7 +567,6 @@ class WifiTestApk(ADB):
             return result
 
     def power_relay(self, powerRelay_port, power_state):
-        # usb = pytest.config.get("powerRelay", {}).get(powerRelay_port, {})
         p_conf_wifi_powerRelay = self.p_config_wifi['powerRelay'][powerRelay_port]
         os.system(self.POWERRALAY_COMMAND_FORMAT.format(p_conf_wifi_powerRelay, power_state))
         logging.info(self.POWERRALAY_COMMAND_FORMAT.format(p_conf_wifi_powerRelay, power_state))
@@ -639,3 +652,16 @@ class WifiTestApk(ADB):
             return max(counts.keys(), key=counts.get)
         except Exception as e:
             return 'mcs_tx'
+
+    def get_tx_bitrate(self):
+        '''
+        return tx bitrate
+        @return: rate (str)
+        '''
+        try:
+            self.root()
+            result = self.checkoutput(self.IW_LINNK_COMMAND)
+            rate = re.findall(r'tx bitrate:\s+(.*?)\s+MBit\/s',result,re.S)[0]
+            return rate
+        except Exception as e:
+            return 'Data Error'

@@ -11,6 +11,8 @@ import re
 import subprocess
 import time
 
+import pytest
+
 from lib.common.system.ADB import ADB
 from protocol.aats.aats_target.aats_adb_target import AATSADBTarget
 
@@ -47,7 +49,10 @@ class Reboot:
         @return: bootup status : boolean
         '''
         if self.adb.build_version == "31":
-            launcher_log = b"com.google.android.apps.tv.launcherx/com.google.android.apps.tv.launcherx.home.HomeActivity"
+            if "dvb" in pytest.target.get("prj"):
+                launcher_log = b"com.google.android.apps.tv.launcherx/com.google.android.apps.tv.launcherx.home.HomeActivity"
+            else:
+                launcher_log = b"com.google.android.apps.tv.launcherx/com.google.android.apps.tv.launcherx.coreservices.notificationlistener.TvNotificationListenerService"
         else:
             launcher_log = b"com.bestv.ott.baseservices/com.bestv.ott.wraplauncher.WrapActivity"
         start_time = time.time()

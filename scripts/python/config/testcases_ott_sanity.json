@@ -1,0 +1,684 @@
+{
+    "testcases": [
+        {
+            "project": "ref",
+            "group": "SYSTEM#DDR",
+            "name": "AATS_OTT_FUNC_DDR_FREEINFO",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_001_DDR.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Ethernet",
+            "name": "AATS_OTT_FUNC_ETHERNET",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_002_Ethernet.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#WIFI",
+            "name": "AATS_OTT_FUNC_WIFI",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_003_Wifi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#HDCP_MODE",
+            "name": "AATS_OTT_FUNC_HDCP_MODE",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_004_HDCP.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#CPU_GPU_WorkFreq",
+            "name": "AATS_OTT_FUNC_CPU_GPU_WORKFREQ",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_006_CPU_GPU_WorkFreq.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#ddr_emmc_info",
+            "name": "AATS_OTT_FUNC_DDR_EMMC_INFO",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_007_eMMC_DDR4.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#CPU_Thermal",
+            "name": "AATS_OTT_FUNC_CPU_THERMAL",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_008_CPU_Thermal.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#CPU_Read_Temp",
+            "name": "AATS_OTT_FUNC_CPU_READ_TEMP",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_009_CPU_Read_Temp.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#USB_And_Camera",
+            "name": "AATS_OTT_FUNC_USB_AND_CAMERA",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_010_USB_and_Camera.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Hdmi_Display",
+            "name": "AATS_OTT_FUNC_HDMI_DISPLAY",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_011_Hdmi_Display.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Netflix",
+            "name": "AATS_OTT_FUNC_NETFLIX",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_012_Netflix.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref&boreal",
+            "group": "SYSTEM#Factory_Reset",
+            "name": "AATS_OTT_FUNC_FACTORY_RESET",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_016_Factory_Reset.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Youtube",
+            "name": "AATS_OTT_FUNC_YOUTUBE_VP9",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Youtube_VP9.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Youtube",
+            "name": "AATS_OTT_FUNC_YOUTUBE_AV1",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Youtube_AV1.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Youtube",
+            "name": "AATS_OTT_FUNC_YOUTUBE_SEEK",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Youtube_SEEK.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Youtube",
+            "name": "AATS_OTT_FUNC_YOUTUBE_SWITCHVIDEO",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Youtube_SwitchVideo.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Youtube",
+            "name": "AATS_OTT_FUNC_YOUTUBE_HOMEPLAY",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Youtube_HomePlay.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_TS",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_308_amplayer_ts.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref&boreal",
+            "group": "SYSTEM#Youtube",
+            "name": "AATS_OTT_FUNC_YOUTUBE_PAIDVIDEO",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Youtube_PaidVideo.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#GooglePlayMovies",
+            "name": "AATS_OTT_FUNC_GOOGLE_PLAY_MOVIES_TRAILER",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_GooglePlayMovies_Trailer.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#GooglePlayMovies",
+            "name": "AATS_OTT_FUNC_GOOGLE_PLAY_MOVIES_FULLVERSION",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_GooglePlayMovies_FullVersion.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#GooglePlayMovies",
+            "name": "AATS_OTT_FUNC_GOOGLE_PLAY_MOVIES_SEEK",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_GooglePlayMovies_SEEK.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#GooglePlayMovies",
+            "name": "AATS_OTT_FUNC_GOOGLE_PLAY_MOVIES_HOMEPLAY",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_GooglePlayMovies_HomePlay.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#GooglePlayMovies",
+            "name": "AATS_OTT_FUNC_GOOGLE_PLAY_MOVIES_SWITCHVIDEO",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_GooglePlayMovies_SwitchVideo.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Secure_OS",
+            "name": "AATS_OTT_FUNC_SECURE_OS_SEEK_ADVANCE",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Secure_OS_SEEK_Advance.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Secure_OS",
+            "name": "AATS_OTT_FUNC_SECURE_OS_SEEK_BACK",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Secure_OS_SEEK_Back.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Secure_OS",
+            "name": "AATS_OTT_FUNC_SECURE_OS_HOMEPLAY",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Secure_OS_HomePlay.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Secure_OS",
+            "name": "AATS_OTT_FUNC_SECURE_OS_DRMVIDEOS",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Secure_OS_DRM_VIDEOS.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jun.yang"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_3G2",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_307_amplayer_3g2.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_3GP",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_306_amplayer_3gp.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_ASF",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_300_amplayer_asf.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_AVI",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_296_amplayer_avi.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_DAT",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_309_amplayer_dat.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_DIVX",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_310_amplayer_divx.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_F4V",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_321_amplayer_f4v.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_FLV1",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_320_amplayer_flv1.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_FLV2",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_322_amplayer_flv2.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_M2TS",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_315_amplayer_m2ts.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_M2V",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_317_amplayer_m2v.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_M4V",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_318_amplayer_m4v.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_MOV",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_302_amplayer_mov.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_MP4",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_303_amplayer_mp4.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_MPEG",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_298_amplayer_mpeg.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_MTS",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_316_amplayer_mts.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_OGM",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_311_amplayer_ogm.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_PMP",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_313_amplayer_pmp.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_RMVB",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_301_amplayer_rmvb.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_TP",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_314_amplayer_tp.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_VOB",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_319_amplayer_vob.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_WMV",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_299_amplayer_wmv.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_4K2K",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_286_amplayer_4k2k.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_H265",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_290_amplayer_h265.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_VP6",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_291_amplayer_vp6.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_VP8",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_292_amplayer_vp8.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_VP9",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_293_amplayer_vp9.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_3D",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_294_amplayer_3d.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_MVC",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_295_amplayer_mvc.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_4KH264",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_287_amplayer_4kh264.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_4KH265",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_288_amplayer_4kh265.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_4KVP9",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_289_amplayer_4kvp9.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_ISO",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_297_amplayer_iso.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_AMV",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_305_amplayer_amv.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_MKV",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_304_amplayer_mkv.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#AmPlayer",
+            "name": "AATS_OTT_FUNC_AMPLAYER_EVO",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT_Sanity_Func_312_amplayer_evo.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yu.zeng"
+        },
+        {
+            "project": "ref",
+            "group": "SYSTEM#Upgrade_Fastboot",
+            "name": "AATS_OTT_FUNC_UPGRADE_FASTBOOT",
+            "path": "tests/OTT_Sanity_Ref/FUNC/test_OTT-Sanity_Func_017_Upgrade_Fastboot.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "jianhua.huang"
+        },
+        {
+            "project": "boreal",
+            "group": "SYSTEM#YOUTUBE",
+            "name": "AATS_OTT_BOREAL_FUNC_360",
+            "path": "tests/Boreal/test_OTT-Sanity_Youtube_360.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "project": "boreal",
+            "group": "SYSTEM#Youtube",
+            "name": "AATS_OTT_BOREAL_FUNC_YOUTUBE_VP9",
+            "path": "tests/Boreal/test_OTT-Sanity_Youtube_VP9.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "project": "boreal",
+            "group": "SYSTEM#Youtube",
+            "name": "AATS_OTT_FUNC_YOUTUBE_LIVE",
+            "path": "tests/Boreal/test_OTT-Sanity_Youtube_Live_VP9.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        }
+    ]
+}

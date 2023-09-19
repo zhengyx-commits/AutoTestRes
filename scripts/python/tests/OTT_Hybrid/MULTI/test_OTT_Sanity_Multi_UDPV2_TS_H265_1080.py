@@ -4,9 +4,7 @@ from tools.StreamProvider import StreamProvider
 from tests.OTT_Hybrid.MULTI import *
 from tests.OTT_Hybrid import *
 
-g_conf_device_id = pytest.config['device_id']
-multi = MultiPlayer(g_conf_device_id)
-playerCheck = PlayerCheck()
+playerCheck = PlayerCheck_Iptv()
 adb = ADB()
 streamProvider = StreamProvider()
 
@@ -19,11 +17,12 @@ def multi_teardown():
     streamProvider.stop_send()
 
 
+@pytest.mark.flaky(reruns=3)
 def test_UDPV2_TS_H265_1080():
     stream_name_list, url = get_conf_url("conf_udp_url", "udp", "conf_stream_name", "h265_1080P")
     for stream_name in stream_name_list:
         file_path = streamProvider.get_file_path('h265_1080P', 'ts', stream_name)
-        if file_path:
+        if len(file_path) >= 1:
             file_path = file_path[0]
         # if not streamProvider.get_file_path('ts', stream_name):
         #     logging.error("stream provider file path doesn't exist.")
@@ -31,7 +30,7 @@ def test_UDPV2_TS_H265_1080():
         # else:
         #     file_path = streamProvider.get_file_path('ts', stream_name)[0]
             try:
-                streamProvider.start_send('udp', file_path, iswait=True)
+                streamProvider.start_send('udp', file_path, url=url[6:], iswait=True)
             except Exception as e:
                 logging.error("stream provider start send failed.")
                 raise False
@@ -42,3 +41,4 @@ def test_UDPV2_TS_H265_1080():
             multi.send_cmd(start_cmd)
             assert playerCheck.check_startPlay()[0], "start playback failed"
             multi.stop_multiPlayer_apk()
+            streamProvider.stop_send()

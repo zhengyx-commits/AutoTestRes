@@ -130,11 +130,22 @@ do
     esac
 done
 
+HOSTNAME=$(hostname -I | awk '{print $1}')
+
+if [[ $HOSTNAME == "192.168.1.100" ]]; then
+    SERVER_IP="10.18.7.34"
+elif [[ $HOSTNAME == "192.168.1.105" ]]; then
+    SERVER_IP="10.18.7.30"
+else
+    SERVER_IP=$HOSTNAME
+fi
+echo "TEST_HOST_IP: $SERVER_IP"
 echo "TEST_BOARD_TYPE:$TEST_BOARD_TYPE"
 echo "TEST_VARIANT_TYPE:$TEST_VARIANT_TYPE"
 echo "TEST_BUILD_NUMBER:$Test_BUILD_NUMBER"
 echo "CHANGEID_PATCHSET: $PATCHSET_IDS"
 echo "SECURE_BOOT_PARAMES: $SECURE_BOOT_PARAMES"
+echo "BUILD_STATUS: $BUILD_STATUS"
 
 # For AATS special arguments, need to configure it on the specific project
 OTHER_ARGS=
@@ -177,12 +188,16 @@ echo "Current Test Job URL: ${BUILD_JOB_URL}"
 IP_STR=$(ifconfig | grep 10.18)
 if [ -z "$IP_STR" ]; then
     where_is_console=shenzhen
+    if [ ${TEST_BOARD_TYPE} == "p291_iptv" ]; then
+        TEST_IMAGE_SITE="firmware-sz.amlogic.com/shenzhen/"
+    else
     TEST_IMAGE_SITE="10.28.8.100/shenzhen"
     TEST_IMAGE_SITE_REVERSE=("10.18.11.97/shanghai" "10.18.11.6/shanghai" "10.88.11.22/xian")
     RECOVERY_IMAGE_SERVER_SZ="10.28.8.6/files/jenkins/RECOVERY_DUT_IMAGE"
+    fi
 else
     where_is_console=shanghai
-    if [[ ${CHIPID} =~ "AH212" ]]; then
+    if [[ ${CHIPID} =~ "AH212" || ${CHIPID} =~ "bg201" ]]; then
         TEST_IMAGE_SITE="10.18.11.6/shanghai"
     else
     TEST_IMAGE_SITE="10.18.11.97/shanghai"
@@ -205,12 +220,12 @@ elif [[ $TEST_PLAN_NAME =~ "DailyBuild_CI_YouTube" ]]; then
 elif [[ $TEST_PLAN_NAME =~ "DailyBuild" ]]; then
     TASK_TYPE=DailyBuild
 else
-    TASK_TYPE=Unknown
+    TASK_TYPE=unknown
 fi
 !
 #=====================================================================================
 
-TASK_TYPE=Unknown
+TASK_TYPE=unknown
 echo "Task type is: $TASK_TYPE"
 
 # check project need flash bootloader or not
@@ -244,6 +259,7 @@ AUTO_OUTPUT=$WORKSPACE/AutoTestRes/output
 AUTO_REPORT_TMP=$WORKSPACE/AutoTestRes/scripts/python/results
 AUTO_RESULTS=$WORKSPACE/AutoTestRes/results
 AUTO_DEVICECHK=$WORKSPACE/AutoTestRes/scripts/python/tools/device_check
+AUTO_ALLURE=$WORKSPACE/AutoTestRes/scripts/python/allure_data
 
 # project folder name
 PRJ_FOLDER_NAME=$(sed -n "4p" ${AUTO_TMP}/test_job_info.txt)
@@ -278,7 +294,7 @@ elif [[ $PROJECT_SERIES != "Android_K" && $TEST_VARIANT_TYPE = "user" ]]; then
     echo "android build is user version! Automation not support user version to test, exit!"
 
     if [ $PATCHSET_IDS != "NULL" ]; then
-        echo '[INFO] Android build is user version! Do not run test now' > $AUTO_REVIEW_INFO
+        echo '[INFO] android build is user version! Do not run test now' > $AUTO_REVIEW_INFO
         bash ${AUTO_SCRIPT}/add_comment4patchset.sh ${AUTO_BIN} ${AUTO_REVIEW_INFO} "${PATCHSET_IDS}"
     fi
 
@@ -311,9 +327,13 @@ YESTERDAY_MDATE=`date "+%Y-%m-%d" -d "-22hour"`
 YESTERDAY_MDATE1=`date "+%Y%m%d" -d "-22hour"`
 
 function func_rebootDutByRelayDelayTime() {
-    ${AUTO_BIN}/powerRelay $PowerRelay_Serial_Port all off
-    sleep 3
-    ${AUTO_BIN}/powerRelay $PowerRelay_Serial_Port all on
+    if [[ $PROJECT_SERIES =~ "Boreal" ]]; then
+        echo "Boreal no need to use the powerRelay!"
+    else
+        ${AUTO_BIN}/powerRelay $PowerRelay_Serial_Port all off
+        sleep 3
+        ${AUTO_BIN}/powerRelay $PowerRelay_Serial_Port all on
+    fi
     echo "Flash image done, sleep $1 seconds to wait DUT boot complete."
     sleep $1
 }
@@ -459,7 +479,7 @@ function func_checkFastbootStatus() {
         i=$[ $i + 1 ]
         done
         echo "Can not find fastboot devices, SN is: $ADB_SN"
-    return 9
+        return 9
 }
 
 function func_checkDutAndRecovery() {
@@ -597,6 +617,34 @@ function func_downloadImgFile() {
             sleep 120
             exit 1
         fi
+    elif [[ $IS_BUILD_COMPRESS == 'iptv_ok' ]]; then
+        echo -e " --- Download file: $URL\nDownloading ..."
+        wget -q -c $URL -O ${DOWNLOAD_PATH}/aml_p291_prue_for_s905l_upgrade_package.img.tgz 
+
+        echo " --- untar aml_p291_upgrade_package.img.tgz  ..."
+        tar -xzf ${DOWNLOAD_PATH}/aml_p291_prue_for_s905l_upgrade_package.img.tgz  -C ${DOWNLOAD_PATH}
+
+        if [ $? -ne 0 ]; then
+            echo " --- untar aml_p291_prue_for_s905l_upgrade_package.img.tgz failure,exit!"
+            func_updateReportFile "FailReason" "aml_p291_prue_for_s905l_upgrade_package.img.tgz failure";
+            func_preTestFailSaveLogs;
+            sleep 120
+            exit 1
+        fi
+    elif [[ $IS_BUILD_COMPRESS == 'R_iptv_ok' ]]; then
+        echo -e " --- Download file: $URL\nDownloading ..."
+        wget -q -c $URL -O ${DOWNLOAD_PATH}/aml_S928X_upgrade_package.img.tgz
+
+        echo " --- untar aml_S928X_upgrade_package.img.tgz   ..."
+        tar -xzf ${DOWNLOAD_PATH}/aml_S928X_upgrade_package.img.tgz    -C ${DOWNLOAD_PATH}
+
+        if [ $? -ne 0 ]; then
+            echo " --- untar aml_S928X_upgrade_package.img.tgz  failure,exit!"
+            func_updateReportFile "FailReason" "aml_S928X_upgrade_package.img.tgz  failure";
+            func_preTestFailSaveLogs;
+            sleep 120
+            exit 1
+        fi
     else
         echo -e " --- Download file: $URL\nDownloading ..."
         wget -q -c $URL -O ${DOWNLOAD_PATH}/aml_upgrade_package.img
@@ -620,7 +668,13 @@ function func_downloadImgFile() {
     fi
 !
 #=========================================================================================
-    cp ${DOWNLOAD_PATH}/aml_upgrade_package.img ${AUTO_IMAGE}/aml_upgrade_package.img
+    if [ ${TEST_BOARD_TYPE} == "p291_iptv" ]; then
+        cp ${DOWNLOAD_PATH}/aml_p291_prue_for_s905l_upgrade_package.img ${AUTO_IMAGE}/aml_p291_prue_for_s905l_upgrade_package.img
+    elif [ ${TEST_BOARD_TYPE} == "s928x_iptv" ]; then
+        cp ${DOWNLOAD_PATH}/aml_S928X_upgrade_package.img ${AUTO_IMAGE}/aml_upgrade_package.img
+    else
+        cp ${DOWNLOAD_PATH}/aml_upgrade_package.img ${AUTO_IMAGE}/aml_upgrade_package.img
+    fi
 }
 
 function func_downloadFastboottgzFile() {
@@ -645,29 +699,9 @@ function func_downloadFastboottgzFile() {
 function func_downloadFastbootFile() {
     URL=$1
     IMGE_URL=$URL
-
     func_updateReportFile "Image URL" $URL;
-
     echo -e " --- Download file: $URL\nDownloading ..."
     wget -q -c $URL -O ${DOWNLOAD_PATH}/fastboot_package.zip
-
-
-#============== shield by wxl 20210317 ===================================================
-:<<!
-        if [[ $SECURE_BOOT_PARAMES =~ "key" ]]; then
-        echo "Encryption $TEST_BOARD_TYPE-fastboot-flashall.zip for securebootV3"
-        bash ${secure_tool_path}/amlogic_secureboot_sign_whole_pkg.bash \
-            --soc $chip_soc \
-            --aml_key ${secure_key_path}/${chip_soc}_${prj_platform}_v1/aml-key/ \
-            --avb_pem_key ${secure_key_path}/testkey_rsa2048.pem \
-            --fastboot_zip ${DOWNLOAD_PATH}/fastboot_package.zip \
-            --output ${DOWNLOAD_PATH}/secure_fastboot_package.zip
-        rm ${DOWNLOAD_PATH}/fastboot_package.zip
-        mv ${DOWNLOAD_PATH}/secure_fastboot_package.zip ${DOWNLOAD_PATH}/fastboot_package.zip
-    fi
-!
-#===========================================================================================
-
     echo " --- Unzip zip file: fastboot_package.zip ..."
     unzip ${DOWNLOAD_PATH}/fastboot_package.zip -d $AUTO_IMAGE
     if [ $? -ne 0 ]; then
@@ -776,7 +810,24 @@ function func_downloadTestImage() {
             fi
         fi
         func_downloadImgFile $URL $IS_BUILD_COMPRESS;
-
+    elif [[ $flash_sw_file =~ "aml_p291" ]]; then
+        IS_BUILD_COMPRESS="iptv_ok"
+        URL=${FILESERVER}aml_p291_prue_for_s905l_upgrade_package.img.tgz
+        func_checkUrlStatus $URL;
+        ret=$?
+        if [ $ret -ne 0 ]; then
+            echo " img Test image is not available, Error code: HTTP 404"
+        fi
+        func_downloadImgFile $URL $IS_BUILD_COMPRESS;
+    elif [[ $flash_sw_file =~ "S928X" ]]; then
+        IS_BUILD_COMPRESS="R_iptv_ok"
+        URL=${FILESERVER}
+        func_checkUrlStatus $URL;
+        ret=$?
+        if [ $ret -ne 0 ]; then
+            echo " img Test image is not available, Error code: HTTP 404"
+        fi
+        func_downloadImgFile $URL $IS_BUILD_COMPRESS;
     elif [[ $flash_sw_file =~ "ota" ]]; then
         URL=${FILESERVER}${TEST_BOARD_TYPE}-ota-${TODAY_MDATE}.zip
         func_checkUrlStatus $URL;
@@ -1057,6 +1108,191 @@ function func_saveResult() {
     echo " --- end to save result"
 }
 
+function get_last_allure_report() {
+    project=$1
+    project_report_path="/home/amlogic/FAE/AutoTest/AllureReport/${project}"
+    last_report=$(sshpass -p "Linux2023" ssh amlogic@10.18.11.98 "ls -lt ${project_report_path} | grep '^d' | head -n 1 | awk '{print \$9}'")
+    if [ -n "$last_report" ]; then
+        echo "Last report history found"
+        sshpass -p "Linux2023" scp -r amlogic@10.18.11.98:${project_report_path}/${last_report}/report/history ${AUTO_ALLURE}
+        scp_exit_code=$?
+        if [[ $scp_exit_code -eq 0 ]]; then
+            echo "Last report history datas successfully scp to new test datas"
+        fi
+    else
+        echo "Last report history not found"
+    fi
+}
+
+function func_environment_info() {
+    ubuntu_version=$(lsb_release -r -s)
+    python_version=$(python3 --version | cut -d " " -f 2)
+    echo "Server=$SERVER_IP" > $AUTO_ALLURE/environment.properties
+    echo "Ubuntu=$ubuntu_version" >> $AUTO_ALLURE/environment.properties
+    echo "Python=$python_version" >> $AUTO_ALLURE/environment.properties
+    echo "Build_Info=$BUILD_INFO" >> $AUTO_ALLURE/environment.properties
+    echo "Test_Job_URL=$TEST_JOB_URL" >> $AUTO_ALLURE/environment.properties
+}
+
+function func_get_project_name() {
+    local target="$1"
+    local TEST_JOB_URL="$2"
+    local project_name=""
+
+    if [[ ${target} = "ott_hybrid_s_yuv" ]]; then
+        project_name="Decoder Check(YUV)"
+    elif [[ ${target} = "ott_hybrid" ]] && [[  "${TEST_JOB_URL}" =~ "Autotest_Basic" ]]; then
+        project_name="IPTV Basic Play Control"
+    elif [[ ${target} = "ott_hybrid_compatibility" ]]; then
+        project_name="IPTV Compatibility"
+    elif [[ "${TEST_JOB_URL}" =~ "Format_Compatibility" ]]; then
+        project_name="Format Compatibility"
+    elif [[ ${target} = "ott_sanity" ]] && [[ ! "${TEST_JOB_URL}" =~ "Android_U_Google_Boreal_Autotest_Sanity" ]]; then
+        project_name="Sanity Test"
+    elif [[ ${target} = "ott_hybrid_s_kpi" ]]; then
+        project_name="KPI"
+    elif [[ "${TEST_JOB_URL}" =~ "Stress" ]] && [[ ! "${target}" =~ "stress" ]]; then
+        project_name="Stress"
+    elif [[ ${target} = "dvb_stress" ]]; then
+        project_name="DVB-Stress"
+    elif [[ ${target} = "dvb_s" ]]; then
+        project_name="DVB-S"
+    elif [[ ${target} = "dvb_t" ]]; then
+        project_name="DVB-T"
+    elif [[ ${target} = "dvb_trunk" ]]; then
+        project_name="DVB-C"
+    elif [[ ${target} = "dvb_kpi" ]]; then
+        project_name="DVB-KPI"
+    elif [[ "${TEST_JOB_URL}" =~ "CAS" ]]; then
+        project_name="CAS"
+    elif [[ "${TEST_JOB_URL}" =~ "GTS_Autotest" ]]; then
+        project_name="GTS"
+    elif [[ "${TEST_JOB_URL}" =~ "CTS_Autotest" ]]; then
+        project_name="CTS"
+    elif [[ "${TEST_JOB_URL}" =~ "VTS_Autotest" ]]; then
+        project_name="VTS"
+    elif [[ "${TEST_JOB_URL}" =~ "STS_Autotest" ]]; then
+        project_name="STS"
+    elif [[ "${TEST_JOB_URL}" =~ "TVTS_Autotest" ]]; then
+        project_name="TVTS"
+    elif [[ "${target}" = "iptv_product_line_p_yuv" ]]; then
+        project_name="Android P IPTV YUV"
+    elif [[ "${target}" = "iptv_product_line_r_yuv" ]]; then
+        project_name="Android R IPTV YUV"
+    fi
+
+    echo "$project_name"
+}
+
+function func_saveAllureReport() {
+    echo " --- start to generate allure report"
+    func_environment_info
+    START_TIME=$(func_getStartTime)
+    remote_user="amlogic"
+    remote_password="Linux2023"
+    remote_ip="10.18.11.98"
+    target=$(jq -r '.target.prj' "$WORKSPACE/AutoTestRes/scripts/python/target.json")
+    test_data_path="/home/amlogic/FAE/AutoTest/allure_test_data/$target"
+    cas_data_path="/home/amlogic/FAE/AutoTest/allure_test_data/android_s_cas"
+    stress_data_path="/home/amlogic/FAE/AutoTest/allure_test_data/android_s_stress"
+    dvb_stress_data_path="/home/amlogic/FAE/AutoTest/allure_test_data/DVB_C_stress"
+    report_path="/home/amlogic/FAE/AutoTest/AllureReport/$target/$START_TIME/report"
+    if [[ "$WORKSPACE" =~ "_CAS" ]]; then
+        sshpass -p "$remote_password" ssh "$remote_user@$remote_ip" "[ -d \"$cas_data_path/datas\" ] || mkdir -p \"$cas_data_path/datas\""
+        sleep 1
+        sshpass -p "$remote_password" scp -r "${AUTO_ALLURE}"/* "$remote_user@$remote_ip:\"$cas_data_path/datas\""
+	scp_exit_code=$?
+	if [[ $scp_exit_code -eq 0 ]]; then
+	    echo "scp files successfully!"
+	fi
+    elif [[ "$WORKSPACE" =~ "Autotest_Multi_Stress" ]]; then
+        sshpass -p "$remote_password" ssh "$remote_user@$remote_ip" "[ -d \"$stress_data_path/datas\" ] || mkdir -p \"$stress_data_path/datas\""
+        sleep 1
+        sshpass -p "$remote_password" scp -r "${AUTO_ALLURE}"/* "$remote_user@$remote_ip:\"$stress_data_path/datas\""
+	scp_exit_code=$?
+        if [[ $scp_exit_code -eq 0 ]]; then
+            echo "scp files successfully!"
+        fi
+    elif [[ "$WORKSPACE" =~ "DVB_C" ]] && [[ "$WORKSPACE" =~ "Stress" ]]; then
+        sshpass -p "$remote_password" ssh "$remote_user@$remote_ip" "[ -d \"$dvb_stress_data_path/datas\" ] || mkdir -p \"$dvb_stress_data_path/datas\""
+        sleep 1
+        sshpass -p "$remote_password" scp -r "${AUTO_ALLURE}"/* "$remote_user@$remote_ip:\"$dvb_stress_data_path/datas\""
+	scp_exit_code=$?
+        if [[ $scp_exit_code -eq 0 ]]; then
+            echo "scp files successfully!"
+        fi
+    else
+        get_last_allure_report  $target
+        sshpass -p "$remote_password" ssh "$remote_user@$remote_ip" "[ -d \"$test_data_path/datas\" ] || mkdir -p \"$test_data_path/datas\""
+        sleep 1
+        sshpass -p "$remote_password" scp -r "${AUTO_ALLURE}"/* "$remote_user@$remote_ip:\"$test_data_path/datas\""
+        scp_exit_code=$?
+        if [[ $scp_exit_code -eq 0 ]]; then
+            sshpass -p "$remote_password" ssh "$remote_user@$remote_ip" "allure generate \"$test_data_path/datas\" -o \"$report_path\" --clean"
+            allure_exit_code=$?
+            if [[ $allure_exit_code -eq 0 ]]; then
+                echo "Allure Report successfully generated, delete test data!"
+                sshpass -p "$remote_password" ssh "$remote_user@$remote_ip" "rm -rf \"$test_data_path/datas\""
+            fi
+        else
+            echo "SCP file failed, can't generate report!"
+        fi
+    fi
+    echo "Restore tox.ini file…………"
+    sed -i '/^ *pytest -v -s/s@^ *pytest -v -s.*@    pytest -v -s {posargs}@' $WORKSPACE/AutoTestRes/scripts/python/tox.ini
+    echo " --- end to generate allure report"
+
+    html_file=""
+    # 远程HTML文件路径和本地临时文件路径
+    if [[ "$TEST_JOB_URL" =~ "SZ" ]]; then
+        sz_html_file="/home/amlogic/FAE/AutoTest/shenzhen.html"
+        html_file=$sz_html_file
+    elif [[ "$SERVER_IP" =~ "XA" ]]; then
+        xa_html_file="/home/amlogic/FAE/AutoTest/xian.html"
+        html_file=$xa_html_file
+    else
+        sh_html_file="/home/amlogic/FAE/AutoTest/index.html"
+        html_file=$sh_html_file
+    fi
+    remote_directory="/home/amlogic/FAE/AutoTest/"
+
+    # 下载远程HTML文件到本地
+#    sshpass -p "$remote_password" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P 22 "$remote_user@$remote_ip:$sh_html_file" "$local_html_file"
+
+    project_name=$(func_get_project_name "$target" "$TEST_JOB_URL")
+
+    android_version="Android_S"
+    if [[ "${TEST_JOB_URL}" =~ "Android_U" ]]; then
+      android_version="Android_U"
+    fi
+
+    class_name=$project_name
+    test_report_prefix="http://aut.amlogic.com/AutoTest/AllureReport/$target/$START_TIME/report"
+
+    chipset=""
+    if [[ "$TEST_BOARD_TYPE" =~ "ohm" ]] && [[ ! "$TEST_BOARD_TYPE" =~ "tkl" ]] && [[ ! "$TEST_BOARD_TYPE" =~ "nocs" ]]; then
+      chipset="S905X4"
+    elif [[ "$TEST_BOARD_TYPE" =~ "oppen" ]] && [[ ! "$TEST_BOARD_TYPE" =~ "oppencas" ]] ; then
+      chipset="S905Y4"
+    elif [[ "$TEST_BOARD_TYPE" =~ "oppencas" ]]; then
+      chipset="S905C3"
+    elif [[ "$TEST_BOARD_TYPE" =~ "ohm_hybrid_tkldtvkit" ]]; then
+      chipset="S905C2"
+    elif [[ "$target" = "iptv_product_line_p_yuv" ]]; then
+      chipset="P291"
+    elif [[ "$target" = "iptv_product_line_r_yuv" ]]; then
+      chipset="S928X"
+    else
+      chipset="S905C2L"
+    fi
+    # 调用远程服务器上的Python函数
+    if [[ "$WORKSPACE" =~ "_CAS" ]] || [[ "$WORKSPACE" =~ "_Stress" ]]; then
+        echo "wait all job run finished!"
+    else
+        sshpass -p "$remote_password" ssh "$remote_user@$remote_ip" "cd $remote_directory; python3 -c 'from replace_variables import generate_html_file; generate_html_file(\"$android_version\", \"$html_file\", \"$project_name\", \"$class_name\", \"$chipset\", \"$test_report_prefix\", \"$BUILD_JOB_URL\", \"$BUILD_NUMBER\")'"
+    fi
+}
+
 function func_pushDeviceCheck() {
     echo " start to push device_check"
 
@@ -1067,7 +1303,7 @@ function func_pushDeviceCheck() {
 
 # Check DUT status pre download image.
 # If DUT adb status is "recovery/NA" will skip test
-if [[ $PROJECT_SERIES =~ "Android" && $PROJECT_SERIES != "Android_K" && ! ${TEST_BOARD_TYPE} =~ "iptv" ]]; then
+if [[ $PROJECT_SERIES =~ "Android" && $PROJECT_SERIES != "Android_K" && ! ${TEST_BOARD_TYPE} =~ "iptv" && $PROJECT_SERIES != "Android_T" ]]; then
     echo "Check DUT adb port status pre download image."
     echo "adb devices SN: $ADB_SN"
     func_checkDutAndRecovery;
@@ -1115,16 +1351,19 @@ if [[ $PROJECT_SERIES =~ "Android" ]]; then
             IMGE_URL=$FILESERVER
             func_downloadFastbootFile $FILESERVER;
             echo " --- --- func_downloadFastbootFile: done"
-            elif [[ $FILESERVER =~ '.tgz' ]]; then
+        elif [[ $FILESERVER =~ '.tgz' ]]; then
             #http://qa-sz.amlogic.com:8882/#/CustomerBuild/TV/Jane/T950X4/09062021/release-almond-bt-PMAIN1_userdebug_1923.tgz
             BUILD_INFO=$(echo $FILESERVER | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
             echo " tgz Build information: $BUILD_INFO"
             IMGE_URL=$FILESERVER
             func_downloadFastboottgzFile $FILESERVER;
             echo " --- --- func_downloadFastboot tgz File: done"
-
+        elif [[ $FILESERVER =~ 'S928X' ]]; then
+            echo " --- --- iptv / Android_R Build information:"
+            URL=${FILESERVER}/aml_S928X_upgrade_package.img.tgz
+            func_downloadTestImage "S928X" $URL;
         else
-            if [[ ${TEST_BOARD_TYPE} =~ "iptv" || $PROJECT_SERIES =~ "Android_K" ]]; then
+            if [[ ${TEST_BOARD_TYPE} =~ "iptv" || $PROJECT_SERIES =~ "Android_K" || $PROJECT_SERIES =~ "Android_T" || ${TEST_JOB_URL} =~ "DVB" || ${TEST_JOB_URL} =~ "Multi_Stress" || ${TEST_JOB_URL} =~ "KPI" || ${TEST_JOB_URL} =~ "Android_S_Hybrid_Openlinux_Autotest" || ${TEST_JOB_URL} =~ "Android_U_Hybrid_Openlinux_Autotest" ]]; then
                 echo " --- --- iptv / Android_K Build information:"
                 # http://10.28.8.100/shenzhen/image/android/Android-K/trunk/2019-09-10/shmobile-user-android32-kernel32-AOSP-8/
                 BUILD_INFO=$(echo $FILESERVER | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
@@ -1165,7 +1404,8 @@ if [[ $PROJECT_SERIES =~ "Android" ]]; then
         fi
 
         if [[ ${TEST_BOARD_TYPE} =~ "iptv" || $PROJECT_SERIES =~ "Android_K" || ${UPDATE_TOOL} =~ "adnl" ]]; then
-            func_downloadTestImage "img" $FILESERVER;
+            #func_downloadTestImage "img" $FILESERVER;
+            func_downloadTestImage "aml_p291" $FILESERVER;
         elif [[ ${UPDATE_TOOL} =~ "fastboot" ]]; then
             func_downloadTestImage "fat" $FILESERVER;
         fi
@@ -1225,7 +1465,9 @@ else
             echo "This is Bootloader user define parameter."
 
         else
-            URL=${FILESERVER}aml_upgrade_package.img
+#            URL=${FILESERVER}aml_upgrade_package.img
+            URL=${FILESERVER}
+
             func_updateReportFile "Image URL" $URL;
             get_http_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} $URL`
             echo "$URL status is: ${get_http_code}"
@@ -1237,7 +1479,17 @@ else
                 exit 1
             else
                 echo -e "Download file: $URL\nDownloading ..."
-                wget -q -c $URL -O ${DOWNLOAD_PATH}/aml_upgrade_package.img
+                wget -q -c $URL -O ${DOWNLOAD_PATH}/aml_upgrade_package_img.tgz
+                echo " --- untar aml_upgrade_package_img.tgz ..."
+                tar -xzvf ${DOWNLOAD_PATH}/aml_upgrade_package.img.tgz -C ${DOWNLOAD_PATH}  # .img
+                if [ $? -ne 0 ]; then
+                    echo " --- untar aml_upgrade_package_img.tgz failure,exit!"
+                    func_updateReportFile "FailReason" "aml_upgrade_package_img.tgz failure failure";
+                    func_preTestFailSaveLogs;
+                    sleep 120
+                    exit 1
+                fi
+#                wget -q -c $URL -O ${DOWNLOAD_PATH}/aml_upgrade_package.img
                 # copy files to image folder
                 cp ${DOWNLOAD_PATH}/aml_upgrade_package.img ${AUTO_IMAGE}/
                 IMGE_URL=$URL
@@ -1304,6 +1556,46 @@ else
 
 fi
 
+function func_stress() {
+  if [[ $ADB_SN =~ "monkey" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_monkey_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_MONKEY
+  elif [[ $ADB_SN = "reboot" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_reboot_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_REBOOT
+  elif [[ $ADB_SN =~ "wifi" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_wifi_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_WIFI
+  elif [[ $ADB_SN =~ "suspend" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_suspend_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_SUSPEND
+  elif [[ $ADB_SN =~ "shutdown" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_shutdown_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_SHUTDOWN
+  elif [[ $ADB_SN =~ "av_play" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_av_play_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_AV_PLAY
+  elif [[ $ADB_SN =~ "factory_reset" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_factory_reset_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_FACTORY_RESET
+  elif [[ $ADB_SN = "uboot_reboot" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_uboot_reboot_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_UBOOT_REBOOT
+  elif [[ $ADB_SN =~ "switch_audioTrack" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_switch_audio_track_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_SWITCH_AUDIO_TRACK
+  elif [[ $ADB_SN =~ "switch_subtitleTrack" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_switch_subtitle_track_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_SWITCH_SUBTITLE_TRACK
+  elif [[ $ADB_SN =~ "youtube" ]]; then
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_youtube_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_YOUTUBE
+  else
+      sed -i  's/\("prj":\).*/"prj": "ott_hybrid_power_stress"/g' target.json
+      python3 localtest_runner.py -m AATS_OTT_STRESS_POWER
+  fi
+}
+
 #upgrade firmware.
 if [[ $PROJECT_SERIES =~ "Android" ]]; then
     func_checkAdbStatus;
@@ -1346,7 +1638,7 @@ elif [[ $PROJECT_SERIES =~ "Bootloader" ]]; then
 #elif [[ ${TEST_BOARD_TYPE} =~ "iptv" || $PROJECT_SERIES =~ "Android_K"  || $PROJECT_SERIES =~ "Linux" || $PROJECT_SERIES =~ "Kernel" ]]; then
 
 #if [[ ${TEST_BOARD_TYPE} =~ "iptv" || $PROJECT_SERIES =~ "Android_R"  || $PROJECT_SERIES =~ "Linux" || $PROJECT_SERIES =~ "Kernel" ]]; then
-elif [[ $PROJECT_SERIES =~ "IPTV" || $PROJECT_SERIES =~ "Android_K" || $PROJECT_SERIES =~ "Linux" || $PROJECT_SERIES =~ "Kernel" || $upgrademode =~ "update" ]]; then
+elif [[ $PROJECT_SERIES =~ "IPTV" || $PROJECT_SERIES =~ "Android_K" || $PROJECT_SERIES =~ "Linux" || $PROJECT_SERIES =~ "Kernel" || $upgrademode =~ "update" || $TEST_BOARD_TYPE == "p291_iptv" ]]; then
 
     echo " --- Start to upgrade firmware"
     # Upgrade DUT by update tool
@@ -1364,6 +1656,16 @@ elif [[ $PROJECT_SERIES =~ "IPTV" || $PROJECT_SERIES =~ "Android_K" || $PROJECT_
         $PowerRelay_Serial_Port \
         aml_upgrade_package.img \
         false \
+        ${UPDATE_TOOL}"
+    elif [ ${TEST_BOARD_TYPE} == "p291_iptv" ]; then
+        flock -x ~/.autoTestflashImage.lock \
+        -c "bash ${WORKSPACE}/AutoTestRes/scripts/shell/upgrade_image.sh \
+        $WORKSPACE \
+        $DUT_Serial_Port \
+        ${DUT_SERIAL_PORT_BAUDRATE} \
+        $PowerRelay_Serial_Port \
+        aml_p291_prue_for_s905l_upgrade_package.img \
+        true \
         ${UPDATE_TOOL}"
     else
         flock -x ~/.autoTestflashImage.lock \
@@ -1392,7 +1694,7 @@ elif [[ $PROJECT_SERIES =~ "IPTV" || $PROJECT_SERIES =~ "Android_K" || $PROJECT_
     fi
 
 
-elif [[ $PROJECT_SERIES =~ "Android_R" || $PROJECT_SERIES =~ "Android_S" ]]; then
+elif [[ $PROJECT_SERIES =~ "Android_R" || $PROJECT_SERIES =~ "Android_S" || $PROJECT_SERIES =~ "Android_T" || $PROJECT_SERIES =~ "Android_U"  || $PROJECT_SERIES =~ "Zapper" ]]; then
     echo " --- Start to upgrade firmware from $PROJECT_SERIES"
     cd ${AUTO_IMAGE}
     if [ ! -L flashImageTool ]; then
@@ -1407,6 +1709,7 @@ elif [[ $PROJECT_SERIES =~ "Android_R" || $PROJECT_SERIES =~ "Android_S" ]]; the
     #Determine whether the burning method is fastboot or update
     if [[ $UPDATE_TOOL =~ "fastboot" ]];then
         echo " --- Start to upgrade with fastboot"
+:<<eof
         if [[ $is_skip_boot_partition = "yes" ]]; then
             echo "adb -s $FASTBOOT_SN reboot bootloader"
             adb -s $FASTBOOT_SN reboot bootloader
@@ -1426,6 +1729,9 @@ elif [[ $PROJECT_SERIES =~ "Android_R" || $PROJECT_SERIES =~ "Android_S" ]]; the
             echo "./flashImageTool skipboot=no flash-all.bat $FASTBOOT_SN ${AUTO_LOG} ${PROJECT_SERIES} 600"
             ./flashImageTool skipboot=no flash-all.bat $FASTBOOT_SN ${AUTO_LOG} ${PROJECT_SERIES} 600
         fi
+eof
+        cp ../scripts/shell/flash-all.sh ./
+        bash flash-all.sh ${DUT_ADB_SN}
 
     elif [[ $UPDATE_TOOL =~ "adnl" ]];then
         echo " --- Start to upgrade with adnl"
@@ -1556,13 +1862,13 @@ else
     sleep 10
 fi
 
-echo "The upgrade is successful, restart and wait for 120 seconds"
-sleep 90
+echo "The upgrade is successful, restart and wait for 180 seconds"
+sleep 180
 
 # Check DUT status after download image.
 echo ' --- Check DUT status after download image:'
 # If DUT adb status is "recovery/NA" will make this version test fail. and write to gerrit.
-if [[ $PROJECT_SERIES =~ "Android" && $PROJECT_SERIES != "Android_K" && ! ${TEST_BOARD_TYPE} =~ "iptv" ]]; then
+if [[ $PROJECT_SERIES =~ "Android" && $PROJECT_SERIES != "Android_K" && ! ${TEST_BOARD_TYPE} =~ "iptv" && $PROJECT_SERIES != "Android_T" ]]; then
     echo " ---  --- Check DUT adb port status after download image."
     echo "adb devices SN: $ADB_SN"
     func_checkDutAndRecovery;
@@ -1597,7 +1903,7 @@ if [[ $PROJECT_SERIES =~ "Android" && $PROJECT_SERIES != "Android_K" && ! ${TEST
 #==========================================================================================
 
 else
-    if [[ ${TEST_BOARD_TYPE} =~ "iptv" ]]; then
+    if [[ ${TEST_BOARD_TYPE} =~ "iptv" || $PROJECT_SERIES =~ "Android_T" ]]; then
         echo "Nothing to check after download image."
     elif [ ${DUT_ADB_SN} != "NotUsed" ]; then
         func_checkLinuxBaseProAdb;
@@ -1682,12 +1988,20 @@ fi
 !
 #==========================================================================================
 
+if [[ ${TEST_JOB_URL} =~ "Android_U_Hybrid_Openlinux_Autotest_Basic_SZ" || ${TEST_JOB_URL} =~ "Android_U_Hybrid_Openlinux_Autotest_Format_Compatibility_SZ" ]]; then
+    echo "start burning oem.img"
+    cp "/home/amlogic/oem_ms12.img" "$(pwd)" && echo "oem.img copy to $(pwd) success" || echo "oem.img copy fail"
+    bash $WORKSPACE/AutoTestRes/scripts/shell/gsi.sh $ADB_SN
+fi
 
-if [[ $PROJECT_SERIES =~ "Android_S" ]]; then
+if [[ $PROJECT_SERIES != "Android_S_Google_Gretzky"  && $PROJECT_SERIES =~ "Android_S" || $PROJECT_SERIES =~ "Android_T" || $PROJECT_SERIES =~ "Android_U" ]]; then
 
-    echo "start to Androi S remount"
+    echo "start to Android S remount"
     func_adbRemount;
 fi
+
+echo "disable bluetooth"
+adb -s $DUT_ADB_SN shell svc bluetooth disable
 
 
 PYTHONSPACE=AutoTestRes/scripts/python
@@ -1717,8 +2031,22 @@ DUT_ADB_SN2=${DUT_ADB_SN_TMP2:0:32}
 echo "WIFI5621 DUT_ADB_SN is" $DUT_ADB_SN1
 echo "WIFI8822CS DUT_ADB_SN is" $DUT_ADB_SN2
 
+# if server has installed allure ,Pytest run with allure command
+if command -v allure &> /dev/null; then
+    echo "allure found. Pytest run with allure command"
+    # 修改 tox.ini 文件
+    sed -i '/^ *pytest -v -s/s@^ *pytest -v -s.*@    pytest -v -s --alluredir=./allure_data {posargs}@' "$WORKSPACE/AutoTestRes/scripts/python/tox.ini"
+    if [ -d "$AUTO_ALLURE" ]; then
+        rm -rf "$AUTO_ALLURE"
+        echo "The history allure_data folder has been removed."
+    else
+        echo "The allure_data folder does not exist. No need to remove it."
+    fi
+else
+    echo "allure not found, Pytest command does not use allure"
+fi
 
-if [[ ${PRJ_INFO} =~ "IPTV" || $PROJECT_SERIES =~ "Android_K"  || $PROJECT_SERIES =~ "Linux" || $PROJECT_SERIES =~ "Kernel" ]]; then
+if [[ ${PRJ_INFO} =~ "IPTV" || $PROJECT_SERIES =~ "Android_K"  || $PROJECT_SERIES =~ "Zapper" || $PROJECT_SERIES =~ "KT"  || $PROJECT_SERIES =~ "Kernel" || ${TEST_BOARD_TYPE} == "p291_iptv" || ${TEST_BOARD_TYPE} == "s928x_iptv" ]]; then
     if [[ ${TEST_JOB_URL} =~ 'WIFI' ]];then
         if [[ ${BUILD_INFO} =~ "telecom" ]]; then
             sed -i  's/\("prj":\).*/"prj": "wifi_ctcc"/g' target.json ]]
@@ -1727,8 +2055,16 @@ if [[ ${PRJ_INFO} =~ "IPTV" || $PROJECT_SERIES =~ "Android_K"  || $PROJECT_SERIE
             sed -i  's/\("prj":\).*/"prj": "wifi_cmcc"/g' target.json
             sed -i "s/\(\"device_id\": \"\)[[:alnum:]]\+/\1$DUT_ADB_SN1/" ./config/config_wifi_cmcc.json
         fi
+    elif [[ ${TEST_BOARD_TYPE} == "p291_iptv" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "iptv_product_line_p_yuv"/g' target.json
+    elif [[ ${TEST_JOB_URL} =~ "Zapper" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "zapper"/g' target.json
+    elif [[ ${TEST_BOARD_TYPE} == "s928x_iptv" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "iptv_product_line_r_yuv"/g' target.json
     elif [[ ${BUILD_INFO} =~ "telecom" ]]; then
         sed -i  's/\("prj":\).*/"prj": "iptv_ctcc"/g' target.json
+    elif [[ ${TEST_JOB_URL} =~ "KT" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "kt_sanity"/g' target.json
     else
         if [[ ${BUILD_ROOT_PATH} =~ "S905L3A" ]]; then
             sed -i  's/\("prj":\).*/"prj": "iptv_cmcc_l3a"/g' target.json
@@ -1737,7 +2073,7 @@ if [[ ${PRJ_INFO} =~ "IPTV" || $PROJECT_SERIES =~ "Android_K"  || $PROJECT_SERIE
         fi
     fi
     python3 localtest_runner.py -l
-    python3 localtest_runner.py --all
+    python3 localtest_runner.py --all --retest 2
 
 elif [[ ${PRJ_INFO} =~ "TV" || ${TEST_BOARD_TYPE} =~ "amazon_pat" ]]; then
 
@@ -1753,19 +2089,111 @@ elif [[ ${PRJ_INFO} =~ "TV" || ${TEST_BOARD_TYPE} =~ "amazon_pat" ]]; then
     #python3 localtest_runner.py -m AATS_AMAZON_PLATFORM_UPGRADE_FASTBOOT --noflash
     python3 localtest_runner.py --all
 
-elif [[ ${PRJ_INFO} =~ "Android-S_Google_Partner" || $PROJECT_SERIES =~ "Android_S" ]]; then
-    if [[ ${TEST_JOB_URL} =~ "DVB" ]]; then
-        sed -i  's/\("prj":\).*/"prj": "dvb"/g' target.json
+elif [[ ${PRJ_INFO} =~ "Android-S_Google_Partner" || $PROJECT_SERIES =~ "Android_S" || $PROJECT_SERIES =~ "Android_T" || $PROJECT_SERIES =~ "Android_U" ]]; then
+    if [[ ${TEST_JOB_URL} =~ "DVB_C" ]]; then
+        if [[ ${TEST_JOB_URL} =~ "Stress" ]]; then
+            if [[ ${ADB_SN} =~ "scan" ]]; then
+                sed -i  's/\("prj":\).*/"prj": "dvb_stress_scan"/g' target.json
+            elif [[ ${ADB_SN} =~ "channelswitch" ]]; then
+                sed -i  's/\("prj":\).*/"prj": "dvb_stress_channel_switch"/g' target.json
+            elif [[ ${ADB_SN} =~ "playback" ]]; then
+                sed -i  's/\("prj":\).*/"prj": "dvb_stress_playback"/g' target.json
+            elif [[ ${ADB_SN} =~ "pvr" ]]; then
+                sed -i  's/\("prj":\).*/"prj": "dvb_stress_pvr"/g' target.json
+            elif [[ ${ADB_SN} =~ "timeshift" ]]; then
+                sed -i  's/\("prj":\).*/"prj": "dvb_stress_timeshift"/g' target.json
+            fi
+            python3 localtest_runner.py -l
+            python3 localtest_runner.py --all
+        else
+            sed -i  's/\("prj":\).*/"prj": "dvb_trunk"/g' target.json
+            python3 localtest_runner.py -l
+            python3 localtest_runner.py --all --retest 2
+        fi
+    elif [[ ${TEST_JOB_URL} =~ "DVB_S" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "dvb_s"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "DVB_T" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "dvb_t"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "Android_U_Hybrid_Openlinux_Autotest_Sanity" || ${TEST_JOB_URL} =~ "Android_S_Hybrid_Openlinux_Autotest_Sanity" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_sanity"/g' target.json
+        python3 localtest_runner.py -l --project=ref
+        python3 localtest_runner.py --all --project=ref --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "Android_U_Google_Boreal_Autotest_Sanity" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_sanity"/g' target.json
+        python3 localtest_runner.py -l --project=boreal
+        python3 localtest_runner.py --all --project=boreal --retest 2
+    elif [[ ${PROJECT_SERIES} =~ "Nagratkl" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_s_nagratkl"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${PROJECT_SERIES} =~ "Nagranocs" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_s_nagranocs"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${PROJECT_SERIES} =~ "KPI" ]]; then
+        if [[ $ADB_SN =~ "skpi" ]]; then
+          sed -i  's/\("prj":\).*/"prj": "ott_hybrid_s_kpi"/g' target.json
+          python3 localtest_runner.py -l
+          python3 localtest_runner.py --all
+        else
+          sed -i  's/\("prj":\).*/"prj": "ott_hybrid_t_kpi"/g' target.json
+          python3 localtest_runner.py -l
+          python3 localtest_runner.py --all
+        fi
+    elif [[ ${TEST_JOB_URL} =~ "Android_S_Hybrid_Openlinux_Autotest_YuvCheck" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_s_yuv"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "Android_U_Hybrid_Openlinux_Autotest_YuvCheck" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_s_yuv"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "Android_T_Hybrid_Autotest_Compatibility" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_t_compatibility"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "Android_S_Hybrid_Openlinux_Autotest_Compatibility" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_compatibility"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "Android_T_Hybrid_Autotest" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_t"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${PROJECT_SERIES} =~ "Google_Gretzky" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "google_gretzky"/g' target.json
         python3 localtest_runner.py -l
         python3 localtest_runner.py --all
-    elif [[ ${TEST_JOB_URL} =~ "YuvCheck" ]]; then
-         sed -i  's/\("prj":\).*/"prj": "ott_hybrid_yuv"/g' target.json
-         python3 localtest_runner.py -l
-         python3 localtest_runner.py -m AATS_OTT_YUV_CHECK
+    elif [[ ${TEST_JOB_URL} =~ "Android_S_Hybrid_Openlinux_Autotest_Multi_Stress" ]]; then
+        func_stress;
+    elif [[ ${TEST_JOB_URL} =~ "Android_S_Hybrid_Openlinux_Autotest_Widevine_CAS" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_widevine_cas"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "Android_S_Hybrid_Openlinux_Autotest_CAS_Vmx_Iptv" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_vmx_iptv"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "Android_S_Hybrid_Openlinux_Autotest_Irdeto_DVB" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "dvb_s_irdeto"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all --retest 2
+    elif [[ ${TEST_JOB_URL} =~ "Android_T_Google_AOSP_Autotest" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ddr"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all
+    elif [[ ${TEST_JOB_URL} =~ "Android_U_Hybrid_Openlinux_Autotest_Format_Compatibility" ]]; then
+        sed -i  's/\("prj":\).*/"prj": "ott_hybrid_playback_strategy"/g' target.json
+        python3 localtest_runner.py -l
+        python3 localtest_runner.py --all
     else
         sed -i  's/\("prj":\).*/"prj": "ott_hybrid"/g' target.json
         python3 localtest_runner.py -l
-        python3 localtest_runner.py --all
+        python3 localtest_runner.py --all --retest 2
     fi
 else
     sed -i  's/\("prj":\).*/"prj": "ott"/g' target.json
@@ -1775,6 +2203,7 @@ else
 fi
 
 func_saveResult;
+func_saveAllureReport;
 exit 0
 
 #============== shield by wxl 20210317 ===================================================
@@ -1865,3 +2294,4 @@ else
 fi
 !
 #==============================================================================================
+

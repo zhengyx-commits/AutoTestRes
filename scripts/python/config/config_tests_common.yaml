@@ -1,0 +1,38 @@
+# This is a config file for tests/common
+
+# for tests/common/network/conftest.py
+conf_conftest:
+  network_qos:
+    auxiliary_device: 192.168.2.102
+    aux_username: amlogic
+    aux_password: Linux2017
+    udp_lost_datagrams: 0
+    tcp_bandwidth_pass: 90
+
+# for tests/common/securtykey/test_security_flash_key.py
+conf_securitykey:
+  drm:
+    usid: 123456789
+    mac:
+    mac_bt:
+    mac_wifi:
+    hdcp:
+    hdcp22_fw_private:
+    widevinekeybox:
+    PlayReadykeybox25:
+    prpubkeybox:
+    prprivkeybox:
+    attestationdevidbox:
+    attestationkeybox:
+
+# for tests/common/tvinput/hdmiIn.py
+conf_hdmiIn:
+  hdmi_in:
+    switch_list:
+      - hdmi1
+      - hdmi2
+      - hdmi3
+    switch_time:
+      - 1
+      - 1
+      - 1

@@ -29,6 +29,7 @@ from abc import ABCMeta, abstractmethod
 from queue import Queue, Empty
 from threading import Lock, Thread, Event
 
+from tools.KpiAnalyze import KpiAnalyze
 from . import AATSTarget, set_timer
 
 from ..exceptions import CLIEndpointNotAvailableError, AATSRuntimeError, AATSDeviceNotFoundError
@@ -153,9 +154,6 @@ class AdbLogcatReader(ProcBufferedReader):
         super(AdbLogcatReader, self).__init__(wait_cmd, logfileobj, kpifileobj)
         self.read_logcat = ""
         self._logfile = logfileobj
-        self.outputDict = {}
-        self.check_keywords = []
-        self.checked = None
         # self._logcatfile = logcatfileobj
 
         if pytest.kpi_enable:
@@ -190,40 +188,6 @@ class AdbLogcatReader(ProcBufferedReader):
         fcntl.fcntl(
             self._sub_proc.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
 
-    def set_check_keywords(self, keywords):
-        self.check_keywords = keywords
-        logging.debug(f"set check_keywords: {self.check_keywords}")
-
-    def get_check_keywords(self):
-        if self.check_keywords:
-            logging.debug(f"get check_keywords: {self.check_keywords}")
-            return self.check_keywords
-
-    def reset_flag(self):
-        self.checked = None
-
-    def set_flag(self, flag):
-        self.checked = flag
-        logging.debug(f"set self.checked: {self.checked}")
-
-    def get_flag(self):
-        logging.debug(f"get self.checked: {self.checked}")
-        return self.checked
-
-    def check_keyword_in_logcat(self, output):
-        for check_keyword in self.check_keywords:
-            if check_keyword and output:
-                logging.debug(f"output: {output}")
-                logging.debug(f"check_keyword: {check_keyword}")
-                if check_keyword in output:
-                    # logging.debug(f"check_keyword_in_logcat keyword: {check_keyword}")
-                    # logging.debug(f"output: {output}")
-                    self.set_flag(True)
-                    self.outputDict[check_keyword] = output
-                    logging.debug(f"self.outputDict:{self.outputDict}")
-            else:
-                pass
-
     def _read_once(self):
         out = b''
         if not self.is_process_running():
@@ -246,81 +210,14 @@ class AdbLogcatReader(ProcBufferedReader):
             log = AATSADBTarget._bytes_to_escaped_unicode(out).replace('\\r', '\r').replace('\\n', '\n').replace('\\t',
                                                                                                                  '\t')
             self._logfile.write(log)
-            self.check_keyword_in_logcat(log)
+            if ("stress" not in pytest.target.get("prj")) and (pytest.target.get("prj") != "ddr"):
+                self._read_buffer.put(log)
+            if pytest.target.get("prj") == "ott_hybrid_switch_audio_track_stress" or pytest.target.get("prj") == "ott_hybrid_switch_subtitle_track_stress":
+                self._read_buffer.put(log)
         if pytest.kpi_enable:
             #  对每条输出的log结果，实时进入kpi分析
             self.kpi.kpi_analysis(out)
         return out
-
-    # def kpi_analysis(self, out):
-    #     str_out = AATSADBTarget._bytes_to_escaped_unicode(out)
-    #     if self._id_dict != {} and self._res_dict != {}:
-    #         #  当id和result数据均找到后，开始分析
-    #         for key, value in self._id_dict.items():
-    #             if value in str_out:
-    #                 # log_time = datetime.datetime.now()  # 获取log打印的当前时间
-    #                 log_time = time.time()
-    #                 '''
-    #                 log_time = datetime.datetime.strptime(str_out.split(" ")[0]
-    #                                                      + ' ' + str_out.split(" ")[1],
-    #                                                     "%m-%d %H:%M:%S.%f")
-    #                 '''
-    #                 # 如果该log的内容中存在需要抓取的信息，将信息存入分析文件中
-    #                 self._kpifile.write("id:" + key + "  '" + value + "' found, Time: " +
-    #                                     str(log_time) + "\n")
-    #                 # if key == "1":
-    #                 #     # 对于id为1的log,仅记录最初一次出现的时间
-    #                 #     if key not in self._kpi_index.keys():
-    #                 #         self._kpi_index.update({key: log_time})
-    #                 # else:
-    #                 #     # 对于其他id的log，每出现一次则覆盖之前记录的结果
-    #                 #     self._kpi_index.update({key: log_time})
-    #                 if key == "1":
-    #                     self.store_enable = True
-    #
-    #                 if self.store_enable:
-    #                     self._kpi_index.update({key: log_time})
-    #
-    #                 if key == str(self._id_list_key_max):
-    #                     self.store_enable = False
-
-    # def kpi_calculate(self):
-    #     if self._kpifile:
-    #         logging.info("kpi calculating...")
-    #         if len(self._kpi_index) == 0:
-    #             self._kpifile.write("no related logs found")
-    #         else:
-    #             for key in self._res_dict.keys():
-    #                 # 每个result的id值在config中是"id1,id2"的形式，对于每一条result，id1是它起始log的id，id2是结束log的id
-    #                 start = key.split(",")[0]  # end id
-    #                 end = key.split(",")[1]  # start id
-    #                 if end in self._kpi_index.keys() and start in self._kpi_index.keys():
-    #                     # 若起始log的id与终止log的id都已被找到，则开始进行计算，否则写入not found信息
-    #                     if self._kpi_index[start] > self._kpi_index[end]:
-    #                         # 如果起始log的出现时间晚于终止log的时间，则将结果从负数转为正数，并进行警告
-    #                         self._kpifile.write(self._res_dict[key] + " = " +
-    #                                             str(self._kpi_index[start] - self._kpi_index[end]) +
-    #                                             "  This result's start log appeared later than end log!!" + "\n")
-    #
-    #                         # # save duration for different cases to list in dictionary
-    #                         # if self._res_dict[key] in self._kpi_dict.keys():
-    #                         #     self._kpi_dict[self._res_dict[key]].append(self._kpi_index[start] - self._kpi_index[end])
-    #                         # else:
-    #                         #     self._kpi_dict[self._res_dict[key]] = [self._kpi_index[start] - self._kpi_index[end]]
-    #                     else:
-    #                         offset = self._kpi_index[end] - self._kpi_index[start]
-    #                         self._kpifile.write(self._res_dict[key] + " = " + str(offset) + "\n")
-    #                         if offset < 10:
-    #                             if self._res_dict[key] in self._kpi_dict.keys():
-    #                                 self._kpi_dict[self._res_dict[key]].append(offset)
-    #                             else:
-    #                                 self._kpi_dict[self._res_dict[key]] = [offset]
-    #                         else:
-    #                             logging.info(
-    #                                 f"KPI out control, key:{key}, self._res_dict[key]:{self._res_dict[key]}, offset:{offset}")
-    #                 else:
-    #                     self._kpifile.write(self._res_dict[key] + ": related log not found\n")
-    #     self._kpifile.close()
 
     def close(self):
         if pytest.kpi_enable:
@@ -388,6 +285,7 @@ class AATSADBTarget(AATSTarget):
         cmd = [adbpath] + cmd
         rc = 1
         output = b''
+
         log.debug("<<<%s>>>", cmd)
         with set_timer(timeout):
             try:
@@ -415,6 +313,11 @@ class AATSADBTarget(AATSTarget):
     def _get_target(cls, device_id, adbpath=None, timeout=0):
         target = cls(device_id=device_id, adbpath=adbpath)
         return target
+
+    @classmethod
+    def _get_targets(cls, device_ids, adbpath=None, timeout=0):
+        targets = cls(device_id=device_ids, adbpath=adbpath)
+        return targets
 
     @classmethod
     def get_target(cls, device_id, adbpath=None, timeout=10):
@@ -469,19 +372,27 @@ class AATSADBTarget(AATSTarget):
         Get list of AATSADBTarget devices
         """
         targets = []
+        device_list = []
         try:
             for device_id in cls._get_adb_device_list(adbpath=adbpath, timeout=10):
-                try:
-                    target = cls._get_target(device_id, adbpath=adbpath, timeout=10)
-                    if target:
-                        targets.append(target)
-                except RuntimeError as e:
-                    log.debug(str(e))
+                if device_id in pytest.multi_instance[0].split(','):
+                    device_list.append(device_id)
+                    try:
+                        target = cls._get_target(device_id, adbpath=adbpath, timeout=10)
+                        if target:
+                            targets.append(target)
+                    except RuntimeError as e:
+                        log.debug(str(e))
+                else:
+                    pass
         except Exception as e:
             # Print warning if something goes wrong with listing devices,
             # e.g. if adb is not installed at PATH.
             log.warning("Unable to list adb devices: %s" % e.message)
+        logging.debug(f"targets is {targets}")
+        logging.debug(f"device_list is {device_list}")
         return targets
+        # return cls._get_targets(device_list, adbpath=adbpath)
 
     def __init__(self, device_id, adbpath=None, lib_path=None, **kwargs):
         super(AATSADBTarget, self).__init__(self.PROTOCOL, **kwargs)
@@ -612,15 +523,16 @@ class AATSADBTarget(AATSTarget):
     def wait_for_bootcomplete(self, timeout=300):
         logging.info("Waiting for bootcomplete")
         self.wait_for_device()
-        count = 0
-        while not self.shell('getprop sys.boot_completed')[1] == '1':
-            count += 1
-            time.sleep(1)
-            if count > 300:
-                raise AATSDeviceNotFoundError()
+        # count = 0
+        # # while not self.shell('getprop sys.boot_completed')[1] == '1':
+        # while not str(self.getprop("sys.boot_completed")) == "1":
+        #     count += 1
+        #     time.sleep(1)
+        #     if count > 30:
+        #         raise AATSDeviceNotFoundError()
         end_time = time.time() + timeout
         while True:
-            if '31' in self.version:
+            if '31' in self.getprop("ro.odm_dlkm.build.version.sdk"):
                 boot_completed = True if str(self.getprop("sys.boot_completed")) == "1" else False
                 if boot_completed:
                     logging.debug("Device bootcompleted.")
@@ -1038,7 +950,7 @@ class AATSADBTarget(AATSTarget):
 
         cmd = ['logcat', '-c']
         self._run_adb_cmd_specific_device(cmd)
-        cmd = ['logcat', '-G', '2m']
+        cmd = ['logcat', '-G', '40M']
         self._run_adb_cmd_specific_device(cmd)
 
         # -b option allows to choose buffers and 'all' is selected

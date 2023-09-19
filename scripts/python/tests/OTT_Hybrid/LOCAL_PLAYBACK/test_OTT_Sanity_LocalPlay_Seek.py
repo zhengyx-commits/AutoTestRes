@@ -1,8 +1,9 @@
 import pytest
-from lib.common.checkpoint.PlayerCheck import PlayerCheck
+from lib.common.checkpoint.PlayerCheck_Base import PlayerCheck_Base
+from lib.common.checkpoint.PlayerCheck_Iptv import PlayerCheck_Iptv
 from . import *
 
-playerCheck = PlayerCheck()
+playerCheck = PlayerCheck_Iptv()
 video, play_command = play_cmd(p_conf_track_path['path'])
 seek_command = "am broadcast -a com.amlogic.vplayer.seekkey --el seek_pos 30000"
 
@@ -23,4 +24,4 @@ def test_seek():
     # find_resume_element()
     time.sleep(10)
     playerCheck.run_shell_cmd(seek_command)
-    assert playerCheck.check_seek()[0]
+    assert playerCheck.check_seek(keywords=["SeekOB_started"])[0]

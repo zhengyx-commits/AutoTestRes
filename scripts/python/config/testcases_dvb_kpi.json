@@ -1,0 +1,94 @@
+{
+    "testcases": [
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_008_SWITCH_CHANNEL_TIME_SF_SD_TO_SD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_008_Switch_Channel_Time_Same_Frequency_SD_To_SD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_009_SWITCH_CHANNEL_TIME_CF_SD_TO_SD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_009_Switch_Channel_Time_Cross_Frequency_SD_To_SD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_010_SWITCH_CHANNEL_TIME_SF_SD_TO_HD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_010_Switch_Channel_Time_Same_Frequency_SD_To_HD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_011_SWITCH_CHANNEL_TIME_CF_SD_TO_HD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_011_Switch_Channel_Time_Cross_Frequency_SD_To_HD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_012_SWITCH_CHANNEL_TIME_SF_HD_TO_HD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_012_Switch_Channel_Time_Same_Frequency_HD_To_HD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_013_SWITCH_CHANNEL_TIME_CF_HD_TO_HD",
+            "path": "tests/DVB/switchChannel/test_DVB_Sanity_Func_013_Switch_Channel_Time_Cross_Frequency_HD_To_HD.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_136_HD_START_KPI",
+            "path": "tests/DVB/playback/test_DVB_Sanity_Func_136_HD_Start_KPI.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "yongbo.shao"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_KPI_SWITCH_CHANNEL_SAME_FREQUENCY",
+            "path": "tests/DVB/KPI/test_DVB_Sanity_Func_KPI_Switch_Channel_Same_Frequency.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_KPI_SWITCH_CHANNEL_CROSS_FREQUENCY",
+            "path": "tests/DVB/KPI/test_DVB_Sanity_Func_KPI_Switch_Channel_Cross_Frequency.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        },
+        {
+            "group": "SYSTEM#DVB",
+            "name": "AATS_DVB_FUNC_KPI_SCAN",
+            "path": "tests/DVB/KPI/test_DVB_Sanity_Func_KPI_Scan.py",
+            "resource": [
+                "media_sys"
+            ],
+            "author": "kejun.chen"
+        }
+    ]
+}

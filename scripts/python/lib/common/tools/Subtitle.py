@@ -21,6 +21,7 @@ class Subtitle(ADB):
 
     def __init__(self):
         super(Subtitle, self).__init__()
+        self.flag = True
         self.error = 0
         self.got_spu = ''
         self.show_spu = ''
@@ -39,6 +40,7 @@ class Subtitle(ADB):
             '-s Scte27Parser | grep langCallback',
             '-s CCSubtitleView | grep "showJsonStr"',
             '-s DvbParser | grep dvbsub_decode',
+            '-s TeletextParser | grep "get_dvb_teletext_spu"',
         ]
 
         self.scte35Parser_keywords = [
@@ -91,12 +93,17 @@ class Subtitle(ADB):
         while True:
             logging.info('start check subtitle loop')
             self.subtitle_check_data(subtitleType, apk_name)
+            assert self.flag, 'The subtitle is abnormal.'
 
     def start_subtitle_datathread(self, subtitleType, apk_name=''):
         self.subtitleThread = threading.Thread(target=self.check_subtitle_dataloop, args=(subtitleType, apk_name),
                                                name='subtitleThread')
         self.subtitleThread.setDaemon(True)
         self.subtitleThread.start()
+
+    def check_subtitle_thread(self, subtitleType='Dvb', apk_name=''):
+        self.start_subtitle_datathread(subtitleType, 'LiveTv')
+        assert self.subtitleThread.is_alive(), 'The subtitle thread is not alive.'
 
     def stop_subtitle_data_thread(self):
         if isinstance(self.subtitleThread, threading.Thread):
@@ -115,7 +122,8 @@ class Subtitle(ADB):
             locals()['logcat' + str(i)] = self.popen('shell logcat ' + self._subtitleCheckCmdLists[i])
         i = 0
         start_time = time.time()
-        while time.time() - start_time < 60:
+        count = 0
+        while time.time() - start_time < 10:
             # 1. check spu pts
             line_presentation = locals()['logcat0'].stdout.readline()
             logging.debug(f'line_presentation : {line_presentation}')
@@ -193,7 +201,7 @@ class Subtitle(ADB):
                             line_server, re.S)[0]
                         logging.info(postDisplayData)
                         if subtitle_type == 'Teletext':
-                            logcat_adaptor = locals()['logcat 5'].stdout.readline()
+                            logcat_adaptor = locals()['logcat5'].stdout.readline()
                             logging.info(f'logcat_adaptor : {logcat_adaptor}')
                             self.subtitle_window = \
                                 re.findall(r'DisplayRect=Rect(.*?) show bitmap scaleW:(\S*), scaleH:(\S*)',
@@ -238,11 +246,25 @@ class Subtitle(ADB):
                         DvbParser = locals()['logcat10'].stdout.readline()
                         self.subtitle_window = re.findall(r'DvbParser', DvbParser, re.S)[0]
                         logging.debug(self.subtitle_window)
+                    elif subtitle_type == 'HOH':
+                        HOHParser = locals()['logcat11'].stdout.readline()
+                        self.subtitle_window = re.findall(r'HOHParser', HOHParser, re.S)[0]
+                        logging.debug(self.subtitle_window)
 
             # 5. check subtitle show sync or not.
-            if ('2 fade SPU:' in line_presentation) or ('1 fade SPU:' in line_presentation):
-                logging.info('video play and subtitle show is not sync')
+            # if ('2 fade SPU:' in line_presentation) or ('1 fade SPU:' in line_presentation):
+            if abs(int(self.got_spu[0]) - int(self.got_spu[3]) / 90000) > 0.5:
+                # count += 1
+                logging.info(f'video play and subtitle show is not sync: {count}')
+                # if count >= 2:
                 self.error += 1
+        logging.info(
+            f'subtitle.error : {self.error}  ;subtitle.got_spu : {self.got_spu}; subtitle.show_spu : {self.show_spu} ; subtitle.subtitle_window: {self.subtitle_window}')
+        if (self.error == 0) & (self.got_spu != '') & (self.show_spu != ''):
+            logging.info('The subtitle shows is normal.')
+        else:
+            logging.info('There are some problems with the subtitle shows')
+            self.flag = False
 
     def seek_time(self, video):
         total_time = 0

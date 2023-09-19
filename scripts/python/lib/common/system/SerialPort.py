@@ -40,16 +40,18 @@ class SerialPort:
     '''
 
     def __init__(self, serial_port='', baud=''):
-        self.serial_port = serial_port or pytest.config['serial_port']
-        self.baud = baud or pytest.config['baudrate']
+        self.serial_port = serial_port or self.get_serial_port()
+        self.baud = baud or self.get_serial_baud()
         logging.info(f"self.serial_port: {self.serial_port},self.baud: {self.baud}")
         self.ser = ''
         self.ethernet_ip = ''
+        self.uboot_time = 0
         try:
             self.ser = serial.Serial(self.serial_port, self.baud, timeout=0.25)
             logging.info('the serial port %s-%s is opened' % (self.serial_port, self.baud))
             self.write('su')
             assert self.recv_until_pattern(b'#'), 'The serial port cannot to communicate to device'
+            # self.ser.write(chr(0x03))
             self.write('setprop persist.sys.usb.debugging y')
             self.write('setprop service.adb.tcp.port 5555')
         except serial.serialutil.SerialException as e:
@@ -61,6 +63,24 @@ class SerialPort:
         if self.ethernet_ip:
             logging.info('get ip ：%s' % self.ethernet_ip)
         logging.info('the status of serial port is {}'.format(self.status))
+
+    def get_serial_port(self):
+        serial_ports = []
+        if isinstance(pytest.config, list):
+            for serial_port in pytest.config:
+                serial_ports.append(serial_port['serial_port'])
+            return serial_ports
+        else:
+            return pytest.config['serial_port']
+
+    def get_serial_baud(self):
+        serial_bauds = []
+        if isinstance(pytest.config, list):
+            for serial_port in pytest.config:
+                serial_bauds.append(serial_port['baudrate'])
+            return serial_bauds
+        else:
+            return pytest.config['baudrate']
 
     def get_ip_address(self, inet='ipv4'):
         '''
@@ -103,7 +123,7 @@ class SerialPort:
         logging.info(f'=> {command}')
         sleep(0.1)
         data = self.recv()
-        logging.info(data.strip())
+        logging.debug(data.strip())
         return data
 
     def enter_uboot(self):
@@ -111,27 +131,35 @@ class SerialPort:
         enter in uboot
         @return: uboot status : boolean
         '''
+        uboot_status = False
         self.write('reboot')
         start = time.time()
         info = ''
-        while time.time() - start < 30:
-            logging.debug(f'uboot {self.ser.read(100)}')
-
+        while time.time() - start < 40:
+            # logging.debug(f'uboot {self.ser.read(500)}')
+            #
             try:
-                info = self.ser.read(100).decode('utf-8')
-                logging.info(info)
+                info = self.ser.read(500).decode('utf-8')
+                logging.info(f"info:{info}")
             except UnicodeDecodeError as e:
                 logging.warning(e)
+            if uboot_status:
+                return uboot_status
             if 'gxl_p211_v1#' in info:
                 logging.info('the device is in uboot')
                 # self.write('reset')
-                return True
-            if 'sc2_ah212#' in info:
+                uboot_status = True
+            if (('sc2_ah212#' in info) or ('s4_ap222#' in info)) and ('console:/ $' not in info):
                 logging.info('OTT is in uboot')
-                return True
+                uboot_status = True
+            if 'console:/ $' in info:
+                uboot_status = False
+                return uboot_status
             else:
-                self.write('\n\n')
-        logging.info('no uboot info printed,please confirm manually')
+                for i in range(5):
+                    self.write('\x0d')
+        logging.info(f'uboot_status: {uboot_status}')
+        return uboot_status
 
     def enter_kernel(self):
         '''
@@ -149,6 +177,8 @@ class SerialPort:
                 logging.info(info)
             except UnicodeDecodeError as e:
                 logging.warning(e)
+            if 'uboot time:' in info:
+                self.uboot_time = re.findall(".*uboot time: (.*) us.*", info, re.S)[0]
             if 'Starting kernel ...' in info:
                 self.write('\n\n')
             if 'console:/ $' in info:
@@ -165,7 +195,7 @@ class SerialPort:
         '''
         self.ser.write(bytes(command + '\r', encoding='utf-8'))
         logging.info(f'=> {command}')
-        sleep(0.1)
+        # sleep(0.1)
 
     def recv(self):
         '''
@@ -174,6 +204,8 @@ class SerialPort:
         '''
         while True:
             data = self.ser.read_all()
+
+            time.sleep(5)
             if data == '':
                 continue
             else:
@@ -201,6 +233,25 @@ class SerialPort:
             result.append(log)
             if pattern and pattern in log:
                 return result
+
+    def receive_file_via_serial(self, output_file):
+        try:
+            # 打开输出文件以写入数据
+            with open(output_file, 'wb') as file:
+                while True:
+                    # 从串口读取数据
+                    data = self.ser.read(1024)
+                    if not data:
+                        break
+
+                    # 将数据写入输出文件
+                    file.write(data)
+
+            print("文件传输完成")
+        except serial.SerialException as e:
+            print("串口连接错误:", str(e))
+        except Exception as e:
+            print("发生错误:", str(e))
 
     def __del__(self):
         try:

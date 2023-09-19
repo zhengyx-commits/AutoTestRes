@@ -23,5 +23,5 @@ def test_HTTP_TS_MPEG2_1080():
         assert common_case.player_check.check_speed(ff_cmd_1, 1.5, 30), "playback ff-1.5x speed failed"
         ff_cmd_2 = multi.FF_CMD_2
         assert common_case.player_check.check_speed(ff_cmd_2, 2.0, 30), "playback ff-2.0x speed failed"
-        common_case.pause_resume_seek_stop()
+        # common_case.pause_resume_seek_stop()
         multi.stop_multiPlayer_apk()

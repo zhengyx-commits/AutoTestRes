@@ -6,9 +6,7 @@ from . import p_conf_play_time_after_restore_network, p_conf_offline_network_tim
 from tests.OTT_Hybrid.MULTI import *
 from tests.OTT_Hybrid import *
 
-g_conf_device_id = pytest.config['device_id']
-multi = MultiPlayer(g_conf_device_id)
-playerCheck = PlayerCheck()
+playerCheck = PlayerCheck_Iptv()
 adb = ADB()
 streamProvider = StreamProvider()
 
@@ -22,8 +20,7 @@ def multi_teardown():
     streamProvider.stop_send()
 
 
-# @pytest.mark.flaky(reruns=3)
-# @pytest.mark.skip
+@pytest.mark.flaky(reruns=3)
 def test_UDPV2_TS_H264_4k_offline_restore_network():
     stream_name_list, url = get_conf_url("conf_udp_url", "udp", "conf_stream_name", "h264_4K")
     for stream_name in stream_name_list:
@@ -36,7 +33,7 @@ def test_UDPV2_TS_H264_4k_offline_restore_network():
         # else:
         #     file_path = streamProvider.get_file_path('ts', stream_name)[0]
             try:
-                streamProvider.start_send('udp', file_path, iswait=True)
+                streamProvider.start_send('udp', file_path, url=url[6:], iswait=True)
             except Exception as e:
                 logging.error("stream provider start send failed.")
                 raise False
@@ -59,3 +56,4 @@ def test_UDPV2_TS_H264_4k_offline_restore_network():
             # multi.send_cmd(stop_cmd)
             # assert playerCheck.check_stopPlay()[0], "stop playback failed"
             multi.stop_multiPlayer_apk()
+            streamProvider.stop_send()

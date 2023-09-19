@@ -7,27 +7,13 @@
 # @Software: PyCharm
 import glob
 import os
-
+import re
 from tools.yamlTool import yamlTool
-from lib.common.system.NetworkAuxiliary import getIfconfig
+from lib.common.system.NetworkAuxiliary import differentiate_servers
 from tools.resManager import ResManager
-# from tests.OTT_Hybrid.MULTI import *
+import random
 
-iplist = getIfconfig()
-# print(iplist)
-DEVICE_IP = ""
-STREAM_IP = ""
-
-device_ip_sz = '192.168.1.246'
-if device_ip_sz in iplist:
-    stream_ip = '192.168.1.247:8554'
-    DEVICE_IP = device_ip_sz
-    STREAM_IP = stream_ip
-else:
-    device_ip_sh = '192.168.1.100'
-    stream_ip = '192.168.1.102:8554'
-    DEVICE_IP = device_ip_sh
-    STREAM_IP = stream_ip
+DEVICE_IP, STREAM_IP, RTSP_PATH = differentiate_servers()
 
 config_yaml = yamlTool(os.getcwd() + '/config/config_ott_hybrid.yaml')
 p_conf_single_stream = config_yaml.get_note("conf_play_single_stream")
@@ -49,12 +35,19 @@ def get_conf_url(conf_url, sub_url, conf_stream_name=None, sub_name=None, single
             # stream_name_list = []
             p_conf_stream_name = config_yaml.get_note(conf_stream_name)
             p_conf_sub_name = p_conf_stream_name.get(sub_name)
-            if "rtp" in url:
-                final_url = url
+            if "udp" in conf_url:
+                # download udp streams
+                resmanager.get_target(path=sub_name, source_path="rtp_udp_videos/" + sub_name)
+                final_url = url[0:-3] + str(random.randint(0, 9)) + str(random.randint(0, 9)) + str(random.randint(0, 9))
+            elif "rtp" in conf_url:
+                final_url = url[0:-3] + str(random.randint(0, 9)) + str(random.randint(0, 9)) + str(random.randint(0, 9))
+                # download rtp streams
+                resmanager.get_target(path=sub_name, source_path="rtp_udp_videos/" + sub_name)
             elif "rtsp" in sub_url:
                 final_url = f"rtsp://{STREAM_IP}" + url
-            elif "udp" in url:
-                final_url = url
+                # download rtsp single stream
+                resmanager.get_target(path=url[1:],
+                                      source_path="live555_videos/" + re.sub(r'^/[^/]+/', '', url))
             else:
                 final_url = f"http://{DEVICE_IP}" + sub_url
             stream_name_list.append(p_conf_sub_name)
@@ -62,6 +55,15 @@ def get_conf_url(conf_url, sub_url, conf_stream_name=None, sub_name=None, single
             return stream_name_list, final_url
         else:
             final_url = f"http://{DEVICE_IP}" + url
+            # download hls single streams
+            if "HLS" in url:
+                url = url.rsplit("/", 1)[0]
+                resmanager.get_target(path=re.sub(r'^/[^/]+/', '', url) + "/",
+                                    source_path="http_hls_videos/" + re.sub(r'^/[^/]+/', '', url))
+            # download http single stream
+            else:
+                resmanager.get_target(path=re.sub(r'^/[^/]+/', '', url),
+                                  source_path="http_hls_videos/" + re.search(r'[^/]+/[^/]+$', url).group(0))
             final_urllist.append(final_url)
             print(final_urllist)
             return final_urllist
@@ -71,23 +73,40 @@ def get_conf_url(conf_url, sub_url, conf_stream_name=None, sub_name=None, single
             print(p_conf_stream_name)
             for k, v in p_conf_stream_name.items():
                 stream_name_list.append(v)
-            final_url = url.get("file")
-            if "rtsp" in conf_url:
-                final_url = f"rtsp://{STREAM_IP}" + final_url
-            print(stream_name_list, final_url)
-            return stream_name_list, final_url
+            url = url.get("file")
+            if "udp" in conf_url:
+                # download udp videos
+                resmanager.get_target(path=sub_name, source_path="rtp_udp_videos/" + sub_name)
+                url = url[0:-3] + str(random.randint(0, 9)) + str(random.randint(0, 9)) + str(random.randint(0, 9))
+            elif "rtp" in conf_url:
+                # download rtp videos
+                resmanager.get_target(path=sub_name, source_path="rtp_udp_videos/" + sub_name)
+                url = url[0:-3] + str(random.randint(0, 9)) + str(random.randint(0, 9)) + str(random.randint(0, 9))
+                print(stream_name_list, url)
+            return stream_name_list, url
         else:
-            if "http" in conf_url:
+            # download rtsp videos
+            if "rtsp" in conf_url:
                 dir_url = url.get("dir")
-                file_path = resmanager.get_target(f"{dir_url}")
+                file_path = resmanager.get_target(path=dir_url, source_path="live555_videos/" + dir_url.split("/")[1])
                 print(f"file_path: {file_path}")
                 files = glob.glob(f"{file_path}/*.ts", recursive=True)
                 for file in files:
+                    file = f"rtsp://{STREAM_IP}" + "/" + "/".join(file.split("/")[-3:])
+                    final_urllist.append(file)
+            # download http videos
+            if "http" in conf_url:
+                dir_url = url.get("dir")
+                file_path = resmanager.get_target(path=dir_url, source_path="http_hls_videos/" + dir_url.split("/")[1])
+                print(f"file_path: {file_path}")
+                files = glob.glob(f"/var/www/res/{dir_url}/*.ts", recursive=True)
+                for file in files:
                     file = f"http://{DEVICE_IP}" + "/" + "/".join(file.split("/")[-4:])
                     final_urllist.append(file)
+            # download hls videos
             elif "hls" in conf_url:
                 dir_url = url.get("dir")
-                file_path = resmanager.get_target(f"{dir_url}")
+                file_path = resmanager.get_target(path=dir_url, source_path="http_hls_videos/" + dir_url.split("/")[1])
                 print(f"file_path: {file_path}")
                 files = glob.glob(f"{file_path}/*", recursive=True)
                 for file in files:
@@ -102,8 +121,3 @@ def get_conf_url(conf_url, sub_url, conf_stream_name=None, sub_name=None, single
                 pass
             print(f"final_urllist:{final_urllist}")
             return final_urllist
-
-
-
-
-
