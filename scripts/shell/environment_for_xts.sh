@@ -4,6 +4,8 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 SUDO_PWD=$1
+cd ~/
+Home=$(pwd)
 apt_install_list=("vim" "python3-pip" "git" "net-tools" "openssh-client" "openssh-server" "tox" "python3-tk" "python3-dev" "jq" "curl" "libxml2-utils" "sshpass")
 get_install_list=("python-protobuf protobuf-compiler" "python-virtualenv" "virtualenv virtualenvwrapper python3-venv" "python-is-python3")
 pip_install_list=("perfetto" "selenium" "PyUserInput" "pyautogui" "pykeyboard" "pyserial" "paramiko" "matplotlib")
@@ -73,7 +75,7 @@ do
 	pip3 --default-timeout=300 install --quiet $pip_install_tools
 done
 echo "--------------------- install bazel ---------------------"
-bazel_folder="$HOME/bazel"
+bazel_folder="${Home}/bazel"
 wget https://github.com/bazelbuild/bazel/releases/download/6.2.1/bazel-6.2.1-installer-linux-x86_64.sh -P "$bazel_folder"
 chmod a+x "$bazel_folder"/bazel-6.2.1-installer-linux-x86_64.sh
 bash "$bazel_folder"/bazel-6.2.1-installer-linux-x86_64.sh --user
@@ -82,7 +84,7 @@ echo "--------------------- Set up adb and aapt tools ---------------------"
 server_address="10.18.11.98"
 build_tools_file_path="/Resource/AndroidSDK/build-tools.zip"
 platform_tools_file_path="/Resource/AndroidSDK/platform-tools.zip"
-target_folder="$HOME/AndroidSDK"
+target_folder="${Home}/AndroidSDK"
 mkdir -p "$target_folder"
 echo "Downloading build-tools.zip..."
 wget "http://$server_address$build_tools_file_path" -P "$target_folder"

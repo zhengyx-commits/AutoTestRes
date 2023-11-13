@@ -5,8 +5,12 @@ read -r OEM_MS12 <<< "$(find . -type f -name '*oem_ms12*' | head -1)"
 read -r BOOT_DEBUG <<< "$(find . -type f -name '*boot-debug*' | head -1)"
 read -r SYSTEM <<< "$(find . -type f -name '*system*' | head -1)"
 if [[ -z "$OEM_MS12" ]]; then
-    echo "oem_ms12.img not found,please copy it to workspace!"
-    exit 1
+    if [[ $workspace =~ "_VTS_Autotest" ]]; then
+        echo "VTS test,go on!"
+    else
+        echo "oem_ms12.img not found,please copy it to workspace!"
+        exit 1
+    fi
 fi
 if [[ $workspace =~ "_VTS_Autotest" ]]; then
     if [[ -z "$BOOT_DEBUG" ]] || [[ -z "$SYSTEM" ]]; then
@@ -19,7 +23,9 @@ adb -s "$device" reboot bootloader
 fastboot -s "$device" wait-for-device
 fastboot -s "$device" flashing unlock_critical
 fastboot -s "$device" flashing unlock
-fastboot -s "$device" flash oem "$OEM_MS12"
+if [[ -n "$OEM_MS12" ]]; then
+    fastboot -s "$device" flash oem "$OEM_MS12"
+fi
 if [[ $workspace =~ "_VTS_Autotest" ]]; then
     fastboot -s "$device" flash vendor_boot "$BOOT_DEBUG"
     fastboot -s "$device" reboot fastboot

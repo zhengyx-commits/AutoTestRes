@@ -1,152 +1,42 @@
 #!/bin/bash
-function usage() {
-    echo "Usage: $0 -b [Current Build number] \
-    -d [ADB_SN] \
-    -f [Project_series] \
-    -i [BUILD_INFO] \
-    -j [Upgrade_IMG_tool] \
-    -m [Manual_Test_Image_URL] \
-    -n [Build_Number] \
-    -o [DUT_Baudrate] \
-    -p [Project] \
-    -q [Test_job_url] \
-    -r [PowerRelay_Serial_Port] \
-    -s [DUT_Serial_Port] \
-    -u [TestPlanName] \
-    -v [userdebug|engine] \
-    -y [work_powerRelay_dir] \
-    -w [Jenkins_Workspace] \
-    [-h help]"
-    exit 1
-}
-while getopts ":b:d:f:i:j:m:n:o:p:q:r:s:u:v:y:w:h" opt
-do
-    case $opt in
-        b)
-    echo "argument: $opt $OPTARG"
-    BUILD_NUMBER=$OPTARG
-    ;;
-        d)
-    echo "argument: $opt $OPTARG"
-    DUT_ADB_SN=$OPTARG
-    ;;
-        f)
-    echo "argument: $opt $OPTARG"
-    PROJECT_SERIES=$OPTARG
-    ;;
-        i)
-    echo "argument: $opt $OPTARG"
-    BUILD_INFO=$OPTARG
-    ;;
-        j)
-    echo "argument: $opt $OPTARG"
-    UPDATE_TOOL=$OPTARG
-    ;;
-        m)
-    echo "argument: $opt $OPTARG"
-    Test_Image_URL=$OPTARG
-    ;;
-        n)
-    echo "argument: $opt $OPTARG"
-    Test_BUILD_NUMBER=$OPTARG
-    ;;
-        o)
-    echo "argument: $opt $OPTARG"
-    DUT_SERIAL_PORT_BAUDRATE=$OPTARG
-    ;;
-        p)
-    echo "argument: $opt $OPTARG"
-    TEST_BOARD_TYPE=$OPTARG
-    ;;
-        q)
-    echo "argument: $opt $OPTARG"
-    TEST_JOB_URL=$OPTARG
-    ;;
-        r)
-    echo "argument: $opt $OPTARG"
-    PowerRelay_Serial_Port=$OPTARG
-    ;;
-        s)
-    echo "argument: $opt $OPTARG"
-    DUT_Serial_Port=$OPTARG
-    ;;
-        u)
-    echo "argument: $opt $OPTARG"
-    TEST_PLAN_NAME=$OPTARG
-    ;;
-        v)
-    echo "argument: $opt $OPTARG"
-    TEST_VARIANT_TYPE=$OPTARG
-    ;;
-        y)
-    echo "argument: $opt $OPTARG"
-    work_powerRelay_dir=$OPTARG
-    ;;
-        w)
-    echo "argument: $opt $OPTARG"
-    WORKSPACE=$OPTARG
-    ;;
-        h)
-    usage
-    ;;
-        \?)
-    echo "invalid argument: $opt"
-    usage
-    ;;
-    esac
+
+# Defined Dir path
+Start_Test_Time=`date '+%Y.%m.%d_%H.%M'`
+Auto_Script="${WORKSPACE}/AutoTestRes/scripts/shell"
+Auto_Bin="${WORKSPACE}/AutoTestRes/bin"
+Auto_Image="${WORKSPACE}/AutoTestRes/image"
+Download_Path="${WORKSPACE}/Temp_Image"
+echo $TEST_NODE_PWD | sudo -S chmod +777 -R $Auto_Bin
+if [ ! -d "result_comparison" ]; then
+    cp -r "${Auto_Script}/result_comparison" ./
+fi
+
+# Defined DUT ADB SN INFO ARRAY
+devices_json_new="$TEST_DEVICES_JSON"
+devices_list=$(echo "$devices_json_new" | jq -r '. | to_entries | map("\(.key)=\(.value)") | join(" ")')
+declare -A Devices_Array
+for pair in $devices_list; do
+  key=${pair%=*}
+  value=${pair#*=}
+  Devices_Array["$key"]=$value
 done
-echo "TEST_BOARD_TYPE:$TEST_BOARD_TYPE"
-echo "TEST_VARIANT_TYPE:$TEST_VARIANT_TYPE"
-echo "TEST_BUILD_NUMBER:$Test_BUILD_NUMBER"
-cd $work_powerRelay_dir
-if [ ! -e ~/.autoTestflashImage.lock ]; then
-    touch ~/.autoTestflashImage.lock
-fi
-echo "Manual_Test_Image_URL:$Test_Image_URL"
-BUILD_JOB_URL=${TEST_JOB_URL}${BUILD_NUMBER}
-echo "Current Test Job URL: ${BUILD_JOB_URL}"
-# Defined DUT ADB SN INFO
-ADB_SN=$DUT_ADB_SN
-ADB_SN_OPTION="-s $DUT_ADB_SN"
-FASTBOOT_SN=$DUT_ADB_SN
-FASTBOOT_SN_OPTION="-s $DUT_ADB_SN"
-AUTO_SCRIPT=${WORKSPACE}/AutoTestRes/scripts/shell/
-AUTO_REPORT=${WORKSPACE}/AutoTestRes/report
-AUTO_BIN=${WORKSPACE}/AutoTestRes/bin
-AUTO_LOG=${WORKSPACE}/AutoTestRes/log
-AUTO_TMP=${WORKSPACE}/AutoTestRes/tmp
-AUTO_IMAGE=${work_powerRelay_dir}/auto_image
-AUTO_OUTPUT=${WORKSPACE}/AutoTestRes/output
-AUTO_DEVICECHK=${WORKSPACE}/AutoTestRes/scripts/python/tools/device_check
 
-DOWNLOAD_PATH=${work_powerRelay_dir}/Temp_Image
-if [ ! -d ${DOWNLOAD_PATH} ]; then
-    mkdir -p ${DOWNLOAD_PATH}
-else
-    rm -rf ${DOWNLOAD_PATH}/*
-fi
-if [ ! -d ${AUTO_IMAGE} ]; then
-    mkdir -p ${AUTO_IMAGE}
-else
-    rm -rf ${AUTO_IMAGE}/*
-fi
-
-TODAY_MDATE=`date "+%Y-%m-%d"`
-TODAY_MDATE1=`date "+%Y%m%d"`
-
-YESTERDAY_MDATE=`date "+%Y-%m-%d" -d "-22hour"`
-YESTERDAY_MDATE1=`date "+%Y%m%d" -d "-22hour"`
-is_skip_boot_partition=no
+##################################################################################
+# Defined function.
+##################################################################################
 function func_rebootDutByRelayDelayTime() {
-    ${AUTO_BIN}/powerRelay $PowerRelay_Serial_Port all off
+    sleep_time=$1
+    PowerRelay_Serial_Port=$2
+    ${Auto_Bin}/powerRelay $PowerRelay_Serial_Port 1 off
     sleep 3
-    ${AUTO_BIN}/powerRelay $PowerRelay_Serial_Port all on
-    echo "Flash image done, sleep $1 seconds to wait DUT boot complete."
-    sleep $1
+    ${Auto_Bin}/powerRelay $PowerRelay_Serial_Port 1 on
+    echo "Sleep $1 seconds to wait DUT Power off/on."
+    sleep $sleep_time
 }
+
 function func_checkUpgradeDutStatus() {
     # Get update error info:
-    update_image_log=$(cat ${AUTO_BIN}/update/upgradeDutStatuslLog.txt)
+    update_image_log=$(cat ${Auto_Bin}/update/upgradeDutStatuslLog.txt)
     echo "DEBUG: Check upgrade status log start:"
     echo $update_image_log
     echo "DEBUG: Check upgrade status log end"
@@ -155,17 +45,18 @@ function func_checkUpgradeDutStatus() {
         echo "=================PRE-TEST SERIAL LOG START================="
         cat $WORKSPACE/AutoTestRes/log/pretest.txt
         echo "=================PRE-TEST SERIAL LOG END================="
-        rm -f ${AUTO_BIN}/update/upgradeDutStatuslLog.txt
+        rm -f ${Auto_Bin}/update/upgradeDutStatuslLog.txt
         return 1
     fi
     return 0
 }
 
 function func_checkAdbStatus() {
+    adb_sn=$1
     i=1
-    while [ $i -lt 5 ]
+    while [[ $i -lt 5 ]]
     do
-        test_adb=`adb devices | grep $ADB_SN`
+        test_adb=`adb devices | grep $adb_sn`
         echo "Loop times: $i adb command result: $test_adb"
         if [[ $test_adb =~ "recovery" ]]; then
             echo "DUT is in recovery mode"
@@ -175,9 +66,9 @@ function func_checkAdbStatus() {
             return 2
         elif [[ $test_adb =~ "no permissions" ]]; then
             echo "DUT is no permissions"
-            echo Linux2017 |sudo -S adb kill-server
+            echo $TEST_NODE_PWD | sudo -S adb kill-server
             sleep 5
-            echo Linux2017 |sudo -S adb start-server
+            echo $TEST_NODE_PWD | sudo -S adb start-server
             sleep 10
             return 0
         elif [[ $test_adb =~ "device" ]]; then
@@ -187,15 +78,16 @@ function func_checkAdbStatus() {
         sleep 2
         i=$[ $i + 1 ]
     done
-    echo "Can not find adb devices, SN is: $ADB_SN"
+    echo "Can not find adb devices, SN is: $adb_sn"
     return 9
 }
 
 function func_checkFastbootStatus() {
+    adb_sn=$1
     i=1
-    while [ $i -lt 5 ]
+    while [[ $i -lt 5 ]]
     do
-    test_fastboot=`fastboot devices | grep $ADB_SN`
+    test_fastboot=`fastboot devices | grep $adb_sn`
     echo "Loop times: $i fastboot command result: $test_fastboot"
     if [[ $test_fastboot =~ "recovery" ]]; then
         echo "DUT is in recovery mode"
@@ -205,9 +97,9 @@ function func_checkFastbootStatus() {
         return 2
     elif [[ $test_fastboot =~ "no permissions" ]]; then
         echo "DUT is no permissions"
-        echo Linux2017 |sudo -S adb kill-server
+        echo $TEST_NODE_PWD | sudo -S adb kill-server
         sleep 5
-        echo Linux2017 |sudo -S adb start-server
+        echo $TEST_NODE_PWD | sudo -S adb start-server
         sleep 10
         return 0
     elif [[ $test_fastboot =~ "fastboot" ]]; then
@@ -217,135 +109,76 @@ function func_checkFastbootStatus() {
     sleep 2
     i=$[ $i + 1 ]
     done
-    echo "Can not find fastboot devices, SN is: $ADB_SN"
+    echo "Can not find fastboot devices, SN is: $adb_sn"
     return 9
-}
-function func_updateReportFile() {
-    # $1 replace html str
-    html_str=$1
-    input_str=$(echo $2 | sed -e 's/\//\\\//g')
-
-    if [[ ${html_str} =~ "Image URL" ]]; then
-        replace_str="s/Image URL:<\/strong> \[REPLACE_STR\]/Image URL:<\/strong> ${input_str}/g"
-    elif [[ ${html_str} =~ "FailReason" ]]; then
-        replace_str="s/Pre-Test Stage: Running...<\/font>/Pre-Test Stage: ${input_str}<\/font>/g"
-    elif [[ ${html_str} =~ "JenkinsBuildRUL" ]]; then
-        replace_str="s/href=\"\[REPLACE_STR\]\" target/href=\"${input_str}\" target/g"
-    else
-        replace_str="NA"
-    fi
-    if [ "${replace_str}" != "NA" ]; then
-        #echo "Replace str: ${replace_str}"
-        if [ ! -z $3]; then
-            if [[ 'report.html' =~ '$3' ]]; then
-                sed -i "${replace_str}" ${AUTO_REPORT}/report.html
-            elif [[  'report_template_upgradefail.html' =~ '$3' ]]; then
-                sed -i "${replace_str}" ${AUTO_TMP}/report_template_upgradefail.html
-            else
-                echo "****** ERROR ****** Report file name is NULL"
-            fi
-        else
-            sed -i "${replace_str}" ${AUTO_REPORT}/report.html
-            sed -i "${replace_str}" ${AUTO_TMP}/report_template_upgradefail.html
-        fi
-    fi
-}
-
-function func_preTestFailSaveLogs() {
-    func_updateReportFile "JenkinsBuildRUL" "${BUILD_JOB_URL}/consoleText";
-    logDirName=$(date +"%Y%m%d-%H%M%S")-${BUILD_INFO}
-    LOG_DIR=${OUTPUT_LOG_DIR}/${logDirName}
-    mkdir -p ${LOG_DIR}
-    cp ${AUTO_TMP}/report_template_upgradefail.html ${AUTO_REPORT}/report.html
-    cp -r ${AUTO_REPORT}/* ${LOG_DIR}/
-
-    if [ $TASK_TYPE = "HourlyBuild" ]; then
-        wget -c ${FILESERVER}project.xml -O ${LOG_DIR}/project.xml
-        wget -c ${FILESERVER}changeid.txt -O ${LOG_DIR}/changeid.txt
-        wget -c ${FILESERVER}repo_ajax.txt -O ${LOG_DIR}/repo_ajax.txt
-        wget -c ${FILESERVER}cl_detail.html -O ${LOG_DIR}/cl_detail.html
-        wget -c ${FILESERVER}unmergeable.txt -O ${LOG_DIR}/unmergeable.txt
-        mv ${AUTO_TMP}/test_job_info.txt ${LOG_DIR}/test_job_info.txt
-    fi
 }
 
 function func_downloadImgFile() {
-    URL=$1
-    IS_BUILD_COMPRESS=$2
-    IMGE_URL=$URL
-    func_updateReportFile "Image URL" $URL;
-    if [[ $IS_BUILD_COMPRESS =~ 'yes' ]]; then
-        echo -e " --- Download file: $URL\nDownloading ..."
-        wget -q -c $URL -O ${DOWNLOAD_PATH}/aml_upgrade_package_img.tar.bz2
+    url=$1
+    is_build_compress=$2
+    if [[ $is_build_compress =~ 'yes' ]]; then
+        echo -e " --- Download file: $url\nDownloading ..."
+        wget -q -c $url -O ${Download_Path}/aml_upgrade_package_img.tar.bz2
 
         echo " --- untar aml_upgrade_package_img.tar.bz2 ..."
-        tar -xjf ${DOWNLOAD_PATH}/aml_upgrade_package_img.tar.bz2 -C ${DOWNLOAD_PATH}
+        tar -xjf ${Download_Path}/aml_upgrade_package_img.tar.bz2 -C ${Download_Path}
 
         if [ $? -ne 0 ]; then
             echo " --- untar aml_upgrade_package_img.tar.bz2 failure,exit!"
-            func_updateReportFile "FailReason" "Untar aml_upgrade_package_img.tar.bz2 failure";
-            func_preTestFailSaveLogs;
             sleep 120
             exit 1
         fi
     else
-        echo -e " --- Download file: $URL\nDownloading ..."
-        wget -q -c $URL -O ${DOWNLOAD_PATH}/aml_upgrade_package.img
+        echo -e " --- Download file: $url\nDownloading ..."
+        wget -q -c $url -O ${Download_Path}/aml_upgrade_package.img
     fi
-    if [[ $URL =~ "signed_image" ]]; then
-        cp ${DOWNLOAD_PATH}/aml_upgrade_package_signed.img ${AUTO_IMAGE}/aml_upgrade_package.img
-    else
-        cp ${DOWNLOAD_PATH}/aml_upgrade_package.img ${AUTO_IMAGE}/aml_upgrade_package.img
-    fi
+    cp ${Download_Path}/aml_upgrade_*.img ${Auto_Image}/aml_upgrade_package.img
 }
+
 function func_downloadFastboottgzFile() {
-    URL=$1
-    IMGE_URL=$URL
-    func_updateReportFile "Image URL" $URL;
-    echo -e " --- Download file: $URL\nDownloading ..."
-    wget -q -c $URL -O ${DOWNLOAD_PATH}/fastboot_package.tgz
+    url=$1
+    echo -e " --- Download file: $url\nDownloading ..."
+    wget -q -c $url -O ${Download_Path}/fastboot_package.tgz
     echo " --- Extract tgz file: fastboot_package.tgz ..."
-    tar -zxvf ${DOWNLOAD_PATH}/fastboot_package.tgz -C $AUTO_IMAGE
-    if [ $? -ne 0 ]; then
+    tar -zxvf ${Download_Path}/fastboot_package.tgz -C $Auto_Image
+    if [[ $? -ne 0 ]]; then
         echo " --- Extract fastboot_package.tgz failure,exit!"
-        func_updateReportFile "FailReason" "Extract fastboot_package.tgz failure";
-        func_preTestFailSaveLogs;
         sleep 120
         exit 1
     fi
 }
 
 function func_downloadFastbootFile() {
-    URL=$1
-    IMGE_URL=$URL
-    func_updateReportFile "Image URL" $URL;
-    echo -e " --- Download file: $URL\nDownloading ..."
-    wget -q -c $URL -O ${DOWNLOAD_PATH}/fastboot_package.zip
+    url=$1
+    echo -e " --- Download file: $url\nDownloading ..."
+    wget -q -c $url -O ${Download_Path}/fastboot_package.zip
     echo " --- Unzip zip file: fastboot_package.zip ..."
-    unzip ${DOWNLOAD_PATH}/fastboot_package.zip -d $AUTO_IMAGE
+    unzip ${Download_Path}/fastboot_package.zip -d $Auto_Image
     if [ $? -ne 0 ]; then
         echo " --- Unzip fastboot_package.zip failure,exit!"
-        func_updateReportFile "FailReason" "Unzip fastboot_package.zip failure";
-        func_preTestFailSaveLogs;
         sleep 120
         exit 1
     fi
 }
+
 function func_killRebootLoggingThread() {
+    DUT_Serial_Port=$1
     ps -ef | grep reboot_logging | grep ${DUT_Serial_Port} | grep -v grep | awk '{print $2}' | xargs kill -9
     #echo "Check reboot_logging after kill thread start"
     ps -ef | grep reboot_logging | grep -v grep # check reboot_logging thread kill or not
     #echo "Check reboot_logging after kill thread end"
 }
+
 function func_checkUrlStatus() {
     get_http_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} $1`
     echo "$1 status is: $get_http_code"
-    if [ $get_http_code != "200" ]; then
+    if [[ $get_http_code != "200" ]]; then
         return 1
     else
         return 0
     fi
 }
+
 function func_checkManualBuild() {
     func_checkUrlStatus $1;
     if [ $? -ne 0 ]; then
@@ -355,151 +188,250 @@ function func_checkManualBuild() {
         return 0
     fi
 }
+
+function func_updateDutByFastboot() {
+    adb_sn=$1
+    if [[ $TEST_BOARD =~ "boreal" ]]; then
+        cp "${Auto_Script}/flash-all.sh" "${Auto_Image}/boreal-flash-all.sh"
+        bash "${Auto_Image}/boreal-flash-all.sh" $adb_sn > "${WORKSPACE}/${adb_sn}.txt"
+        sleep 180
+        func_checkAdbStatus $adb_sn
+    fi
+}
+
+function func_updateDutByAdnlTool() {
+    DUT_Serial_Port=$1
+    PowerRelay_Serial_Port=$2
+    adb_sn=$3
+    echo "upgrade_image.sh:(1)${DUT_Serial_Port} (2)${PowerRelay_Serial_Port} (3)${Auto_Image}/aml_upgrade_package.img (4)true"
+    flock -x ~/.autoTestflashImage.lock \
+    -c "bash ${WORKSPACE}/upgrade_image.sh \
+    ${DUT_Serial_Port} \
+    ${PowerRelay_Serial_Port} \
+    ${Auto_Image}/aml_upgrade_package.img \
+    true" > "${WORKSPACE}/${adb_sn}.txt"
+    func_checkUpgradeDutStatus;
+    updateStatus=$?
+    if [[ $updateStatus -ne 0 ]]; then
+        echo "@@@@@@ Upgrade image fail, exit test! @@@@@@"
+        sleep 120
+        exit 1
+    fi
+    func_rebootDutByRelayDelayTime 180 $PowerRelay_Serial_Port;
+    func_checkAdbStatus $adb_sn;
+    dutStatus=$?
+    if [[ $dutStatus -ne 0 ]]; then
+        func_killRebootLoggingThread $DUT_Serial_Port;
+        echo "====================  SERIAL PORT LOG START ========================"
+        exit 1
+    fi
+}
+
+function func_burnOemAndGsi() {
+    device=$1
+    if [[ $TEST_BOARD =~ "gtv" ]] && [[ ! $TEST_BOARD =~ "hybrid" ]]; then
+        read -r oem_ms12 <<< "$(find . -maxdepth 1 -type f -name '*gtv_oem_ms12*.img' | head -1)"
+    elif [[ $TEST_BOARD =~ "hybrid" ]]; then
+        read -r oem_ms12 <<< "$(find . -maxdepth 1 -type f -name '*hybrid_oem_ms12*.img' | head -1)"
+    fi
+    read -r boot_debug <<< "$(find . -maxdepth 1 -type f -name '*boot-debug*.img' | head -1)"
+    read -r system <<< "$(find . -maxdepth 1 -type f -name 'system.img' | head -1)"
+    if [[ -z "$oem_ms12" ]]; then
+        if [[ $TEST_TARGET == "vts" ]]; then
+            echo "VTS test,go on!"
+        else
+            echo "oem_ms12.img not found,please copy it to workspace!"
+            return 1
+        fi
+    fi
+    if [[ $TEST_TARGET == "vts" ]]; then
+        if [[ -z "$boot_debug" ]] || [[ -z "$system" ]]; then
+            echo "boot-debug.img or system.img not found,please copy it to workspace!"
+            return 1
+        fi
+    fi
+    adb -s "$device" reboot bootloader
+    fastboot -s "$device" wait-for-device
+    fastboot -s "$device" flashing unlock_critical
+    fastboot -s "$device" flashing unlock
+    if [[ -n "$oem_ms12" ]]; then
+        fastboot -s "$device" flash oem "$oem_ms12"
+    fi
+    if [[ $TEST_TARGET == "vts" ]]; then
+        fastboot -s "$device" flash vendor_boot "$boot_debug"
+        fastboot -s "$device" reboot fastboot
+        fastboot -s "$device" delete-logical-partition product_a
+        fastboot -s "$device" delete-logical-partition product_b
+        fastboot -s "$device" delete-logical-partition product
+        fastboot -s "$device" flash system "$system"
+        fastboot -s "$device" reboot bootloader
+        fastboot -s "$device" -w
+        fastboot -s "$device" reboot
+    else
+        fastboot -s "$device" flashing lock
+        fastboot -s "$device" reboot
+    fi
+    sleep 180
+    return 0
+}
+
+# Check flash image lock file exist or not
+[[ ! -e ~/.autoTestflashImage.lock ]] && touch ~/.autoTestflashImage.lock
+echo "Manual_TEST_IMAGE_URL:$TEST_IMAGE_URL"
+
+#Create or delete img temp files
+if [[ ! -d ${Download_Path} ]]; then
+    mkdir -p ${Download_Path}
+else
+    rm -rf ${Download_Path}/*
+fi
+if [[ ! -d ${Auto_Image} ]]; then
+    mkdir -p ${Auto_Image}
+else
+    rm -rf ${Auto_Image}/*
+fi
+
+#If user version,exit test,Except certification test!
+#if [ $TEST_BUILD_VARIANT = "user" ]; then
+#    if [[ ! $TEST_TARGET =~ (_CTS|_TVTS|_VTS|_GTS|_NTS) ]]; then
+#        echo "android build is user version! Automation not support user version to test, exit!"
+#        exit 1
+#    fi
+#fi
+
+#Power on/off device
+if [[ ! $TEST_BOARD =~ "boreal" ]]; then
+    for device in "${!Devices_Array[@]}"; do
+        dev_info="${Devices_Array[$device]}"
+        IFS="," read serial_path powerRelay_path <<< "$dev_info"
+        echo "device:${device}  serial_path:${serial_path}  powerRelay_path:${powerRelay_path}"
+        func_rebootDutByRelayDelayTime 90 $powerRelay_path &
+    done
+    wait
+fi
 ##################################################################################
 #download firmware.
 ##################################################################################
 echo " --- Start to download firmware"
-if [[ $PROJECT_SERIES =~ "Android" ]]; then
-        echo " --- --- if project_series is Android, $Test_Image_URL"
-    if [[ ${Test_Image_URL} =~ 'http://' ]]; then  # if 'http://' is exist in Test_Image_URL, then run
-        func_checkManualBuild ${Test_Image_URL}
-        FILESERVER=$Test_Image_URL
-        echo " --- --- Android test_image_url: $FILESERVER:"
-        if [[ $FILESERVER =~ '.bz2' ]]; then
-            BUILD_INFO=$(echo $FILESERVER | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
-            echo "bz2 Build information: $BUILD_INFO"
-            IMGE_URL=$FILESERVER
-            IS_BUILD_COMPRESS='yes'
-            func_downloadImgFile $FILESERVER $IS_BUILD_COMPRESS;
+if [[ $TEST_SERIES =~ "Android" ]]; then
+        echo " --- --- if TEST_SERIES is Android, $TEST_IMAGE_URL"
+    if [[ ${TEST_IMAGE_URL} =~ 'http://' ]]; then  # if 'http://' is exist in TEST_IMAGE_URL, then run
+        func_checkManualBuild ${TEST_IMAGE_URL}
+        file_server=$TEST_IMAGE_URL
+        echo " --- --- Android TEST_IMAGE_URL: $file_server:"
+        if [[ $file_server =~ '.bz2' ]]; then
+            build_info=$(echo $file_server | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
+            echo "bz2 Build information: $build_info"
+            image_URL=$file_server
+            is_build_compress='yes'
+            func_downloadImgFile $file_server $is_build_compress
             echo " --- --- func_downloadImgFile: done"
-        elif [[ $FILESERVER =~ '.img' ]]; then
-            echo "img Build information: $FILESERVER"
-            IMGE_URL=$FILESERVER
-            IS_BUILD_COMPRESS='no'
-            func_downloadImgFile $FILESERVER $IS_BUILD_COMPRESS;
+        elif [[ $file_server =~ '.img' ]]; then
+            echo "img Build information: $file_server"
+            image_URL=$file_server
+            is_build_compress='no'
+            func_downloadImgFile $file_server $is_build_compress
             echo " --- --- func_downloadImgFile: done"
-        elif [[ $FILESERVER =~ '.zip' ]]; then
-            BUILD_INFO=$(echo $FILESERVER | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
-            echo " Zip Build information: $BUILD_INFO"
-            IMGE_URL=$FILESERVER
-            func_downloadFastbootFile $FILESERVER;
+        elif [[ $file_server =~ '.zip' ]]; then
+            build_info=$(echo $file_server | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
+            echo " Zip Build information: $build_info"
+            image_URL=$file_server
+            func_downloadFastbootFile $file_server
             echo " --- --- func_downloadFastbootFile: done"
-        elif [[ $FILESERVER =~ '.tgz' ]]; then
-            BUILD_INFO=$(echo $FILESERVER | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
-            echo " tgz Build information: $BUILD_INFO"
-            IMGE_URL=$FILESERVER
-            func_downloadFastboottgzFile $FILESERVER;
+        elif [[ $file_server =~ '.tgz' ]]; then
+            build_info=$(echo $file_server | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
+            echo " tgz Build information: $build_info"
+            image_URL=$file_server
+            func_downloadFastboottgzFile $file_server
             echo " --- --- func_downloadFastboot tgz File: done"
         else
-            if [[ $PROJECT_SERIES =~ "Android_U" || $PROJECT_SERIES =~ "Android_S" ]]; then
+            if [[ $TEST_SERIES =~ "Android_U" || $TEST_SERIES =~ "Android_S" || $TEST_SERIES =~ "Android_R" ]]; then
                 echo " --- --- Android_S / Android_U Build information:"
-                BUILD_INFO=$(echo $FILESERVER | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
-                DATE_STR=$(echo $FILESERVER | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /^[0-9]+-/) print $i; i++} }')
-                AUTO_BUILD_NUMBER=$(echo $FILESERVER | awk -F'-' '{split($NF,a,"/"); print a[1]}')
-                MDATE1=$(echo $DATE_STR | tr -cd "[0-9]")
-                if [[ $PROJECT_SERIES =~ "Android_U" ]]; then
-                    URL=${FILESERVER}aml_upgrade_signed_img-${MDATE1}-${AUTO_BUILD_NUMBER}.tar.bz2
+                build_info=$(echo $file_server | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
+                date_str=$(echo $file_server | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /^[0-9]+-/) print $i; i++} }')
+                mdate1=$(echo $date_str | tr -cd "[0-9]")
+                if [[ $TEST_SERIES =~ "Android_U" ]]; then
+                    url=${file_server}aml_upgrade_signed_img-${mdate1}-${TEST_BUILD_NUMBER}.tar.bz2
                 else
-                    URL=${FILESERVER}aml_upgrade_img-${MDATE1}-${AUTO_BUILD_NUMBER}.tar.bz2
+                    url=${file_server}aml_upgrade_img-${mdate1}-${TEST_BUILD_NUMBER}.tar.bz2
                 fi
-                get_http_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} $URL`
-                echo "$URL status is: $get_http_code"
+                get_http_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} $url`
+                echo "$url status is: $get_http_code"
                 if [ $get_http_code != "200" ]; then
-                    echo " Android for K Test image is not available, Error code: HTTP 404"
-                    func_updateReportFile "FailReason" "Test image is not available";
+                    echo "${TEST_SERIES} Test image is not available, Error code: HTTP 404,exit test!"
+                    exit 1
                 else
-                    IMGE_URL=$URL
-                    IS_BUILD_COMPRESS='yes'
-                    func_downloadImgFile $URL $IS_BUILD_COMPRESS;
+                    image_URL=$url
+                    is_build_compress='yes'
+                    func_downloadImgFile $image_URL $is_build_compress
                 fi
-            else
-                BUILD_INFO=$(echo $FILESERVER | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /[A-Za-z].+-.+-.+-.+-.+-/) print $i; i++} }')
-                DATE_STR=$(echo $FILESERVER | awk -F '/' '{ i=1; while(i<=NF) {if( $i ~ /^[0-9]+-/) print $i; i++} }')
-                TODAY_MDATE=$(echo $split_str | tr -cd "[0-9]")  # get the number string from split_str
-                echo "Other Build information: $BUILD_INFO"
-                func_downloadTestImage "fat" $FILESERVER;
             fi
         fi
     fi
 fi
-if [[ $PROJECT_SERIES =~ "Android_S" || $PROJECT_SERIES =~ "Android_U" ]]; then
-    echo " --- Start to upgrade firmware from $PROJECT_SERIES"
-    cd ${AUTO_IMAGE}
+
+##################################################################################
+#Burn upgrade img.
+##################################################################################
+if [[ $TEST_SERIES =~ "Android_S" || $TEST_SERIES =~ "Android_U" || $TEST_SERIES =~ "Android_R" ]]; then
+    echo " --- Start to upgrade firmware from $TEST_SERIES"
+    if [ ! -f "upgrade_image.sh" ]; then
+        wget -O upgrade_image.sh "http://10.18.11.98/Resource/Scripts/upgrade_image_temp.sh"
+    fi
+    cd ${Auto_Image}
     if [ ! -L flashImageTool ]; then
-        echo "ln -s ${AUTO_BIN}/flashImageTool flashImageTool"
-        ln -s ${AUTO_BIN}/flashImageTool flashImageTool
+        echo "ln -s ${Auto_Bin}/flashImageTool flashImageTool"
+        ln -s ${Auto_Bin}/flashImageTool flashImageTool
     fi
     if [ ! -L tc_flash-all.sh ]; then
-        echo "ln -s ${AUTO_SCRIPT}/tc_flash-all.sh tc_flash-all.sh"
-        ln -s ${AUTO_SCRIPT}/tc_flash-all.sh tc_flash-all.sh
+        echo "ln -s ${Auto_Script}/tc_flash-all.sh tc_flash-all.sh"
+        ln -s ${Auto_Script}/tc_flash-all.sh tc_flash-all.sh
     fi
-    if [[ $UPDATE_TOOL =~ "fastboot" ]];then
-        echo " --- Start to upgrade with fastboot"
-        cp ../scripts/shell/flash-all.sh ./
-        bash flash-all.sh ${DUT_ADB_SN}
-    elif [[ $UPDATE_TOOL =~ "adnl" ]];then
-        echo " --- Start to upgrade with adnl"
-        if [[ $is_skip_boot_partition = "yes" ]]; then
-            echo "upgrade_image.sh:(1)$WORKSPACE (2)$DUT_Serial_Port (3)${DUT_SERIAL_PORT_BAUDRATE} (4)$PowerRelay_Serial_Port (5)${AUTO_IMAGE}/aml_upgrade_package.img (6)false (7)${UPDATE_TOOL} "
-            flock -x ~/.autoTestflashImage.lock \
-            -c "bash ${WORKSPACE}/AutoTestRes/scripts/shell/upgrade_image.sh \
-            $WORKSPACE \
-            $DUT_Serial_Port \
-            ${DUT_SERIAL_PORT_BAUDRATE} \
-            $PowerRelay_Serial_Port \
-            ${AUTO_IMAGE}/aml_upgrade_package.img \
-            false \
-            ${UPDATE_TOOL}"
-        else
-            echo "upgrade_image.sh:(1)$WORKSPACE (2)$DUT_Serial_Port (3)${DUT_SERIAL_PORT_BAUDRATE} (4)$PowerRelay_Serial_Port (5)${AUTO_IMAGE}/aml_upgrade_package.img (6)true (7)${UPDATE_TOOL}"
-            flock -x ~/.autoTestflashImage.lock \
-            -c "bash ${WORKSPACE}/AutoTestRes/scripts/shell/upgrade_image.sh \
-            $WORKSPACE \
-            $DUT_Serial_Port \
-            ${DUT_SERIAL_PORT_BAUDRATE} \
-            $PowerRelay_Serial_Port \
-            ${AUTO_IMAGE}/aml_upgrade_package.img \
-            true \
-            ${UPDATE_TOOL}"
-        fi
+    if [[ $UPGRADE_MODE =~ "fastboot" ]];then
+        for device_id in "${!Devices_Array[@]}"; do
+            func_updateDutByFastboot $device_id &
+        done
+        wait
+    elif [[ $UPGRADE_MODE =~ "adnl" ]];then
+        for device_id in "${!Devices_Array[@]}"; do
+            dev_info="${Devices_Array[$device_id]}"
+            IFS="," read serial_path powerRelay_path <<< "$dev_info"
+            func_updateDutByAdnlTool $serial_path $powerRelay_path $device_id &
+        done
+        wait
     else
         echo "Burning mode not currently supported,exit test!"
         exit 1
     fi
-    func_checkUpgradeDutStatus;
-    updateStatus=$?
-    if [ $updateStatus -ne 0 ]; then
-        echo "@@@@@@ Upgrade image fail, exit test! @@@@@@"
-        func_updateReportFile "FailReason" "Upgrade image by update tool failure";
-        func_preTestFailSaveLogs;
-        sleep 120
-        exit 1
-    fi
 fi
-if [[ $PROJECT_SERIES =~ "Android" ]]; then
-    if [[ $PROJECT_SERIES =~ "Boreal" ]]; then
-        sleep 180
-    else
-        func_rebootDutByRelayDelayTime 180;
-    fi
-fi
-echo "The upgrade is successful, restart and wait for 10 seconds"
-sleep 10
-echo " ---  --- Check DUT adb port status after download image."
-echo "adb devices SN: $ADB_SN"
-func_checkAdbStatus;
-dutStatus=$?
-if [ $dutStatus -ne 0 ]; then
-    func_updateReportFile "FailReason" "DUT boot up fail after upgrade test image";
-    func_preTestFailSaveLogs;
-    func_killRebootLoggingThread;
-    echo "====================  SERIAL PORT LOG START ========================"
-    exit 1
-fi
-echo " ---  --- Check DUT adb port status after download image"
-if [[ $TEST_PLAN_NAME =~ "STS" ]]; then
-    adb $ADB_SN_OPTION root
-    sleep 2
-fi
+
+##################################################################################
+#Burn oem and gsi img,only certification test
+##################################################################################
 cd ${WORKSPACE}
+if [[ $TEST_TARGET =~ (cts|vts|gts|sts) ]]; then
+    echo "Start burn oem_ms12 | vendor_boot | system"
+    for device_id in "${!Devices_Array[@]}"; do
+        {
+            func_burnOemAndGsi $device_id
+            if [[ $TEST_TARGET == "vts" ]] || [[ $TEST_BUILD_VARIANT == "userdebug" ]]; then
+                adb -s "$device_id" root
+            fi
+#            adb -s "$device_id" shell cmd wifi set-wifi-enabled enabled
+#            if [[ ! $TEST_WIFI_SSID == "NULL" ]]; then
+#                if [[ $TEST_BOARD =~ "boreal" ]]; then
+#                    adb -s "$device_id" shell cmd wifi add-suggestion "$TEST_WIFI_SSID" wpa2 "$TEST_WIFI_PWD"
+#                else
+#                    adb -s "$device_id" shell cmd wifi connect-network "$TEST_WIFI_SSID" wpa2 "$TEST_WIFI_PWD"
+#                fi
+#            fi
+#            adb -s "$device_id" shell "settings put global stay_on_while_plugged_in 1"
+        } &
+    done
+    wait
+fi
+
+echo "############################################################################################"
+echo "DUT update and burn OEM | vendor_boot has finished,Start Certification ${TEST_TARGET^^} Test"
+echo "############################################################################################"
 exit 0

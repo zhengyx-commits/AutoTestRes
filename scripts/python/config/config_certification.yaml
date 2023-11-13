@@ -1,10 +1,8 @@
 # config for Android S Certification test
-android_s:
+android_s_sh_ohm:
   wifi:
     cts_wifi_ssid: "AUT_XTS_5G-1"
     cts_wifi_pwd: "XTS12345678"
-    tvts_wifi_ssid: "openwrt_5g"
-    tvts_wifi_pwd: "1234567890"
     public_wifi_ssid: "AUT_XTS_5G-2"
     public_wifi_pwd: "XTS12345678"
   google_account:
@@ -82,12 +80,10 @@ android_s:
     tvts: "/home/amlogic/Desktop/android-tvts"
 
 # config for Android U SH Certification test
-android_u_sh:
+android_u_sh_ohm:
   wifi:
     cts_wifi_ssid: "AUT_XTS_5G-1"
     cts_wifi_pwd: "XTS12345678"
-    tvts_wifi_ssid: "openwrt_5g"
-    tvts_wifi_pwd: "1234567890"
     public_wifi_ssid: "AUT_XTS_5G-2"
     public_wifi_pwd: "XTS12345678"
   google_account:
@@ -118,8 +114,6 @@ android_u_sh:
         powerRelay: "/dev/powerRelay_for_tvts1"
       - device_id: "tvts00000002"
         powerRelay: "/dev/powerRelay_for_tvts2"
-#      - device_id: "tvts00000003"
-#        powerRelay: "/dev/powerRelay_for_tvts3"
     gts:
       - device_id: "gts000000001"
         powerRelay: "/dev/powerRelay_for_gts"
@@ -139,16 +133,15 @@ android_u_sh:
   bluetooth_powerRelay_two:
     - "/dev/powerRelay_for_bluetooth1"
     - "/dev/powerRelay_for_bluetooth2"
-  bluetooth_powerRelay_one: "/dev/powerRelay_for_bluetooth3"
   retry_count:
     cts:
-      first_loop: 5
-      second_loop: 2
+      first_loop: 4
+      second_loop: 5
     gts:
       first_loop: 4
       second_loop: 2
     tvts:
-      first_loop: 5
+      first_loop: 4
     sts:
       first_loop: 3
     vts:
@@ -169,19 +162,17 @@ android_u_sh:
     password: "Amlogic123!m"
 
 # config for Android U XA Certification test
-android_u_xa:
+android_u_xa_ohm:
   wifi:
-    cts_wifi_ssid: "galaxy"
+    cts_wifi_ssid: "Redmi_8C88"
     cts_wifi_pwd: "Home1357"
-    tvts_wifi_ssid: "openwrt_5g"
-    tvts_wifi_pwd: "1234567890"
-    public_wifi_ssid: "ASUS_5G"
+    public_wifi_ssid: "Redmi_8C88"
     public_wifi_pwd: "Home1357"
   google_account:
-    cts_username: "yu.zeng@amlogic.com"
-    cts_password: "Owen@200714"
-    public_username: "yu.zeng@amlogic.com"
-    public_password: "Owen@200714"
+    cts_username: "heng.liu@amlogic.com"
+    cts_password: "Zll@1004"
+    public_username: "heng.liu@amlogic.com"
+    public_password: "Zll@1004"
   devices:
     cts:
       - device_id: "ohmcts001"
@@ -220,10 +211,242 @@ android_u_xa:
   bluetooth_powerRelay_two:
     - "/dev/powerRelay_for_bluetooth1"
     - "/dev/powerRelay_for_bluetooth2"
-  bluetooth_powerRelay_one: "/dev/powerRelay_for_bluetooth3"
   retry_count:
     cts:
-      first_loop: 5
+      first_loop: 4
+      second_loop: 5
+    gts:
+      first_loop: 4
+      second_loop: 2
+    tvts:
+      first_loop: 4
+    sts:
+      first_loop: 3
+    vts:
+      first_loop: 3
+  server:
+    ip: "127.0.0.1"
+    port: 22
+    username: "amlogic"
+    password: "Linux2017"
+  netflix:
+    account: "tester_xts@netflix.com"
+    password: "Amlogic123!m"
+
+android_u_xa_oppen:
+  wifi:
+    cts_wifi_ssid: "Redmi_8C88"
+    cts_wifi_pwd: "Home1357"
+    public_wifi_ssid: "Redmi_8C88"
+    public_wifi_pwd: "Home1357"
+  google_account:
+    cts_username: "heng.liu@amlogic.com"
+    cts_password: "Zll@1004"
+    public_username: "heng.liu@amlogic.com"
+    public_password: "Zll@1004"
+  devices:
+    cts:
+      - device_id: "oppencts001"
+        powerRelay: "/dev/powerRelay_for_cts1"
+      - device_id: "oppencts002"
+        powerRelay: "/dev/powerRelay_for_cts2"
+      - device_id: "oppencts003"
+        powerRelay: "/dev/powerRelay_for_cts3"
+      - device_id: "oppencts004"
+        powerRelay: "/dev/powerRelay_for_cts4"
+      - device_id: "oppencts005"
+        powerRelay: "/dev/powerRelay_for_cts5"
+      - device_id: "oppencts006"
+        powerRelay: "/dev/powerRelay_for_cts6"
+    tvts:
+      - device_id: "oppentvts001"
+        powerRelay: "/dev/powerRelay_for_tvts1"
+      - device_id: "oppentvts002"
+        powerRelay: "/dev/powerRelay_for_tvts2"
+    gts:
+      - device_id: "oppengts001"
+        powerRelay: "/dev/powerRelay_for_gts"
+    vts:
+      - device_id: "oppenvts001"
+        powerRelay: "/dev/powerRelay_for_vts"
+    sts:
+      - device_id: "oppensts001"
+        powerRelay: "/dev/powerRelay_for_sts"
+    cts_single:
+      device_id: "oppencts006"
+      powerRelay: "/dev/powerRelay_for_cts1"
+    tvts_single:
+      device_id: "oppentvts002"
+      powerRelay: "/dev/powerRelay_for_tvts2"
+  chip: "S905Y4"
+  bluetooth_powerRelay_two:
+    - "/dev/powerRelay_for_bluetooth1"
+    - "/dev/powerRelay_for_bluetooth2"
+  retry_count:
+    cts:
+      first_loop: 4
+      second_loop: 5
+    gts:
+      first_loop: 4
+      second_loop: 2
+    tvts:
+      first_loop: 4
+    sts:
+      first_loop: 3
+    vts:
+      first_loop: 3
+  server:
+    ip: "127.0.0.1"
+    port: 22
+    username: "amlogic"
+    password: "Linux2017"
+  netflix:
+    account: "tester_xts@netflix.com"
+    password: "Amlogic123!m"
+  test_suite_path:
+    cts: "/home/amlogic/xTS/14.0/r1/android-cts"
+    gts: "/home/amlogic/xTS/android_u/android-gts"
+    vts: "/home/amlogic/xTS/android_u/android-vts"
+    sts: "/home/amlogic/xTS/android_u/android-sts"
+    tvts: "/home/amlogic/xTS/android_u/android-tvts"
+
+android_u_sz_planck:
+  wifi:
+    cts_wifi_ssid: "NETGEAR16-5G-1"
+    cts_wifi_pwd: "88889999"
+    public_wifi_ssid: "NETGEAR16-5G-2"
+    public_wifi_pwd: "88889999"
+  google_account:
+    cts_username: "maoxian999@gmail.com"
+    cts_password: "ASDF435qa"
+    public_username: "maoxian999@gmail.com"
+    public_password: "ASDF435qa"
+  devices:
+    cts:
+#      - device_id: "AMLS805X2AQ222BT0014"
+#        powerRelay: "/dev/powerRelay014"
+#      - device_id: "AMLS805X2AQ222BT0035"
+#        powerRelay: "/dev/powerRelay035"
+      - device_id: "AMLS805X2AQ222BT038"
+        powerRelay: "/dev/powerRelay038"
+      - device_id: "AMLS805X2AQ222BT061"
+        powerRelay: "/dev/powerRelay061"
+      - device_id: "AMLS805X2AQ222BT067"
+        powerRelay: "/dev/powerRelay067"
+      - device_id: "AMLS805X2AQ222BT124"
+        powerRelay: "/dev/powerRelay124"
+      - device_id: "AMLS805X2AQ222BT126"
+        powerRelay: "/dev/powerRelay126"
+      - device_id: "AMLS805X2AQ222BT255"
+        powerRelay: "/dev/powerRelay255"
+    tvts:
+      - device_id: "AMLS805X2AQ222BT0020"
+        powerRelay: "/dev/powerRelay_tvts020"
+      - device_id: "AMLS805X2AQ222BT071"
+        powerRelay: "/dev/powerRelay_tvts071"
+    gts:
+      - device_id: "AMLS805X2AQ222BT012"
+        powerRelay: "/dev/powerRelay_gts012"
+    vts:
+      - device_id: "AMLS802X2AQ222BT064"
+        powerRelay: "/dev/powerRelay_vts064"
+    sts:
+      - device_id: "AMLS805X2AQ222BT141"
+        powerRelay: "/dev/powerRelay_sts141"
+    cts_single:
+      device_id: "AMLS805X2AQ222BT255"
+      powerRelay: "/dev/powerRelay255"
+    tvts_single:
+      device_id: "AMLS805X2AQ222BT071"
+      powerRelay: "/dev/powerRelay_tvts071"
+  chip: "S805X2"
+  bluetooth_powerRelay_two:
+    - "/dev/powerRelay_for_bluetooth1"
+    - "/dev/powerRelay_for_bluetooth2"
+  retry_count:
+    cts:
+      first_loop: 4
+      second_loop: 5
+    gts:
+      first_loop: 4
+      second_loop: 2
+    tvts:
+      first_loop: 4
+    sts:
+      first_loop: 3
+    vts:
+      first_loop: 3
+  server:
+    ip: "127.0.0.1"
+    port: 22
+    username: "amlogic"
+    password: "Linux2017"
+  netflix:
+    account: "tester_xts@netflix.com"
+    password: "Amlogic123!m"
+  test_suite_path:
+    cts: "/home/amlogic/xTS/android_u/R1/android-cts"
+    gts: "/home/amlogic/xTS/android_u/android-gts"
+    vts: "/home/amlogic/xTS/android_u/android-vts"
+    sts: "/home/amlogic/xTS/android_u/android-sts"
+    tvts: "/home/amlogic/android/tvts/android-tvts"
+
+
+# config for KT Android R SH Certification test
+android_r_sh_ohm:
+  wifi:
+    cts_wifi_ssid: "AUT_KT_XTS_5G-1"
+    cts_wifi_pwd: "XTS12345678"
+    public_wifi_ssid: "AUT_KT_XTS_5G-2"
+    public_wifi_pwd: "XTS12345678"
+  google_account:
+    cts_username: "amlogictest1@gmail.com"
+    cts_password: "amltest123"
+    public_username: "amlogictest1@gmail.com"
+    public_password: "amltest123"
+  devices:
+    cts:
+      - device_id: "ktcts0001"
+        powerRelay: "/dev/powerRelay_for_cts1"
+      - device_id: "ktcts0002"
+        powerRelay: "/dev/powerRelay_for_cts2"
+      - device_id: "ktcts0003"
+        powerRelay: "/dev/powerRelay_for_cts3"
+      - device_id: "ktcts0004"
+        powerRelay: "/dev/powerRelay_for_cts4"
+      - device_id: "ktcts0005"
+        powerRelay: "/dev/powerRelay_for_cts5"
+      - device_id: "ktcts0006"
+        powerRelay: "/dev/powerRelay_for_cts6"
+    tvts:
+      - device_id: "kttvts0001"
+        powerRelay: "/dev/powerRelay_for_tvts1"
+      - device_id: "kttvts0002"
+        powerRelay: "/dev/powerRelay_for_tvts2"
+      - device_id: "kttvts0003"
+        powerRelay: "/dev/powerRelay_for_tvts3"
+    gts:
+      - device_id: "ktgts0001"
+        powerRelay: "/dev/powerRelay_for_gts"
+    vts:
+      - device_id: "ktvts0001"
+        powerRelay: "/dev/powerRelay_for_vts"
+    sts:
+      - device_id: "ktsts0001"
+        powerRelay: "/dev/powerRelay_for_sts"
+    cts_single:
+      device_id: "ktcts0001"
+      powerRelay: "/dev/powerRelay_for_cts1"
+    tvts_single:
+      device_id: "kttvts0001"
+      powerRelay: "/dev/powerRelay_for_tvts1"
+  chip: "S905X4"
+  bluetooth_powerRelay_two:
+    - "/dev/powerRelay_for_bluetooth1"
+    - "/dev/powerRelay_for_bluetooth2"
+  retry_count:
+    cts:
+      first_loop: 4
       second_loop: 2
     gts:
       first_loop: 4
@@ -239,6 +462,239 @@ android_u_xa:
     port: 22
     username: "amlogic"
     password: "Linux2017"
+  test_suite_path:
+    cts: "/home/amlogic/Android_R_Certification/android-cts"
+    gts: "/home/amlogic/Android_R_Certification/android-gts"
+    vts: "/home/amlogic/Android_R_Certification/android-vts"
+    sts: "/home/amlogic/Android_R_Certification/android-sts"
+    tvts: "/home/amlogic/xTS/TVTS/android-tvts"
   netflix:
     account: "tester_xts@netflix.com"
     password: "Amlogic123!m"
+
+android_u_xa_adt4:
+  wifi:
+    cts_wifi_ssid: "Redmi_8C88"
+    cts_wifi_pwd: "Home1357"
+    public_wifi_ssid: "Redmi_8C88"
+    public_wifi_pwd: "Home1357"
+  google_account:
+    cts_username: "heng.liu@amlogic.com"
+    cts_password: "Zll@1004"
+    public_username: "heng.liu@amlogic.com"
+    public_password: "Zll@1004"
+  devices:
+    cts:
+      - device_id: "S202208012340001"
+        powerRelay: "/dev/powerRelay_for_cts1"
+      - device_id: "S202208012340007"
+        powerRelay: "/dev/powerRelay_for_cts2"
+      - device_id: "S202208012340015"
+        powerRelay: "/dev/powerRelay_for_cts3"
+      - device_id: "AMLS905X4AH212BT003"
+        powerRelay: "/dev/powerRelay_for_cts4"
+      - device_id: "AMLS905X4AH212BT163"
+        powerRelay: "/dev/powerRelay_for_cts5"
+      - device_id: "AMLS905X4AH212BT1101"
+        powerRelay: "/dev/powerRelay_for_cts6"
+    tvts:
+      - device_id: "S202208012340019"
+        powerRelay: "/dev/powerRelay_for_tvts1"
+      - device_id: "S202208040340007"
+        powerRelay: "/dev/powerRelay_for_tvts2"
+    gts:
+      - device_id: "S202208012340014"
+        powerRelay: "/dev/powerRelay_for_gts"
+    vts:
+      - device_id: "GZ22110230800036"
+        powerRelay: "/dev/powerRelay_for_vts"
+    sts:
+      - device_id: "ohmsts001"
+        powerRelay: "/dev/powerRelay_for_sts"
+    cts_single:
+      device_id: "S202208012340001"
+      powerRelay: "/dev/powerRelay_for_cts1"
+    tvts_single:
+      device_id: "S202208040340007"
+      powerRelay: "/dev/powerRelay_for_tvts2"
+  chip: "unknown"
+  bluetooth_powerRelay_two:
+    - "/dev/powerRelay_for_bluetooth1"
+    - "/dev/powerRelay_for_bluetooth2"
+  retry_count:
+    cts:
+      first_loop: 4
+      second_loop: 5
+    gts:
+      first_loop: 4
+      second_loop: 2
+    tvts:
+      first_loop: 4
+    sts:
+      first_loop: 3
+    vts:
+      first_loop: 3
+  server:
+    ip: "127.0.0.1"
+    port: 22
+    username: "amlogic"
+    password: "Linux2017"
+  netflix:
+    account: "tester_xts@netflix.com"
+    password: "Amlogic123!m"
+
+android_u_sh_boreal:
+  wifi:
+    cts_wifi_ssid: "XTS_ASUS_5G"
+    cts_wifi_pwd: "JKjk5lxts"
+    public_wifi_ssid: "XTS_ASUS_5G"
+    public_wifi_pwd: "JKjk5lxts"
+  google_account:
+    cts_username: "kang.jiang115@gmail.com"
+    cts_password: "feujy0202"
+    public_username: "kang.jiang115@gmail.com"
+    public_password: "feujy0202"
+  devices:
+    cts:
+      - device_id: "1917105GN016M9"
+        powerRelay: "NULL"
+      - device_id: "1918105GN016MN"
+        powerRelay: "NULL"
+      - device_id: "1917105GN016NJ"
+        powerRelay: "NULL"
+      - device_id: "1918105GN016MG"
+        powerRelay: "NULL"
+      - device_id: "1918105GN016N1"
+        powerRelay: "NULL"
+      - device_id: "1918105GN016QU"
+        powerRelay: "NULL"
+    tvts:
+      - device_id: "2326105GN01LL5"
+        powerRelay: "NULL"
+      - device_id: "2326105GN01LL8"
+        powerRelay: "NULL"
+      - device_id: "2326105GN01LJE"
+        powerRelay: "NULL"
+    gts:
+      - device_id: "2326105GN01LET"
+        powerRelay: "NULL"
+    vts:
+      - device_id: "GZ22110230800036"
+        powerRelay: "NULL"
+    sts:
+      - device_id: "ohmsts001"
+        powerRelay: "NULL"
+    cts_single:
+      device_id: "1917105GN016M9"
+      powerRelay: "NULL"
+    tvts_single:
+      device_id: "2326105GN01LJE"
+      powerRelay: "NULL"
+  chip: "S805X2"
+  bluetooth_powerRelay_two:
+    - "/dev/powerRelay_for_bluetooth1"
+    - "/dev/powerRelay_for_bluetooth2"
+  retry_count:
+    cts:
+      first_loop: 4
+      second_loop: 5
+    gts:
+      first_loop: 4
+      second_loop: 2
+    tvts:
+      first_loop: 4
+    sts:
+      first_loop: 3
+    vts:
+      first_loop: 3
+  server:
+    ip: "127.0.0.1"
+    port: 22
+    username: "amlogic"
+    password: "Linux2017"
+  netflix:
+    account: "tester_xts@netflix.com"
+    password: "Amlogic123!m"
+  test_suite_path:
+    cts: "/home/amlogic/xTS/android_u/android-cts"
+    gts: "/home/amlogic/xTS/android_u/android-gts"
+    vts: "/home/amlogic/xTS/android_u/android-vts"
+    sts: "/home/amlogic/xTS/android_u/android-sts"
+    tvts: "/home/amlogic/xTS/android_u/android-tvts"
+
+android_s_sz_ohm:
+  wifi:
+    cts_wifi_ssid: "NETGEAR16-5G-2"
+    cts_wifi_pwd: "88889999"
+    public_wifi_ssid: "aml-gms-5g"
+    public_wifi_pwd: "11112222"
+  google_account:
+    cts_username: "amlogic.test0009@gmail.com"
+    cts_password: "aml@sz2016"
+    public_username: "amlogic.test0009@gmail.com"
+    public_password: "aml@sz2016"
+  devices:
+    cts:
+      - device_id: "ohm80566015800b25"
+        powerRelay: "/dev/powerRelay_for_xts1"
+      - device_id: "ohm8056601580131f"
+        powerRelay: "/dev/powerRelay_for_xts2"
+      - device_id: "ohm8056601580181e"
+        powerRelay: "/dev/powerRelay_for_xts3"
+      - device_id: "ohm8056601580321e"
+        powerRelay: "/dev/powerRelay_for_xts4"
+      - device_id: "ohm80566015801f1f"
+        powerRelay: "/dev/powerRelay_for_xts5"
+#      - device_id: "cts000000036"
+#        powerRelay: "/dev/powerRelay36"
+    tvts:
+      - device_id: "ohm80566015800b25"
+        powerRelay: "/dev/powerRelay_for_xts1"
+      - device_id: "ohm8056601580131f"
+        powerRelay: "/dev/powerRelay_for_xts2"
+      - device_id: "ohm8056601580181e"
+        powerRelay: "/dev/powerRelay_for_xts3"
+    gts:
+      - device_id: "ohm80566015801f1f"
+        powerRelay: "/dev/powerRelay_for_xts5"
+    vts:
+      - device_id: "ohm8056601580131f"
+        powerRelay: "/dev/powerRelay_for_xts2"
+    sts:
+      - device_id: "ohm8056601580181e"
+        powerRelay: "/dev/powerRelay_for_xts3"
+    cts_single:
+      device_id: "ohm80566015800b25"
+      powerRelay: "/dev/powerRelay_for_xts1"
+    tvts_single:
+      device_id: "ohm8056601580181e"
+      powerRelay: "/dev/powerRelay_for_xts3"
+  chip: "S905X4"
+  bluetooth_powerRelay_two:
+    - "/dev/powerRelay_for_bluetooth1"
+    - "/dev/powerRelay_for_bluetooth2"
+  bluetooth_powerRelay_one: "/dev/powerRelay_for_bluetooth3"
+  retry_count:
+    cts:
+      first_loop: 4
+      second_loop: 5
+    gts:
+      first_loop: 4
+      second_loop: 2
+    tvts:
+      first_loop: 4
+    sts:
+      first_loop: 3
+    vts:
+      first_loop: 3
+  server:
+    ip: "127.0.0.1"
+    port: 22
+    username: "amlogic"
+    password: "Linux2017"
+  test_suite_path:
+    cts: "/home/amlogic/android/Test_Suite/cts/12/android-cts-12_r9-linux_x86-arm/android-cts"
+    gts: "/home/amlogic/android/Test_Suite/gts/11-r1/android-gts"
+    vts: "/home/amlogic/android/Test_Suite/vts/12/12-r9/android-vts-10138954_arm64/android-vts"
+    sts: "/home/amlogic/android/Test_Suite/sts/android-sts-12_sts-r20-linux-arm/android-sts"
+    tvts: "/home/amlogic/android/Test_Suite/tvts/arm_android-tvts-2.8_r1/android-tvts"
