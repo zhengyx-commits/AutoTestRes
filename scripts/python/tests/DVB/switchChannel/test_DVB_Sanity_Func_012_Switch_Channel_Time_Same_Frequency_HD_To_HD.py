@@ -25,12 +25,12 @@ p_conf_switch_channel_time = p_conf_dvb['same_fre_hd_to_jd_time']
 @pytest.fixture(scope='function', autouse=True)
 def dvb_setup_teardown():
     dvb_stream.start_dvbc_stream('gr1')
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     yield
     dvb.stop_livetv_apk()
     dvb_stream.stop_dvb()
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_check_switch_channel_time():
     assert dvb_check.check_switch_channel_time(p_conf_switch_channel_time)

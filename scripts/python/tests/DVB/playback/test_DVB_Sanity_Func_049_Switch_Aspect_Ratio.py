@@ -25,7 +25,7 @@ dvb_stream = DVBStreamProvider()
 def dvb_setup_teardown():
     dvb_stream.start_dvbc_stream('4_audio')
     adb.clear_logcat()
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(5)
     yield
     dvb.stop_livetv_apk()

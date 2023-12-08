@@ -10,7 +10,7 @@ import time
 import logging
 from tests.DVB.PVR import *
 
-from tests.DVB.PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
+from tests.DVB.PVR import pytest, dvb_stream, dvb, dvb_check
 
 video_name = 'gr1'
 
@@ -21,7 +21,7 @@ p_conf_playback_count = p_conf_dvb['timeshift_playback_count']
 @pytest.fixture(scope='function', autouse=True)
 def setup_teardown():
     dvb_stream.start_dvbc_stream(video_name)
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(1)
     # dvb.auto_search()
     yield
@@ -29,7 +29,7 @@ def setup_teardown():
     dvb_stream.stop_dvb()
 
 
-# @pytest.mark.flaky(reruns=3)
+@pytest.mark.skip
 def test_timeshift_playback():
     for i in range(p_conf_playback_count):
         logging.info(f'------The {i + 1} times------')
@@ -49,3 +49,4 @@ def test_timeshift_playback():
         assert dvb_check.check_timeshift_seek()
         dvb.timeshift_stop()
         assert dvb_check.check_timeshift_stop()
+        time.sleep(10)

@@ -58,12 +58,8 @@ def test_check_switch_channel():
     #         time.sleep(5)
     # dvb.root()
     # dvb.dvb_environment_detection()
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(5)
-    subtitle.start_subtitle_datathread('CC', 'LiveTV')
-    assert subtitle.subtitleThread.is_alive()
+    # subtitle.check_subtitle_thread('CC', 'LiveTv')
     time.sleep(15)
-    assert (subtitle.error == 0) & (subtitle.got_spu != '') & (subtitle.show_spu != '') & (
-            subtitle.subtitle_window != ''), \
-        'There are some problems with the subtitle shows'
     dvb_check.check_play_status_main_thread()

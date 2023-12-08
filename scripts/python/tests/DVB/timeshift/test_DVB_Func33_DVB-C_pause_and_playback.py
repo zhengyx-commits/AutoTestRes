@@ -10,13 +10,14 @@
 import time
 import logging
 from tests.DVB.PVR import *
+from lib.common.tools.Subtitle import Subtitle
+from tests.DVB.PVR import pytest, dvb_stream, dvb, dvb_check
 
-from tests.DVB.PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
-
-video_name = 'gr1'
+subtitle = Subtitle()
+video_name = 'BBC_MUX_UH'
 
 p_conf_dvb = config_yaml.get_note('conf_stress')
-p_conf_pause_count = p_conf_dvb['timeshift_pause_resume_count']
+p_conf_repeat_count = p_conf_dvb['33_timeshift_basic_function_count']
 
 
 @pytest.fixture(scope='function', autouse=True)
@@ -30,7 +31,7 @@ def setup_teardown():
     # dvb_check.check_search_ex(video_name)
     # dvb.home()
     # time.sleep(3)
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(1)
     yield
     dvb.stop_livetv_apk()
@@ -40,6 +41,8 @@ def setup_teardown():
 # @pytest.mark.flaky(reruns=3)
 def test_pause_and_playback():
     assert dvb.getUUID() != 'emulated', "Doesn't get u-disk"
+    dvb.keyevent(8)
+    time.sleep(3)
     dvb.timeshift_start()
     time.sleep(10)
     logging.info('start play')
@@ -47,8 +50,14 @@ def test_pause_and_playback():
     time.sleep(3)
     assert dvb_check.check_timeshift_start()
     logging.info('finish check start')
-    for i in range(p_conf_pause_count):
+    # subtitle.check_subtitle_thread('Dvb', 'LiveTv')
+    for i in range(p_conf_repeat_count):
         logging.info(f'------The {i + 1} times------')
+        dvb.timeshift_current_seek(duration=5000)
+        assert dvb_check.check_timeshift_seek()
+        time.sleep(5)
+        dvb.timeshift_current_seek(duration=-5000)
+        assert dvb_check.check_timeshift_seek()
         time.sleep(5)
         logging.info('timeshift pause')
         dvb.timeshift_pause()
@@ -56,6 +65,7 @@ def test_pause_and_playback():
         time.sleep(5)
         logging.info('timeshift resume')
         dvb.timeshift_resume()
-    dvb_check.check_play_status_main_thread(timeout=15)
+        time.sleep(5)
+        dvb_check.check_play_status_main_thread(timeout=10)
     dvb.timeshift_stop()
     assert dvb_check.check_timeshift_stop()

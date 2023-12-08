@@ -25,8 +25,8 @@ p_conf_switch_channel_time = p_conf_dvb['cross_fre_hd_to_jd_time']
 
 @pytest.fixture(scope='function', autouse=True)
 def dvb_setup_teardown():
-    dvb_stream.start_dvbc_multi_stream_diff_frq('ts', '4KH265', 'TRT_4K')
-    dvb.start_livetv_apk(fre_count=2)
+    dvb_stream.start_dvbc_multi_stream_diff_frq(0, 'ts', '4KH265', 'TRT_4K')
+    dvb.start_livetv_apk_and_manual_scan(fre_count=2)
     time.sleep(5)
     yield
     dvb.stop_livetv_apk()

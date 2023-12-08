@@ -13,19 +13,17 @@ from lib.common.system.ADB import ADB
 from tools.DVBStreamProvider import DVBStreamProvider
 from lib.common.tools.DVB import DVB
 from lib.common.checkpoint.DvbCheck import DvbCheck
-from lib.common.checkpoint.PlayerCheck import PlayerCheck
 
 adb = ADB()
 dvb = DVB()
 dvb_stream = DVBStreamProvider()
 dvb_check = DvbCheck()
-player_check = PlayerCheck()
 
 
 @pytest.fixture(scope='function', autouse=True)
 def dvb_setup_teardown():
     dvb_stream.start_dvbc_stream('gr1')
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     yield
     dvb.stop_livetv_apk()
     dvb_stream.stop_dvb()

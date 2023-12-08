@@ -11,7 +11,7 @@ import time
 import logging
 from . import *
 
-from ..PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
+from ..PVR import pytest, dvb_stream, dvb, dvb_check
 
 p_conf_dvb = config_yaml.get_note('conf_stress')
 p_conf_repeat_count = p_conf_dvb['pvr_playback_every_two_hours_count']
@@ -19,7 +19,7 @@ p_conf_repeat_count = p_conf_dvb['pvr_playback_every_two_hours_count']
 
 @pytest.fixture(scope='function', autouse=True)
 def setup_teardown():
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     yield
     dvb.stop_livetv_apk()
     dvb_stream.stop_dvb()

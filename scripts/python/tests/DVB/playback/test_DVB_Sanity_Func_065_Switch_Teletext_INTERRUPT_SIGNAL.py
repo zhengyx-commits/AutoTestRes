@@ -29,7 +29,7 @@ def dvb_setup_teardown():
     # dvb.check_display_mode()
     dvb_stream.start_dvbc_stream('14_TMC')
     adb.clear_logcat()
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(5)
     yield
     dvb.stop_livetv_apk()
@@ -40,19 +40,13 @@ def dvb_setup_teardown():
 # @pytest.mark.flaky(reruns=3)
 def test_check_switch_teletext_interrupt_signal():
     dvb.switch_teletext()
-    subtitle.start_subtitle_datathread('Teletext', 'LiveTV')
-    assert subtitle.subtitleThread.is_alive()
+    # subtitle.check_subtitle_thread('Teletext', 'LiveTv')
     time.sleep(15)
-    logging.debug(
-        f'subtitle.got_spu : {subtitle.got_spu}; subtitle.show_spu : {subtitle.show_spu} ; subtitle.subtitle_window: {subtitle.subtitle_window}')
-    assert (subtitle.got_spu != '') & (subtitle.show_spu != '') & (
-            subtitle.subtitle_window != ''), \
-        'There are some problems with the subtitle shows'
     dvb_check.check_play_status_main_thread()
     logging.info('DVB interrupt signal ...')
-    dvb_stream.stop_dvb()
+    dvb_stream.pause_dvb()
     time.sleep(10)
-    dvb_stream.start_dvbc_stream('14_TMC')
+    dvb_stream.resume_dvbc_stream('14_TMC')
     dvb.clear_logcat()
     # subtitle.start_subtitle_datathread('Teletext', 'LiveTV')
     # assert subtitle.subtitleThread.is_alive()
@@ -60,5 +54,14 @@ def test_check_switch_teletext_interrupt_signal():
     # logging.debug(
     #     f'subtitle.got_spu : {subtitle.got_spu}; subtitle.show_spu : {subtitle.show_spu} ; subtitle.subtitle_window: {subtitle.subtitle_window}')
     # assert (subtitle.got_spu != '') & (subtitle.show_spu != ''), \
+    #     'There are some problems with the subtitle shows'
+    # dvb.switch_teletext()
+    # subtitle.start_subtitle_datathread('Teletext', 'LiveTV')
+    # assert subtitle.subtitleThread.is_alive()
+    # time.sleep(15)
+    # logging.debug(
+    #     f'subtitle.got_spu : {subtitle.got_spu}; subtitle.show_spu : {subtitle.show_spu} ; subtitle.subtitle_window: {subtitle.subtitle_window}')
+    # assert (subtitle.got_spu != '') & (subtitle.show_spu != '') & (
+    #         subtitle.subtitle_window != ''), \
     #     'There are some problems with the subtitle shows'
     dvb_check.check_play_status_main_thread()

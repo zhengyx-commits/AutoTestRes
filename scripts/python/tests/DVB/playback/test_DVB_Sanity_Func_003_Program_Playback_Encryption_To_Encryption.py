@@ -9,22 +9,32 @@ import logging
 import time
 
 import pytest
-
 from lib.common.system.ADB import ADB
 from tools.DVBStreamProvider import DVBStreamProvider
 from lib.common.tools.DVB import DVB
 from lib.common.checkpoint.DvbCheck import DvbCheck
+from lib.common.system.Reboot import Reboot
+from lib import get_device
+from tests.DVB import PreOperation
 
+preOperation = PreOperation()
 adb = ADB()
 dvb = DVB()
 dvb_stream = DVBStreamProvider()
 dvb_check = DvbCheck()
 
+logdir = pytest.result_dir
+for g_conf_device_id in get_device():
+    adb_cmd = ["/usr/bin/adb", "-s", g_conf_device_id, "shell", "logcat -s ActivityManager"]
+    reboot = Reboot(adb_cmd=adb_cmd, device_id=g_conf_device_id, logdir=logdir)
+
 
 @pytest.fixture(scope='function', autouse=True)
 def dvb_setup_teardown():
-    dvb_stream.start_dvbc_multi_stream_diff_frq('ts', 'iptv_test', 'gr1')
-    dvb.start_livetv_apk(fre_count=2)
+    preOperation.delete_udisk_recorded()
+    reboot.reboot_once()
+    dvb_stream.start_dvbc_multi_stream_diff_frq(0, 'ts', 'iptv_test', 'gr1')
+    dvb.start_livetv_apk_and_manual_scan(fre_count=2)
     time.sleep(5)
     yield
     dvb.stop_livetv_apk()
@@ -32,7 +42,7 @@ def dvb_setup_teardown():
     dvb_check.clear_multi_frq_program_information()
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 # @pytest.mark.flaky(reruns=3)
 def test_check_program_playback():
     # dvb.set_channel_mode()

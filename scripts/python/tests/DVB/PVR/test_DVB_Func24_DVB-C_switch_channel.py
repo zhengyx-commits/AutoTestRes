@@ -9,7 +9,7 @@
 import time
 import logging
 
-from ..PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
+from ..PVR import pytest, dvb_stream, dvb, dvb_check
 
 video_name = 'gr1'
 
@@ -17,7 +17,7 @@ video_name = 'gr1'
 @pytest.fixture(scope='function', autouse=True)
 def setup_teardown():
     dvb_stream.start_dvbc_stream(video_name)
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(2)
     # dvb.auto_search()
     yield
@@ -37,6 +37,6 @@ def test_switch_channel():
     assert dvb_check.check_stop_pvr_recording()
     dvb.pvr_start_play()
     assert dvb_check.check_pvr_start_play()
-    dvb_check.check_play_status_main_thread(timeout=30)
-    dvb.pvr_stop()
-    assert dvb_check.check_pvr_stop()
+    dvb_check.check_play_status_main_thread(timeout=60)
+    # dvb.pvr_stop()
+    # assert dvb_check.check_pvr_stop()

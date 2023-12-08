@@ -27,7 +27,7 @@ p_conf_switch_count = p_conf_dvb['switch_count']
 @pytest.fixture(scope='function', autouse=True)
 def dvb_setup_teardown():
     dvb_stream.start_dvbc_stream('gr1')
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     yield
     dvb.stop_livetv_apk()
     dvb_stream.stop_dvb()

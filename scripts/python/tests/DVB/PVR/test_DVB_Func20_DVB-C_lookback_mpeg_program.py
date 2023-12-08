@@ -10,7 +10,7 @@
 import time
 import logging
 
-from ..PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
+from ..PVR import pytest, dvb_stream, dvb, dvb_check
 
 video_name = 'MPEG2-1080I-30fps'
 
@@ -26,7 +26,7 @@ def setup_teardown():
     # dvb_check.check_search_ex(video_name)
     # dvb.home()
     # time.sleep(3)
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(1)
     yield
     dvb.stop_livetv_apk()
@@ -43,6 +43,6 @@ def test_lookback_mpeg_program():
     assert dvb_check.check_stop_pvr_recording()
     dvb.pvr_start_play()
     assert dvb_check.check_pvr_start_play()
-    dvb_check.check_play_status_main_thread(timeout=15)
+    dvb_check.check_play_status_main_thread(timeout=20)
     dvb.pvr_stop()
     assert dvb_check.check_pvr_stop()

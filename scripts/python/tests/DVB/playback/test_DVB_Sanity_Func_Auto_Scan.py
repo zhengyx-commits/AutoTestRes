@@ -5,7 +5,7 @@
 # @File    : test_DVB_Sanity_Func_Auto_Scan.py
 # @Email   : kejun.chen@amlogic.com
 # @Ide: PyCharm
-
+import logging
 import pytest
 
 from tools.DVBStreamProvider import DVBStreamProvider
@@ -25,8 +25,17 @@ def dvb_setup_teardown():
     yield
     dvb.stop_livetv_apk()
     dvb_stream.stop_dvb()
+    dvb_check.clear_multi_frq_program_information()
 
 
 def test_check_switch_channel():
     dvb.start_livetv_apk_and_auto_scan()
-    dvb_check.check_play_status_main_thread(10)
+    channel_id = dvb_check.get_channel_id()
+    logging.info(f'channel_id : {channel_id}')
+    dvb_check.get_pid_before_switch()
+    # length = len(channel_id)
+    for i in range(5):
+        dvb.switch_channel(channel_id[i])
+        logging.info(f'switch channel id : {channel_id[i]}')
+        assert dvb_check.check_switch_channel(), f'switch channel to {channel_id[i]} failed.'
+        dvb_check.check_play_status_main_thread(5)

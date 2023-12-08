@@ -13,21 +13,19 @@ import logging
 
 
 from tools.DVBStreamProvider import DVBStreamProvider
-from lib.common.checkpoint.PlayerCheck import PlayerCheck
 from lib.common.tools.DVB import DVB
 from lib.common.checkpoint.DvbCheck import DvbCheck
 from lib.common.system.Reboot import Reboot
+from lib import *
 from .. import config_yaml
 
-g_conf_device_id = pytest.config['device_id']
 logdir = pytest.result_dir
-print(g_conf_device_id)
-adb_cmd = ["/usr/bin/adb", "-s", g_conf_device_id, "shell", "logcat -s ActivityManager"]
-reboot = Reboot(adb_cmd=adb_cmd, device_id=g_conf_device_id, logdir=logdir)
+for g_conf_device_id in get_device():
+    adb_cmd = ["/usr/bin/adb", "-s", g_conf_device_id, "shell", "logcat -s ActivityManager"]
+    reboot = Reboot(adb_cmd=adb_cmd, device_id=g_conf_device_id, logdir=logdir)
 p_conf_repeat_time = config_yaml.get_note("conf_start_kpi").get("time")
 
 
-player_check = PlayerCheck()
 dvb_stream = DVBStreamProvider()
 dvb = DVB()
 dvb_check = DvbCheck()
@@ -50,7 +48,7 @@ def test_uhd_start_kpi():
     # send stream
     dvb_stream.start_dvbc_stream(video_name)
     # start play
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     # test HD start KPI
     flag, log = player_check.check_startPlay()
     if flag:

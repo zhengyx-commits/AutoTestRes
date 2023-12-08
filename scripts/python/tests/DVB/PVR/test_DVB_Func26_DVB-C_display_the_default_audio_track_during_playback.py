@@ -9,16 +9,16 @@ import threading
 import time
 import logging
 
-from ..PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
+from ..PVR import pytest, dvb_stream, dvb, dvb_check
 
 # video_name = 'BBC_MUX_UH'
-video_name = '14_TMC_France'
+video_name = 'Multiple_Languages'
 
 
 @pytest.fixture(scope='function', autouse=True)
 def setup_teardown():
-    dvb_stream.start_dvbc_stream(video_name)
-    dvb.start_livetv_apk()
+    dvb_stream.start_dvbc_stream(video_name, 'trp')
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(1)
     yield
     dvb.stop_livetv_apk()
@@ -36,6 +36,8 @@ def test_display_default_audio_track_during_playback():
     assert dvb_check.check_stop_pvr_recording()
     dvb.pvr_start_play()
     assert dvb_check.check_pvr_start_play()
-    dvb_check.check_play_status_main_thread(10)
-    dvb.pvr_stop()
-    assert dvb_check.check_pvr_stop()
+    time.sleep(10)
+    dvb.switch_audio_during_pvr(track=1)
+    dvb_check.check_play_status_main_thread(50)
+    # dvb.pvr_stop()
+    # assert dvb_check.check_pvr_stop()

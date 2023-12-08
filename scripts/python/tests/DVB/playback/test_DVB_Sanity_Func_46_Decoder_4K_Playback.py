@@ -10,12 +10,12 @@ import time
 import pytest
 
 from tools.DVBStreamProvider import DVBStreamProvider
-from lib.common.checkpoint.PlayerCheck import PlayerCheck
+
 from lib.common.tools.DVB import DVB
 from lib.common.checkpoint.DvbCheck import DvbCheck
 
 dvb_stream = DVBStreamProvider()
-player_check = PlayerCheck()
+
 dvb = DVB()
 dvb_check = DvbCheck()
 
@@ -25,7 +25,7 @@ video_name = "4KH265_16"
 @pytest.fixture(scope='function', autouse=True)
 def dvb_setup_teardown():
     dvb_stream.start_dvbc_stream(video_name)
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(5)
     yield
     dvb.stop_livetv_apk()

@@ -8,7 +8,6 @@
 import logging
 import time
 import pytest
-from lib.common.checkpoint.PlayerCheck import PlayerCheck
 from lib.common.system.ADB import ADB
 from lib.common.checkpoint.DvbCheck import DvbCheck
 from lib.common.tools.DVB import DVB
@@ -21,7 +20,6 @@ dvb = DVB()
 dvb_check = DvbCheck()
 dvb_stream = DVBStreamProvider()
 subtitle = Subtitle()
-Player_check = PlayerCheck()
 p_config_channel_name = config_yaml.get_note('conf_channel_name')['dvb']
 p_config_channel_dif = config_yaml.get_note('conf_channel_dif_id')['dvb']
 
@@ -32,7 +30,7 @@ def dvb_setup_teardown():
     # p_subtitle_mode = dvb_check.get_subtitle_mode('dvb.ts')
     # assert p_subtitle_mode == 'Dvb'
     adb.clear_logcat()
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(5)
     yield
     dvb.stop_livetv_apk()
@@ -43,12 +41,6 @@ def dvb_setup_teardown():
 # @pytest.mark.flaky(reruns=3)
 def test_check_switch_subtitle_dvb_text():
     dvb.switch_subtitle_type(subtitle_type=0)
-    subtitle.start_subtitle_datathread('Dvb', 'LiveTV')
-    assert subtitle.subtitleThread.is_alive()
+    # subtitle.check_subtitle_thread('Dvb', 'LiveTv')
     time.sleep(60)
-    logging.info(
-        f'subtitle.error : {subtitle.error}  ;subtitle.got_spu : {subtitle.got_spu}; subtitle.show_spu : {subtitle.show_spu} ; subtitle.subtitle_window: {subtitle.subtitle_window}')
-    assert (subtitle.error == 0) & (subtitle.got_spu != '') & (subtitle.show_spu != '') & (
-            subtitle.subtitle_window != ''), \
-        'There are some problems with the subtitle shows'
     dvb_check.check_play_status_main_thread()

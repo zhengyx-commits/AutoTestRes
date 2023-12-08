@@ -14,12 +14,10 @@ from tools.DVBStreamProvider import DVBStreamProvider
 from lib.common.tools.DVB import DVB
 from lib.common.checkpoint.DvbCheck import DvbCheck
 from lib.common.system.ADB import ADB
-from lib.common.checkpoint.PlayerCheck import PlayerCheck
 
 dvb = DVB()
 dvb_stream = DVBStreamProvider()
 dvb_check = DvbCheck()
-player_check = PlayerCheck()
 adb = ADB()
 
 
@@ -27,7 +25,7 @@ adb = ADB()
 def dvb_setup_teardown():
     dvb_stream.start_dvbc_stream('gr1')
     adb.clear_logcat()
-    dvb.start_livetv_apk(fre_count=2)
+    dvb.start_livetv_apk_and_manual_scan(fre_count=2)
     time.sleep(5)
     yield
     dvb.stop_livetv_apk()

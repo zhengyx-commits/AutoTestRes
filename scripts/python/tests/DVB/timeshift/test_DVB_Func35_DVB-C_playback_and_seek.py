@@ -11,7 +11,7 @@ import logging
 import random
 from tests.DVB.PVR import *
 
-from tests.DVB.PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
+from tests.DVB.PVR import pytest, dvb_stream, dvb, dvb_check
 
 video_name = 'gr1'
 
@@ -30,7 +30,7 @@ def setup_teardown():
     # dvb_check.check_search_ex(video_name)
     # dvb.home()
     # time.sleep(3)
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(1)
     yield
     dvb.stop_livetv_apk()
@@ -51,8 +51,13 @@ def test_playback_and_seek():
     # assert dvb_check.check_timeshift_ff()
     for i in range(p_conf_seek_count):
         logging.info(f'------The {i + 1} times------')
-        seek_time = random.choice(range(10))
-        dvb.timeshift_seek(seek_time=seek_time*1000)
+        # seek_time = random.choice(range(10))
+        # dvb.timeshift_seek(seek_time=seek_time*1000)
+        time.sleep(5)
+        dvb.timeshift_current_seek(duration=-5000)
+        assert dvb_check.check_timeshift_seek()
+        time.sleep(5)
+        dvb.timeshift_current_seek(duration=5000)
         assert dvb_check.check_timeshift_seek()
         dvb_check.check_play_status_main_thread(timeout=10)
     dvb.timeshift_stop()

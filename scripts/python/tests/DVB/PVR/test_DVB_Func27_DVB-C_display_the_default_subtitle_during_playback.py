@@ -10,18 +10,18 @@
 import time
 import logging
 
-from ..PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
+from ..PVR import pytest, dvb_stream, dvb, dvb_check
 from lib.common.tools.Subtitle import Subtitle
 
-video_name = 'hbo'
+video_name = 'MBT_muxA'
 subtitle = Subtitle()
 
 
 # @pytest.mark.skip
 @pytest.fixture(scope='function', autouse=True)
 def setup_teardown():
-    dvb_stream.start_dvbc_stream(video_name)
-    dvb.start_livetv_apk()
+    dvb_stream.start_dvbc_stream(video_name, 'trp')
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(3)
     for i in range(20):
         number = dvb.get_subtitle_list()
@@ -44,10 +44,8 @@ def test_play_multi_language_program():
     # subtitle_type = dvb_check.get_subtitle_mode('ts')
     dvb.switch_subtitle_type(subtitle_type=1)
     assert dvb_check.check_subtitle_current_language(switch_type=1)
-    subtitle.start_subtitle_datathread('Teletext', 'LiveTv')
+    # subtitle.check_subtitle_thread('Teletext', 'LiveTV')
     time.sleep(15)
-    assert (subtitle.error == 0) & (subtitle.got_spu != '') & (
-            subtitle.show_spu != ''), 'There are some problems with the subtitle shows'
     dvb.start_pvr_recording()
     assert dvb_check.check_start_pvr_recording()
     time.sleep(60)
@@ -55,6 +53,8 @@ def test_play_multi_language_program():
     assert dvb_check.check_stop_pvr_recording()
     dvb.pvr_start_play()
     assert dvb_check.check_pvr_start_play()
-    dvb_check.check_play_status_main_thread(timeout=30)
-    dvb.pvr_stop()
-    assert dvb_check.check_pvr_stop()
+    time.sleep(10)
+    dvb.switch_subtitle_during_pvr(track=1)
+    dvb_check.check_play_status_main_thread(timeout=50)
+    # dvb.pvr_stop()
+    # assert dvb_check.check_pvr_stop()

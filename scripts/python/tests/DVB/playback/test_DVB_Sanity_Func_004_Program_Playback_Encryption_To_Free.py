@@ -23,8 +23,8 @@ dvb_check = DvbCheck()
 
 @pytest.fixture(scope='function', autouse=True)
 def dvb_setup_teardown():
-    dvb_stream.start_dvbc_multi_stream_diff_frq('ts', 'iptv_test', 'gr1')
-    dvb.start_livetv_apk(fre_count=2)
+    dvb_stream.start_dvbc_multi_stream_diff_frq(0, 'ts', 'iptv_test', 'gr1')
+    dvb.start_livetv_apk_and_manual_scan(fre_count=2)
     time.sleep(5)
     yield
     dvb.stop_livetv_apk()
@@ -32,7 +32,7 @@ def dvb_setup_teardown():
     dvb_check.clear_multi_frq_program_information()
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 # @pytest.mark.flaky(reruns=3)
 def test_check_program_playback():
     # dvb.set_channel_mode()

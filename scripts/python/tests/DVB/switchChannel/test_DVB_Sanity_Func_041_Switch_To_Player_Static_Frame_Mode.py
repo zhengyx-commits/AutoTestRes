@@ -14,22 +14,21 @@ from lib.common.tools.DVB import DVB
 from lib.common.checkpoint.DvbCheck import DvbCheck
 from lib.common.playback.Youtube import YoutubeFunc
 from lib.common.playback.Netflix import Netflix
-from lib.common.checkpoint.PlayerCheck import PlayerCheck
 
 dvb = DVB()
 dvb_stream = DVBStreamProvider()
 dvb_check = DvbCheck()
 youtube = YoutubeFunc()
 netflix = Netflix()
-player_check = PlayerCheck()
 
 
 @pytest.fixture(scope='function', autouse=True)
 def dvb_setup_teardown():
+    dvb.connect_external_wifi()
     dvb_stream.start_dvbc_stream('gr1')
     dvb.change_switch_mode('1')
     netflix.netflix_setup()
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     yield
     dvb.stop_livetv_apk()
     dvb_stream.stop_dvb()
@@ -37,7 +36,7 @@ def dvb_setup_teardown():
     netflix.stop_netflix()
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_check_program_playback():
     channel_id = dvb_check.get_channel_id()
     logging.info(f'channel_id : {channel_id}')
@@ -46,9 +45,9 @@ def test_check_program_playback():
     dvb.switch_channel(switch_channel_id)
     logging.info(f'switch channel id : {switch_channel_id}')
     assert dvb_check.check_switch_channel(), f'switch failed.'
-    youtube.start_youtube()
+    youtube.start_play()
     dvb_check.check_play_status_main_thread()
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     dvb.switch_channel(switch_channel_id)
     assert dvb_check.check_switch_channel(), f'switch failed.'
     netflix.start_play()

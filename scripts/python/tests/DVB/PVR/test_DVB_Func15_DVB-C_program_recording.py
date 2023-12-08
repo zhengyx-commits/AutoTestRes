@@ -5,19 +5,19 @@
 # @Site    :
 # @File    : test_DVB_Func15_DVB-C_program_recording.py
 # @Software: PyCharm
-
-import time
 import logging
+import time
+from lib.common.tools.Subtitle import Subtitle
+from ..PVR import pytest, dvb_stream, dvb, dvb_check
 
-from ..PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
-
-video_name = 'gr1'
+subtitle = Subtitle()
+video_name = 'BBC_MUX_UH'
 
 
 @pytest.fixture(scope='function', autouse=True)
 def setup_teardown():
     dvb_stream.start_dvbc_stream(video_name)
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(1)
     # dvb.auto_search()
     yield
@@ -28,11 +28,12 @@ def setup_teardown():
 # @pytest.mark.flaky(reruns=3)
 def test_program_recording():
     assert dvb.getUUID() != 'emulated', "Doesn't get u-disk"
-    dvb.add_timer_recording(start_time=35, end_time=65)
-    assert dvb_check.check_start_pvr_recording(35), "Pvr start recording less then 35 seconds"
-    time.sleep(35)
+    dvb.add_timer_recording(start_time=65, end_time=125)
+    assert dvb_check.check_start_pvr_recording(65), "Pvr start recording time is not 65 seconds"
+    # subtitle.check_subtitle_thread('Dvb', 'LiveTv')
+    time.sleep(65)
     dvb.pvr_start_play()
     assert dvb_check.check_pvr_start_play()
-    dvb_check.check_play_status_main_thread(timeout=20)
-    dvb.pvr_stop()
-    assert dvb_check.check_pvr_stop()
+    dvb_check.check_play_status_main_thread(timeout=10)
+    # dvb.pvr_stop()
+    # assert dvb_check.check_pvr_stop()

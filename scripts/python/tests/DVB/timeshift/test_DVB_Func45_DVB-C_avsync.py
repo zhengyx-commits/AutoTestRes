@@ -11,7 +11,7 @@ import time
 import logging
 from tests.DVB.PVR import *
 
-from tests.DVB.PVR import pytest, dvb_stream, dvb, dvb_check, playerCheck
+from tests.DVB.PVR import pytest, dvb_stream, dvb, dvb_check
 
 video_name = 'gr1'
 
@@ -30,7 +30,7 @@ def setup_teardown():
     # dvb_check.check_search_ex(video_name)
     # dvb.home()
     # time.sleep(3)
-    dvb.start_livetv_apk()
+    dvb.start_livetv_apk_and_manual_scan()
     time.sleep(1)
     yield
     dvb.stop_livetv_apk()
