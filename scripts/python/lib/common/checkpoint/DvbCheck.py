@@ -1253,6 +1253,14 @@ class DvbCheck(PlayerCheck_Base, threading.Thread, ResManager):
             else:
                 time.sleep(3)
 
+    def get_random_value(self, my_list):
+        if len(my_list) < 2:
+            raise ValueError("列表中至少应该有两个元素")
+        current_value = random.choice(my_list[1:])
+        while True:
+            yield current_value
+            current_value = random.choice([value for value in my_list if value != current_value])
+
     def check_is_playing(self):
         frame_start = self.run_shell_cmd(self.dvbCheck_keywords.FRAME_COUNT)[1]
         logging.info(f'frame count start is :{frame_start}')
