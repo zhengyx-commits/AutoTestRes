@@ -21,7 +21,7 @@ def once(func):
     wrapper.has_run = False
     return wrapper
 
-
+@once
 def start_obs(app_id):
     obs_process = subprocess.Popen(['flatpak', 'run', app_id])
     time.sleep(5)
