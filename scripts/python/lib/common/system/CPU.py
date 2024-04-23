@@ -1,26 +1,12 @@
-#!/usr/bin/env python
-# _*_ coding: utf-8 _*_
-# @Time    : 2022/4/28 09:28
-# @Author  : chao.li
-# @Site    :
-# @File    : CPU.py
-# @Software: PyCharm
-
 import fcntl
+from lib.common.system.ADB import ADB
 import logging
-import os
 import re
 import threading
 import time
-from time import sleep
-
 import pygal
 
-from lib.common.system.ADB import ADB
-from lib.common.system.TvSetting import TvSettingApp
-
-
-class CPU(ADB):
+class CPU():
     '''
     cpu status check test lib
 
@@ -48,29 +34,28 @@ class CPU(ADB):
     CPU_ONLINE_COMMAND = 'cat /sys/devices/system/cpu/online'
     CPU_TEMPERATURE_COMMAND = 'cat /sys/class/thermal/thermal_zone0/temp'
     CPU_WORK_MODE_COMMAND = 'cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor'
+    CPU_MODEL_COMMAND = 'cat /proc/cpuinfo'
 
     GPU_MAX_COMMAND = 'cat /sys/class/mpgpu/max_freq'
     GPU_CUR_COMMAND = 'cat /sys/class/mpgpu/cur_freq'
 
     def __init__(self, serialnumber='', logdir=''):
-        super().__init__(serialnumber=serialnumber, name='CPU', logdir=logdir, stayFocus=True, unlock_code="")
+        self.adb = ADB()
+        # super().__init__(serialnumber=serialnumber, name='CPU', logdir=logdir, stayFocus=True, unlock_code="")
         self.serialnumber = serialnumber
-        self.temperature_control = self.run_shell_cmd(self.CPU_TEMPERATURE_COMMAND.replace('temp', 'mode'))
+        self.temperature_control = self.adb.run_shell_cmd(self.CPU_TEMPERATURE_COMMAND.replace('temp', 'mode'))
         self.error_count = 0
         self.all_count = 0
-        self.path = f'{self.logdir}/cpu_info.log'
-        self.cpu_thermal = f'{self.logdir}/cpu_thermal.log'
+        self.path = f'{self.adb.logdir}/cpu_info.log'
+        self.cpu_thermal = f'{self.adb.logdir}/cpu_thermal.log'
         self.cpu_actual_thermal_dict = {}
-        self.tvset = TvSettingApp()
-        # if os.path.exists(self.rootPath + '/result/cpu_info.log'):
-        #     os.remove(self.rootPath + '/result/cpu_info.log')
 
     def run(self):
         '''
         run thread to catch cpu info
         @return: thread : threading.Thread
         '''
-        t = threading.Thread(target=self.get_cpu_info, name='CpuInfo')
+        t = threading.Thread(target=self.get_cpu_temp(), name='CpuInfo')
         t.setDaemon(True)
         t.start()
         return t
@@ -113,7 +98,7 @@ class CPU(ADB):
         line_chart.add('cpu_max', max_freq)
         line_chart.add('cpu_min', min_freq)
         line_chart.add('cpu_online', online)
-        line_chart.render_to_file(f'{self.logdir}/Cpu info.svg')
+        line_chart.render_to_file(f'{self.adb.logdir}/Cpu info.svg')
 
         # add hw info lline chart
         line_chart1 = pygal.Line()
@@ -123,7 +108,7 @@ class CPU(ADB):
         line_chart1.add('temperature (℃)', temperature)
         line_chart1.add('memfree (M)', memfree)
         line_chart1.add('iow (%)', iow)
-        line_chart1.render_to_file(f'{self.logdir}/HW info.svg')
+        line_chart1.render_to_file(f'{self.adb.logdir}/HW info.svg')
 
         # add top task stack bar
         bar_chart = pygal.StackedBar()
@@ -134,7 +119,7 @@ class CPU(ADB):
         bar_chart.add('', [{'value': i[2]['load'], 'label': i[2]['name']} for i in top])
         bar_chart.add('', [{'value': i[3]['load'], 'label': i[3]['name']} for i in top])
         bar_chart.add('', [{'value': i[4]['load'], 'label': i[4]['name']} for i in top])
-        bar_chart.render_to_file(f'{self.logdir}/Process Top info.svg')
+        bar_chart.render_to_file(f'{self.adb.logdir}/Process Top info.svg')
 
     def catch_temperature(self, counter, actual_thermal):
         # TODO @chao.li : add function comments
@@ -161,45 +146,44 @@ class CPU(ADB):
         cpu temperature info
         @return: None
         '''
-        while True:
-            with open(self.path, 'a') as f:
-                fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-                self.all_count += 1
-                topInfo = self.run_shell_cmd('top -n 1 -m 5')[1]
-                if topInfo:
-                    f.write(f'Time : {time.asctime()} \n')
-                    f.write('Top info:\n')
-                    f.write(topInfo)
-                    f.write('\n')
-                    f.write('cpu_work_mode: ')
-                    f.write(self.run_shell_cmd(self.CPU_WORK_MODE_COMMAND)[1].strip())
-                    f.write('\n')
-                    f.write('current_freq: ')
-                    f.write(self.run_shell_cmd(self.CPU_CUR_COMMAND)[1].strip())
-                    f.write('\n')
-                    f.write('max_freq: ')
-                    f.write(self.run_shell_cmd(self.CPU_MAX_COMMAND)[1].strip())
-                    f.write('\n')
-                    f.write('min_freq: ')
-                    f.write(self.run_shell_cmd(self.CPU_MIN_COMMAND)[1].strip())
-                    f.write('\n')
-                    f.write('gpu_max_freq: ')
-                    f.write(self.run_shell_cmd(self.GPU_MAX_COMMAND)[1].strip())
-                    f.write('\n')
-                    f.write('gpu_cur_freq: ')
-                    f.write(self.run_shell_cmd(self.GPU_CUR_COMMAND)[1].strip())
-                    f.write('\n')
-                    f.write('cpu_online: ')
-                    f.write(self.run_shell_cmd(self.CPU_ONLINE_COMMAND)[1].strip())
-                    f.write('\n')
-                    f.write('cpu_temperature: ')
-                    f.write(self.run_shell_cmd(self.CPU_TEMPERATURE_COMMAND)[1].strip())
-                    f.write('\n')
-                    f.write('-' * 20 + '\n')
-                    time.sleep(1)
-                else:
-                    self.error_count += 1
+        # if not self.adb.live
+        with open(self.path, 'a') as f:
+            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+            self.all_count += 1
+            topInfo = self.adb.run_shell_cmd('top -n 1 -m 5')[1]
+            if topInfo:
+                f.write(f'Time : {time.asctime()} \n')
+                f.write('Top info:\n')
+                f.write(topInfo)
+                f.write('\n')
+                f.write('cpu_work_mode: ')
+                f.write(self.adb.run_shell_cmd(self.CPU_WORK_MODE_COMMAND)[1].strip())
+                f.write('\n')
+                f.write('current_freq: ')
+                f.write(self.adb.run_shell_cmd(self.CPU_CUR_COMMAND)[1].strip())
+                f.write('\n')
+                f.write('max_freq: ')
+                f.write(self.adb.run_shell_cmd(self.CPU_MAX_COMMAND)[1].strip())
+                f.write('\n')
+                f.write('min_freq: ')
+                f.write(self.adb.run_shell_cmd(self.CPU_MIN_COMMAND)[1].strip())
+                f.write('\n')
+                f.write('gpu_max_freq: ')
+                f.write(self.adb.run_shell_cmd(self.GPU_MAX_COMMAND)[1].strip())
+                f.write('\n')
+                f.write('gpu_cur_freq: ')
+                f.write(self.adb.run_shell_cmd(self.GPU_CUR_COMMAND)[1].strip())
+                f.write('\n')
+                f.write('cpu_online: ')
+                f.write(self.adb.run_shell_cmd(self.CPU_ONLINE_COMMAND)[1].strip())
+                f.write('\n')
+                f.write('-' * 20 + '\n')
+                time.sleep(1)
 
-    def check_network(self):
-        if self.tvset.check_ping_host(self.__class__.__name__, "eth0"):
-            return True
+    def get_cpu_temp(self):
+        with open(self.path, 'a') as f:
+            f.write('cpu_temperature: ')
+            f.write(self.adb.run_shell_cmd(self.CPU_TEMPERATURE_COMMAND)[1].strip())
+            f.write('\n')
+            f.write('-' * 20 + '\n')
+

@@ -13,6 +13,7 @@ import os
 import subprocess
 import time
 import pytest
+from xml.dom import minidom
 from lib.common.system.ADB import ADB
 from tools.resManager import ResManager
 from lib.common.checkpoint.DvbCheck import DvbCheck
@@ -50,6 +51,7 @@ class DVB(ADB, ResManager):
         self.Livetv_test = 'livetv.test'
         self.DTVkit_test = 'android.action.search.channel'
         self.DVBS_PARAMETER_ACTION = 'dtvkit.test'
+        self.DVBS_SETUP_ACTION = 'android.action.dvbs.setup'
         self.DVBS_SCAN_ACTION = 'android.action.dvbs.scan'
         self.DVBT_SCAN_ACTION = 'android.action.dvbt.scan'
         self.SUBTITLE_LIST = []
@@ -65,6 +67,9 @@ class DVB(ADB, ResManager):
         elif self.android_version == '14':
             livetv_apk = 'androidu/Tv-release.apk'
             dtvkit_apk = 'androidu/inputsource.apk'
+        elif self.android_version == '11':
+            livetv_apk = 'androidr/Tv-release.apk'
+            dtvkit_apk = 'androidr/inputsource.apk'
         else:
             assert False, "Can't get android version!"
         self.get_target(f'apk/{livetv_apk}')
@@ -151,6 +156,18 @@ class DVB(ADB, ResManager):
                     time.sleep(5)
             self.root()
             self.run_adb_cmd_specific_device(['remount'])
+            if self.android_version == '11':
+                cmd = ['install', '-r', '-d', f'res/apk/{dtvkit_apk}']
+                logging.info(cmd)
+                output = self.run_adb_cmd_specific_device(cmd)[1].decode().strip().split('\n')
+                time.sleep(5)
+                logging.info(output)
+                if 'Success' in output:
+                    logging.info('inputsource apk install successful')
+                    assert True
+                else:
+                    logging.info('inputsource apk install failed')
+                    assert False
 
     def broadcast_cmd(self, action, keywords):
         """
@@ -183,6 +200,16 @@ class DVB(ADB, ResManager):
         logging.info(cmd)
         self.send_cmd(cmd)
         time.sleep(5)
+        if self.android_version == '11':
+            logging.info('switch source to DTV')
+            self.keyevent('KEYCODE_TV_INPUT')
+            for i in range(10):
+                self.keyevent('19')
+                time.sleep(1)
+            self.keyevent('20')
+            self.keyevent('20')
+            self.keyevent('23')
+            time.sleep(3)
 
     def start_livetv_apk_and_manual_scan(self, fre_count=1, list_index=0):
         self.start_livetv_apk()
@@ -239,20 +266,28 @@ class DVB(ADB, ResManager):
         else:
             logging.info('The dvb full scan log is not exit.')
 
-    def start_livetv_apk_and_quick_scan(self):
+    def start_livetv_apk_and_quick_scan(self, action="", keywords="", searchtype='quick', is_freq=False, frequency='362000', check_time=300):
         self.start_livetv_apk()
         if dvb_check.check_is_need_search():
             self.set_channel_mode_dvbc()
             time.sleep(3)
-            self.quick_scan()
-            assert dvb_check.check_quick_scan()
+            logging.info(f'start auto {searchtype} scan.')
+            if not keywords and is_freq:
+                keywords = f' -e sync_status "sync_started" --ei searchmode 1 -e AutoscanType {searchtype} -e operator KDG -e frequency {frequency}'
+            else:
+                keywords = f' -e sync_status "sync_started" --ei searchmode 1 -e AutoscanType {searchtype} -e operator KDG'
+            if not action:
+                action = self.DTVkit_test
+            cmd = self.broadcast_cmd(action=action, keywords=keywords)
+            self.send_cmd(cmd)
+            assert dvb_check.check_quick_scan(check_time=check_time)
 
-    def start_livetv_apk_and_auto_scan(self, check_time=300):
+    def start_livetv_apk_and_auto_scan(self, searchtype='full', check_time=900):
         self.start_livetv_apk()
         if dvb_check.check_is_need_search():
             self.set_channel_mode_dvbc()
             time.sleep(3)
-            self.auto_search()
+            self.auto_search(searchtype=searchtype)
             assert dvb_check.check_search_ex(is_auto=True, check_time=check_time)
 
     def stop_livetv_apk(self):
@@ -277,19 +312,10 @@ class DVB(ADB, ResManager):
         cmd = self.broadcast_cmd(action=action, keywords=keywords)
         self.send_cmd(cmd)
 
-    def auto_search(self, action="", keywords=""):
-        logging.info('start auto channel.')
+    def auto_search(self, action="", keywords="", searchtype='full'):
+        logging.info(f'start auto {searchtype} scan.')
         if not keywords:
-            keywords = ' -e sync_status "sync_started" --ei searchmode 1 -e AutoscanType full -e operator KDG'
-        if not action:
-            action = self.DTVkit_test
-        cmd = self.broadcast_cmd(action=action, keywords=keywords)
-        self.send_cmd(cmd)
-
-    def quick_scan(self, action="", keywords=""):
-        logging.info('start quick scan.')
-        if not keywords:
-            keywords = ' -e sync_status "sync_started" --ei searchmode 1 -e AutoscanType quick -e operator KDG'
+            keywords = f' -e sync_status "sync_started" --ei searchmode 1 -e AutoscanType {searchtype} -e operator KDG'
         if not action:
             action = self.DTVkit_test
         cmd = self.broadcast_cmd(action=action, keywords=keywords)
@@ -616,6 +642,20 @@ class DVB(ADB, ResManager):
         self.keyevent(23)
         self.keyevent(4)
 
+    def close_teletext(self, action="", keywords=""):
+        logging.info('close_subtitle')
+        if not keywords:
+            keywords = f' --es command teletext_switch'
+        if not action:
+            action = self.Livetv_test
+        cmd = self.broadcast_cmd(action=action, keywords=keywords)
+        self.send_cmd(cmd)
+        time.sleep(3)
+        self.keyevent(19)
+        time.sleep(2)
+        self.keyevent(23)
+        self.keyevent(4)
+
     def check_display_mode(self):
         self.start_activity('com.android.tv.settings', '.system.CaptionSetupActivity')
         # self.uiautomator_dump()
@@ -686,11 +726,58 @@ class DVB(ADB, ResManager):
 
     def __change_switch_mode(self):
         self.keyevent(82)
-        self.wait_and_tap("TV Setting", "text")
-        self.wait_and_tap("Settings", "text")
-        self.wait_and_tap("Nosignal Screen Status", "text")
-        self.wait_and_tap("Static Frame", "text")
-        self.wait_and_tap("Black Screen", "text")
+        time.sleep(1)
+        # self.wait_and_tap("TV Setting", "text")
+        # self.wait_and_tap("Settings", "text")
+        # self.wait_and_tap("Nosignal Screen Status", "text")
+        # self.wait_and_tap("Static Frame", "text")
+        # self.wait_and_tap("Black Screen", "text")
+        self.simulate_click('dvbtrunk', "TV Setting")
+        self.simulate_click('dvbtrunk', "Settings")
+        self.simulate_click('dvbtrunk', "Nosignal Screen Status")
+        self.simulate_click('dvbtrunk', "Static Frame")
+        self.simulate_click('dvbtrunk', "Black Screen")
+
+
+    def get_ui_info(self, device):
+        # os.system(f"adb -s {device} shell mkdir /sdcard/temp")
+        os.system(f"adb -s {device} shell uiautomator dump > /dev/null")
+        os.system(f"adb -s {device} pull /sdcard/window_dump.xml ./{device}_window_dump.xml > /dev/null")
+        xml_path = f"./{device}_window_dump.xml"
+        with open(xml_path, 'r') as f:
+            temp = f.read()
+        return temp
+
+    def get_button_coordinates(self, device, text, attribute="text"):
+        xml_path = f"./{device}_window_dump.xml"
+        xml_file = minidom.parse(xml_path)
+        item_list = xml_file.getElementsByTagName('node')
+        bounds = None
+        for item in item_list:
+            # logging.debug(f'try to find {text} - {item.attributes[attribute].value}')
+            if text == item.attributes[attribute].value:
+                bounds = item.attributes['bounds'].value
+                logging.info(f"Find {text} - {item.attributes[attribute].value}")
+                break
+        if bounds is None:
+            logging.error("attr: %s not found" % attribute)
+            return -1, -1
+        bounds = re.findall(r"\[(\d+),(\d+)]", bounds)
+        x_start, y_start = bounds[0]
+        x_end, y_end = bounds[1]
+        x_midpoint, y_midpoint = (int(x_start) + int(x_end)) / 2, (int(y_start) + int(y_end)) / 2
+        return int(x_midpoint), int(y_midpoint)
+
+    def simulate_click(self, device, searchKey):
+        for i in range(6):
+            assistant_info = self.get_ui_info(device)
+            if f"text=\"{searchKey}\"" in assistant_info:
+                x, y = self.get_button_coordinates(device, searchKey)
+                logging.info(f">{searchKey}< coordinates:{x} {y}")
+                os.system(f"adb -s {device} shell input tap {x} {y}")
+                return
+            else:
+                logging.info(f'The searchKey {searchKey} is not found.')
 
     def send_cmd(self, cmd):
         self.clear_logcat()
@@ -736,7 +823,7 @@ class DVB(ADB, ResManager):
         logging.info('set up dvb_s parameter setting page.')
         # self.set_channel_mode_dvbs()
         # self.keyevent('KEYCODE_PROG_BLUE')
-        action = self.DVBS_PARAMETER_ACTION
+        action = self.DVBS_SETUP_ACTION
         cmd = self.broadcast_cmd(action=action, keywords='')
         self.send_cmd(cmd)
         time.sleep(2)
@@ -917,7 +1004,7 @@ class DVB(ADB, ResManager):
         self.send_cmd(cmd)
 
     def dvbt_manual_scan_by_id(self, index='0'):
-        logging.info('start dvb-s scan.')
+        logging.info('start dvb-t scan.')
         keywords = f' --ei searchmode 0 --ei isfrequency 1 --es index {index}'
         action = self.DVBT_SCAN_ACTION
         cmd = self.broadcast_cmd(action=action, keywords=keywords)
@@ -943,3 +1030,36 @@ class DVB(ADB, ResManager):
                 logging.info("Connect wifi failed! try again!")
                 count += 1
         time.sleep(2)
+
+    def open_ad_setting(self):
+        self.keyevent("KEYCODE_MENU")
+        for j in range(6):
+            self.keyevent("KEYCODE_DPAD_DOWN")
+        self.keyevent(22)
+        self.keyevent(23)
+        for j in range(5):
+            self.keyevent("KEYCODE_DPAD_DOWN")
+        self.keyevent(23)
+
+    def skip_channel(self):
+        self.keyevent("KEYCODE_MENU")
+        for j in range(2):
+            self.keyevent("KEYCODE_DPAD_DOWN")
+        self.keyevent(22)
+        for j in range(2):
+            self.keyevent("KEYCODE_DPAD_DOWN")
+        self.keyevent(23)
+        for j in range(4):
+            self.keyevent("KEYCODE_0")
+        self.keyevent(23)
+        time.sleep(1)
+        self.keyevent(19)
+        for i in range(7):
+            self.keyevent(23)
+            self.keyevent(19)
+            time.sleep(1)
+        for i in range(2):
+            self.keyevent(19)
+            self.keyevent(23)
+            time.sleep(1)
+        self.keyevent(4)

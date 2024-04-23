@@ -134,7 +134,7 @@ class ADB:
         self.res_manager = ResManager()
         self.live = False
         self.lock = threading.Lock()
-        # self.wait_devices()
+        self.wait_devices()
         if pytest.target.get("prj") != "zapper":
             self.build_version = self.getprop(CheckAndroidVersion().get_android_version())
         self.p_config_wifi = config_yaml.get_note('conf_wifi')
@@ -303,7 +303,6 @@ class ADB:
             logging.debug("Cancel stay focus timer")
             self.timer.stop()
             self.timer = None
-        self.kill_logcat_pid()
 
     def clear_app_data(self, app_name):
         self.run_shell_cmd(f"pm clear {app_name}")
@@ -432,6 +431,22 @@ class ADB:
             self.timer.start()
         return return_code
 
+    def check_current_window(self, current_window):
+        current_window = self.run_shell_cmd(current_window)[1]
+        return current_window
+
+    def enable_cec(self):
+        self.run_shell_cmd("cmd hdmi_control cec_setting set hdmi_cec_enabled 1")
+
+    def disable_cec(self):
+        self.run_shell_cmd("cmd hdmi_control cec_setting set hdmi_cec_enabled 0")
+
+    def disable_remote_control(self):
+        self.run_shell_cmd("echo 2 > /sys/class/remote/amremote/protocol")
+
+    def enable_remote_control(self):
+        self.run_shell_cmd("echo 1 > /sys/class/remote/amremote/protocol")
+
     def pull(self, filepath, destination):
         '''
         pull file from DUT to pc
@@ -558,6 +573,32 @@ class ADB:
             if ping_output['packet_loss'] <= expected_pkt_loss:
                 return True
 
+    def create_network_auxiliary(self):
+        from lib.common.system.NetworkAuxiliary import getIfconfig
+        # Get list of IP addresses for available network interfaces
+        iplist = getIfconfig()
+
+        # Check if the desired IP address exists in the list of available IP addresses
+        if "192.168.1.246" in iplist:
+            # If the desired IP address is found, use eth0 as the network interface
+            network_interface = "eth0"
+        else:
+            # If the desired IP address is not found, use eth0 as the network interface
+            network_interface = "eth0"
+
+        return network_interface
+
+    def offline_network(self, interface):
+        # Run the shell command to take the specified network interface offline
+        self.run_shell_cmd(f"ifconfig {interface} down")
+
+        # Return the name of the interface that was taken offline
+        return interface
+
+    def restore_network(self, interface):
+        # Run the shell command to bring the specified network interface back online
+        self.run_shell_cmd(f"ifconfig {interface} up")
+
     def check_apk_exist(self, package_name):
         return True if package_name in self.checkoutput('pm list packages') else False
 
@@ -663,6 +704,7 @@ class ADB:
                     else:
                         return rc, output.stdout.readlines()
 
+    @connect_again
     def run_shell_cmd(self, cmd, timeout=0):
         '''
         Run shell command
@@ -757,7 +799,7 @@ class ADB:
         # else:
         #     return 0
 
-    # @connect_again
+    @connect_again
     def run_adb_cmd_specific_device(self, cmd, timeout=0, verbose=True):
         '''
         runs adb command specific to a device
@@ -1121,9 +1163,10 @@ class ADB:
         itemlist = xml_file.getElementsByTagName('node')
         bounds = None
         for item in itemlist:
-            logging.debug(f'try to find {searchKey} - {item.attributes[attribute].value}')
+            # logging.debug(f'try to find {searchKey} - {item.attributes[attribute].value}')
             if searchKey == item.attributes[attribute].value:
                 bounds = item.attributes['bounds'].value
+                logging.info(f'Find {searchKey} - {item.attributes[attribute].value}')
                 break
         if bounds is None:
             logging.error("attr: %s not found" % attribute)
@@ -1198,14 +1241,11 @@ class ADB:
         @return: None
         '''
         count = 0
-        rc, output = self.run_shell_cmd("getprop sys.boot_completed")
-        while rc != 0:
-        # while subprocess.run(f'adb -s {self.serialnumber} shell getprop sys.boot_completed', shell=True,
-        #                      encoding='utf-8', stdout=subprocess.PIPE).returncode != 0:
+        while subprocess.run(f'adb -s {self.serialnumber} shell getprop sys.boot_completed', shell=True,
+                             encoding='utf-8', stdout=subprocess.PIPE).returncode != 0:
             if count % 10 == 0:
                 logging.info('devices not exists')
             self.set_status_off()
-            # subprocess.check_output('adb connect {}'.format(self.serialnumber), shell=True, encoding='utf-8')
             time.sleep(3)
             count += 1
             if count > 20:
@@ -1219,7 +1259,7 @@ class ADB:
         '''
         self.run_shell_cmd("killall logcat")
 
-    # @connect_again
+    @connect_again
     def popen(self, command, stdout=None):
         '''
         run adb command over popen
@@ -1496,13 +1536,32 @@ class ADB:
         '''
         Remove the network mentioned by <networkId>
         '''
-        list_networks_cmd = "cmd wifi list-networks"
-        output = self.run_shell_cmd(list_networks_cmd)
-        if "No networks" in output[1]:
-            logging.debug("has no wifi connect")
+        for i in range(10):
+            list_networks_cmd = "cmd wifi list-networks"
+            output = self.run_shell_cmd(list_networks_cmd)
+            logging.info(f"output: {output}")
+            if "No networks" in output[1]:
+                logging.debug("has no wifi connect")
+                return True
+            else:
+                network_id = re.findall("\n(.*?) ", output[1])
+                forget_wifi_cmd = "cmd wifi forget-network {}".format(int(network_id[0]))
+                output1 = self.run_shell_cmd(forget_wifi_cmd)
+                if "successful" in output1[1]:
+                    logging.info(f"Network id {network_id[0]} closed")
+
+    def check_package(self, package):
+        rc, out = self.run_shell_cmd(f"pm list packages | grep {package}")
+        if package in out:
+            installed_packages = [line.split(":")[-1].strip() for line in out.splitlines()]
+            if package in installed_packages:
+                logging.info(f"{package} has installed")
+                return True
+            else:
+                logging.info(f"{package} has installed")
+                return False
         else:
-            network_id = re.findall("\n(.*?) ", output[1])
-            forget_wifi_cmd = "cmd wifi forget-network {}".format(int(network_id[0]))
-            output1 = self.run_shell_cmd(forget_wifi_cmd)
-            if "successful" in output1[1]:
-                logging.info(f"Network id {network_id[0]} closed")
+            logging.info(f"{package} not installed")
+            return False
+
+

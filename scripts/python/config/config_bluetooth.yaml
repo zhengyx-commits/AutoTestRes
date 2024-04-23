@@ -1,0 +1,10 @@
+# This is yaml for bluetooth product
+
+# serial control for remote press
+remote_control:
+  remote_back: /dev/remote_back
+  remote_home: /dev/remote_home
+  remote_power: /dev/remote_power
+  speaker_power: /dev/speaker_power
+  mouse_pair: /dev/mouse_pair
+  band: 9600

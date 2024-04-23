@@ -43,7 +43,7 @@ class Bluetooth(ADB):
     def __init__(self):
         ADB.__init__(self, 'Bluetooth')
         self.config_yaml = yamlTool(os.getcwd() + '/config/config_bluetooth.yaml')
-        self.logcat_releate_file = self.res_manager.get_target('/bt/bt_stack.conf')
+        # self.logcat_releate_file = self.res_manager.get_target('/bt/bt_stack.conf') //TODO
 
     def check_permission(self):
         '''
@@ -116,14 +116,14 @@ class Bluetooth(ADB):
         @return:
         '''
         try:
-            logging.info("Press remote")
+            logging.info("Start matching bluetooth remote")
             self.remote_back.write(b'\xA0\x01\x01\xA2')  # 通路
             self.remote_home.write(b'\xA0\x01\x01\xA2')
-            time.sleep(3)
+            time.sleep(10)
             self.remote_back.write(b'\xA0\x01\x00\xA1')  # 断路
             self.remote_home.write(b'\xA0\x01\x00\xA1')
             time.sleep(1)
-
+            logging.info("Stop matching bluetooth remote")
         except KeyboardInterrupt:
             self.remote_back.close()
             self.remote_home.close()

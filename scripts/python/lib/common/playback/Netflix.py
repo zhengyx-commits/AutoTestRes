@@ -52,8 +52,8 @@ class Netflix(Online):
     PLAYTYPE = 'Netflix'
     # ACCOUNT = 'amlqatest2@amlogic.com'
     # PASSWORD = 'Amlqa456'
-    ACCOUNT = 'tester_xts@netflix.com'
-    PASSWORD = 'Amlogic123!m'
+    ACCOUNT = 'tester_autsanity@netflix.com'
+    PASSWORD = 'Amlogic@123m'
     # ACCOUNT = 'tester_ntsauto@netflix.com'
     # PASSWORD = 'Linux2017!'
     DECODE_TAG = 'AmlogicVideoDecoderAwesome2'
@@ -191,7 +191,7 @@ class Netflix(Online):
         '''
         if self.getprop("ro.build.version.sdk") != "34":
             self.open_omx_info()
-        self.checkoutput('tee_provision -q -t 0x11')
+            self.checkoutput('tee_provision -q -t 0x43')
         check_account = str(self.subprocess_run('ls -la /data/data/com.netflix.ninja/files/activated'))
         logging.debug(f'check_account is {check_account}')
         if 'returncode=1' in check_account:
@@ -260,13 +260,13 @@ class Netflix(Online):
         '''
         if self.getprop("ro.build.version.sdk") != "34":
             self.open_omx_info()
-        self.checkoutput('tee_provision -q -t 0x11')
+            self.checkoutput('tee_provision -q -t 0x43')
         check_account = str(self.subprocess_run('ls -la /data/data/com.netflix.ninja/files/activated'))
-        logging.debug(f'check_account is {check_account}')
+
         if 'returncode=1' in check_account:
             logging.info("Start to login Netflix")
             os.system(f"adb -s {device} shell monkey -p {self.PACKAGE_NAME} 1")
-            time.sleep(30)
+            time.sleep(60)
             os.system(f"adb -s {device} shell \"input keyevent 21;input keyevent 23\"")
             time.sleep(5)
             os.system(f"adb -s {device} shell \"input keyevent 22;input keyevent 23\"")
@@ -289,7 +289,7 @@ class Netflix(Online):
 
     def netflix_setup_with_files(self, target=''):
         self.open_omx_info()
-        self.checkoutput('tee_provision -q -t 0x11')
+        self.checkoutput('tee_provision -q -t 0x43')
         check_account = str(self.subprocess_run('ls -la /data/data/com.netflix.ninja/files/activated'))
         logging.debug(f'check_account is {check_account}')
         if 'returncode=1' in check_account:
@@ -316,7 +316,7 @@ class Netflix(Online):
     #     else:
     #         logging.info(f"Source name '{source_name}' not found in obs_config_dict.")
     #     self.open_omx_info()
-    #     self.checkoutput('tee_provision -q -t 0x11')
+    #     self.checkoutput('tee_provision -q -t 0x43')
     #     check_account = str(self.subprocess_run('ls -la /data/data/com.netflix.ninja/files/activated'))
     #     logging.debug(f'check_account is {check_account}')
     #     if 'returncode=1' in check_account:

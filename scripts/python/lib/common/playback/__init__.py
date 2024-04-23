@@ -34,29 +34,30 @@ class Environment_Detection(ADB, ResManager, CheckAndroidVersion):
             MS12_SO = "libdolbyms12.so"
             ms12_flag = self.checkoutput('ls -la /odm/lib/ms12/')
             if MS12_SO not in ms12_flag:
-                res_manager.get_target(path="ms12_X4", source_path="so/ms12_X4")
-                logging.info("android push so")
-                self.root()
-                self.run_shell_cmd("setenforce 0")
-                self.run_adb_cmd_specific_device(["remount"])
-                self.push(f"/home/amlogic/so/ms12_X4/{MS12_SO}", "/oem/lib/ms12/libdolbyms12.so")
-                self.reboot()
-                start_time = time.time()
-                while time.time() - start_time < 60:
-                    reboot_check = self.run_shell_cmd("getprop sys.boot_completed")[1]
-                    if reboot_check == "1":
-                        logging.info("booted up")
-                        break
-                    else:
-                        time.sleep(5)
-                reboot_check = self.run_shell_cmd("getprop sys.boot_completed")[1]
-                if reboot_check != "1":
-                    raise Exception('boot up run time error')
-                else:
-                    pass
-                time.sleep(20)
+                logging.info(f"{MS12_SO} not exists")
+                # res_manager.get_target(path="ms12_X4", source_path="so/ms12_X4")
+                # logging.info("android push so")
+                # self.root()
+                # self.run_shell_cmd("setenforce 0")
+                # self.run_adb_cmd_specific_device(["remount"])
+                # self.push(f"/home/amlogic/so/ms12_X4/{MS12_SO}", "/oem/lib/ms12/libdolbyms12.so")
+                # self.reboot()
+                # start_time = time.time()
+                # while time.time() - start_time < 60:
+                #     reboot_check = self.run_shell_cmd("getprop sys.boot_completed")[1]
+                #     if reboot_check == "1":
+                #         logging.info("booted up")
+                #         break
+                #     else:
+                #         time.sleep(5)
+                # reboot_check = self.run_shell_cmd("getprop sys.boot_completed")[1]
+                # if reboot_check != "1":
+                #     raise Exception('boot up run time error')
+                # else:
+                #     pass
+                # time.sleep(20)
             else:
-                logging.info(f"{MS12_SO} exists")
+                logging.debug(f"{MS12_SO} exists")
 
     def add_so(self):
         if pytest.target.get("prj") == "ott_hybrid_widevine_cas":

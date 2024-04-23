@@ -61,7 +61,9 @@ class Youtube(Online):
         {'link': 'ctwalU3o7MY', 'name': 'paid video'},
         {'link': 'rf7ft8-nUQQ', 'name': 'stress video'},
         {'link': 'hNAbQYU0wpg', 'name': 'VR 360 Video of Top 5 Roller (360)'},  # 360
-        {'link': 'QjoYpj2G-ug', 'name': 'Optus Sport On The Road'}  # live vp9
+        {'link': 'QjoYpj2G-ug', 'name': 'Optus Sport On The Road'},  # live vp9
+        {'link': 'RO014qcVkJc', 'name': 'Spider man: Homecoming'},  # DRM
+        {'link': 'NSxxrhnhjf4', 'name': 'Tokyo, Light Trail, 4K HDR HLG UHD (Shoot on RX100 VI)'},  # HLG
     ]
 
     def __init__(self, name=''):
@@ -92,6 +94,18 @@ class Youtube(Online):
                     time.sleep(30)
                     playerCheck.check_secure()
                     assert playerCheck.run_check_main_thread(300), f'play_error: {i}'
+                    break
+                else:
+                    continue
+            elif playback_format == "4kP60":
+                if i['link'] == "vX2vsvdq8nw":
+                    playerCheck.reset()
+                    logging.info(f"Start playing Youtube - {i['name']}")
+                    self.playback(self.PLAYERACTIVITY_REGU, i['link'])
+                    assert self.check_playback_status(), 'playback not success'
+                    time.sleep(10)
+                    playerCheck.check_secure()
+                    assert playerCheck.run_check_main_thread(10), f'play_error: {i}'
                     break
                 else:
                     continue
@@ -204,6 +218,42 @@ class Youtube(Online):
                     continue
             elif playback_format == "stress":
                 if i['link'] == "rf7ft8-nUQQ":
+                    playerCheck.reset()
+                    logging.info(f"Start playing Youtube - {i['name']}")
+                    self.playback(self.PLAYERACTIVITY_REGU, i['link'])
+                    assert self.check_playback_status(), 'playback not success'
+                    time.sleep(10)
+                    playerCheck.check_secure()
+                    assert playerCheck.run_check_main_thread(repeat_time), f'play_error: {i}'
+                    break
+                else:
+                    continue
+            elif playback_format == "DRM":
+                if i['link'] == "RO014qcVkJc":
+                    playerCheck.reset()
+                    logging.info(f"Start playing Youtube - {i['name']}")
+                    self.playback(self.PLAYERACTIVITY_REGU, i['link'])
+                    assert self.check_playback_status(), 'playback not success'
+                    time.sleep(20)
+                    playerCheck.check_secure()
+                    #assert playerCheck.run_check_main_thread(repeat_time), f'play_error: {i}'
+                    break
+                else:
+                    continue
+            elif playback_format == "HLG":
+                if i['link'] == "NSxxrhnhjf4":
+                    playerCheck.reset()
+                    logging.info(f"Start playing Youtube - {i['name']}")
+                    self.playback(self.PLAYERACTIVITY_REGU, i['link'])
+                    assert self.check_playback_status(), 'playback not success'
+                    time.sleep(10)
+                    playerCheck.check_secure()
+                    assert playerCheck.run_check_main_thread(repeat_time), f'play_error: {i}'
+                    break
+                else:
+                    continue
+            elif playback_format == "HDR":
+                if i['link'] == "LXb3EKWsInQ":
                     playerCheck.reset()
                     logging.info(f"Start playing Youtube - {i['name']}")
                     self.playback(self.PLAYERACTIVITY_REGU, i['link'])

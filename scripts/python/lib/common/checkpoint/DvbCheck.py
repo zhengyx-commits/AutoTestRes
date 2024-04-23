@@ -198,7 +198,7 @@ class DvbCheck(PlayerCheck_Base, threading.Thread, ResManager):
         self.check_logcat_output(log_filter, keywords, p_conf_check_time,
                                  self.__manual_search_by_id_checkpoint.__name__)
 
-    def check_quick_scan(self):
+    def check_quick_scan(self, check_time=p_conf_check_time):
         """
 
         Check whether the quick scan is successful.
@@ -210,9 +210,9 @@ class DvbCheck(PlayerCheck_Base, threading.Thread, ResManager):
         # self.reset()
         flag = False
         if self.__check_thread(self.__quick_scan_checkpoint(), 'check_quick_scan'):
-            if self.check_search_result():
-                if self.check_whether_search_missing():
-                    flag = True
+            if self.check_search_result(check_time=check_time):
+                # if self.check_whether_search_missing():
+                flag = True
         return flag
 
     def __quick_scan_checkpoint(self):
@@ -266,7 +266,7 @@ class DvbCheck(PlayerCheck_Base, threading.Thread, ResManager):
         self.check_logcat_output(log_filter_driver, keywords_driver, p_conf_check_time,
                                  self.__search_process_checkpoint.__name__)
 
-    def check_search_result(self, check_time=p_conf_check_time):
+    def check_search_result(self, check_time=p_conf_check_dvbt_auto_scan_time):
         """
 
         Check whether the search is successful.

@@ -252,12 +252,12 @@ class Subtitle(ADB):
                         logging.debug(self.subtitle_window)
 
             # 5. check subtitle show sync or not.
-            # if ('2 fade SPU:' in line_presentation) or ('1 fade SPU:' in line_presentation):
-            if abs(int(self.got_spu[0]) - int(self.got_spu[3]) / 90000) > 0.5:
-                # count += 1
-                logging.info(f'video play and subtitle show is not sync: {count}')
-                # if count >= 2:
-                self.error += 1
+            if ('2 fade SPU:' in line_presentation) or ('1 fade SPU:' in line_presentation):
+                if abs(int(self.got_spu[0]) - int(self.got_spu[3]) / 90000) > 0.5:
+                    # count += 1
+                    logging.info(f'video play and subtitle show is not sync: {count}')
+                    if count >= 2:
+                        self.error += 1
         logging.info(
             f'subtitle.error : {self.error}  ;subtitle.got_spu : {self.got_spu}; subtitle.show_spu : {self.show_spu} ; subtitle.subtitle_window: {self.subtitle_window}')
         if (self.error == 0) & (self.got_spu != '') & (self.show_spu != ''):
@@ -318,3 +318,4 @@ class Subtitle(ADB):
         self.enter()
         time.sleep(5)
         self.screenshot('teletext', layer="osd+video")
+

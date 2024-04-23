@@ -77,56 +77,44 @@
         "ott_hybrid": {
             "device_id": "ohm8096a104c1010814",
             "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_ah212_Compatibility_connector",
+            "serial_port": "/dev/ott_hybrid_u_iptv_basic_connector",
             "baudrate": 921600,
             "build_version": "S"
         },
         "ott_hybrid_compatibility": {
             "device_id": "ohm5610190440170a",
-             "ipaddr": "10.18.32.170",
-             "serial_port": "/dev/ott_hybrid_ah212_connector",
-             "baudrate": 921600,
-             "build_version": "S"
-          },
-        "ott_hybrid_s_nagratkl": {
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_ah212_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "ott_hybrid_cas": {
             "device_id": "nagra_tkl1234567890",
             "ipaddr": "10.18.32.170",
             "serial_port": "/dev/ott_hybrid_s_kpi_connector",
             "baudrate": 921600,
             "build_version": "S"
         },
-        "ott_hybrid_s_nagranocs": {
-            "device_id": "nagra_nocs",
+        "ott_hybrid_kpi": {
+            "device_id": "kpi1234567890",
             "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_nagra_nocs_connector",
-            "baudrate": 921600,
-            "build_version": "S"
-        },
-        "ott_hybrid_s_kpi": {
-            "device_id": "skpi1234567890",
-            "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_s_kpi_connector",
-            "baudrate": 921600,
-            "build_version": "S"
-        },
-        "ott_hybrid_t_kpi": {
-            "device_id": "tkpi1234567890",
-            "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_t_kpi_connector",
+            "serial_port": "/dev/ott_hybrid_u_kpi_connector",
+            "power_symlink": "/dev/ott_hybrid_u_kpi_powerRelay",
             "baudrate": 921600,
             "build_version": "S"
         },
         "ott_hybrid_s_yuv": {
-              "device_id": "ohm56101904501018",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_s_yuv_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_sanity": {
-            "device_id": "ohm56101904400a10",
+            "device_id": "ohm56101904501018",
             "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ah212_smoking_connector",
+            "serial_port": "/dev/ott_hybrid_yuv_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "ott_sanity": {
+            "device_id": "ohm56101904402209",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ttyUSB1",
+            "power_symlink": "/dev/ott_hybrid_u_Sanity_Compatibility_powerRelay",
             "baudrate": 921600,
             "build_version": "S",
             "ethernet": {
@@ -135,147 +123,36 @@
                     "gateway": "192.168.1.1"
                 }
             }
-         },
-        "ott_hybrid_shutdown_stress": {
-              "device_id": "shutdown1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_shutdown_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_uboot_reboot_stress": {
-              "device_id": "uboot_reboot",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_uboot_reboot_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_factory_reset_stress": {
-              "device_id": "factory_reset1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_factory_reset_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_av_play_stress": {
-              "device_id": "av_play1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_av_play_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_suspend_stress": {
-              "device_id": "suspend1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_suspend_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_reboot_stress": {
-              "device_id": "reboot1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_reboot_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_monkey_stress": {
-              "device_id": "monkey1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_monkey_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_power_stress": {
-              "device_id": "power1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_power_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_wifi_stress": {
-              "device_id": "wifi1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_wifi_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_switch_audio_track_stress": {
-              "device_id": "switch_audioTrack1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_switch_audio_track_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_switch_subtitle_track_stress": {
-              "device_id": "switch_subtitleTrack1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_switch_subtitle_track_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_youtube_stress": {
-              "device_id": "youtube1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_youtube_stress_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_widevine_cas": {
-              "device_id": "ap222d9721140513409",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_widevine_cas_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_vmx_iptv": {
-              "device_id": "ap2223c4236d46052766a",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_vmx_ultra_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
+        },
+        "ott_stress": {
+            "device_id": "youtube1234567890",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_youtube_stress_connector",
+            "power_symlink": "/dev/ott_hybrid_ah212_stress_powerRelay",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
         "ott_hybrid_playback_strategy": {
-              "device_id": "playback_strategy1234567890",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/playback_strategy_connector",
-              "baudrate": 921600,
-              "build_version": "S"
-         },
-        "ott_hybrid_t": {
-            "device_id": "ohm5610190440170a",
+            "device_id": "playback_strategy1234567890",
             "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_Android_T_hybrid_AutoTest_connector",
+            "serial_port": "/dev/ott_hybrid_u_Sanity_Compatibility_connector",
             "baudrate": 921600,
-            "build_version": "T"
+            "build_version": "S"
         },
-        "ott_hybrid_t_compatibility": {
-            "device_id": "ohm5610190440170a",
-            "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_Android_T_hybrid_AutoTest_connector",
-            "baudrate": 921600,
-            "build_version": "T"
-        },
-        "ott_hybrid_t_yuv": {
-              "device_id": "ohm5610190440310b",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/ott_hybrid_t_yuv_connector",
-              "baudrate": 921600,
-              "build_version": "T"
-         },
         "iptv_product_line_p_yuv": {
-              "device_id": "0010039901A03310000100692D6D0606",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/iptv_product_line_yuv_connector",
-              "baudrate": 115200,
-              "build_version": "P"
-         },
-	 "iptv_product_line_r_yuv": {
-              "device_id": "0010039901A0331000012C334147F375",
-              "ipaddr": "10.18.32.170",
-              "serial_port": "/dev/R_iptv_product_line_yuv_connector",
-              "baudrate": 921600,
-              "build_version": "R"
-         },
+            "device_id": "0010039901A03310000100692D6D0606",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/iptv_product_line_yuv_connector",
+            "baudrate": 115200,
+            "build_version": "P"
+        },
+        "iptv_product_line_r_yuv": {
+            "device_id": "0010039901A0331000012C334147F375",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/R_iptv_product_line_yuv_connector",
+            "baudrate": 921600,
+            "build_version": "R"
+        },
         "dvb": {
             "device_id": "ohm5610190450261a",
             "ipaddr": "10.18.32.170",
@@ -291,56 +168,21 @@
             "build_version": "S"
         },
         "dvb_stress": {
-            "device_id": "ohm5610190450261a",
-            "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_dvb_connector",
-            "baudrate": 921600,
-            "build_version": "S"
-        },
-        "dvb_stress_scan": {
-            "device_id": "dvbcscan",
-            "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_dvb_connector",
-            "baudrate": 921600,
-            "build_version": "S"
-        },
-        "dvb_stress_channel_switch": {
-            "device_id": "dvbcchannelswitch",
-            "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_dvb_connector",
-            "baudrate": 921600,
-            "build_version": "S"
-        },
-        "dvb_stress_playback": {
-            "device_id": "dvbcplayback",
-            "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_dvb_connector",
-            "baudrate": 921600,
-            "build_version": "S"
-        },
-        "dvb_stress_pvr": {
-            "device_id": "dvbcpvr",
-            "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_dvb_connector",
-            "baudrate": 921600,
-            "build_version": "S"
-        },
-        "dvb_stress_timeshift": {
-            "device_id": "dvbctimeshift",
+            "device_id": "dvbstress",
             "ipaddr": "10.18.32.170",
             "serial_port": "/dev/ott_hybrid_dvb_connector",
             "baudrate": 921600,
             "build_version": "S"
         },
         "dvb_kpi": {
-            "device_id": "ohm5610190450261a",
+            "device_id": "dvbkpi",
             "ipaddr": "10.18.32.170",
             "serial_port": "/dev/ott_hybrid_dvb_connector",
             "baudrate": 921600,
             "build_version": "S"
         },
         "dvb_s": {
-            "device_id": "dvbs",
+            "device_id": "dvbtrunk",
             "ipaddr": "10.18.32.170",
             "serial_port": "/dev/ott_hybrid_dvb_connector",
             "baudrate": 921600,
@@ -353,10 +195,52 @@
             "baudrate": 921600,
             "build_version": "S"
         },
-        "dvb_s_irdeto": {
-            "device_id": "irdeto",
+        "dvb_trunk_s905y5": {
+            "device_id": "bh20153375631ea932813",
             "ipaddr": "10.18.32.170",
-            "serial_port": "/dev/ott_hybrid_irdeto_connector",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "dvb_s_s905y5": {
+            "device_id": "bh20153375631ea932813",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "dvb_t_s905y5": {
+            "device_id": "bh20153375631ea932813",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "dvb_trunk_t5m": {
+            "device_id": "dvbtrunk",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "dvb_weak_signal_avs": {
+            "device_id": "t963d496a10c88911c05",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "dvb_weak_signal_h265": {
+            "device_id": "t963d496a10c88911903",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
+            "baudrate": 921600,
+            "build_version": "S"
+        },
+        "dvb_weak_signal_mpeg": {
+            "device_id": "t963d496a10c88911c10",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ott_hybrid_dvb_connector",
             "baudrate": 921600,
             "build_version": "S"
         },
@@ -413,8 +297,58 @@
             "serial_port": "/dev/ttyUSB0",
             "baudrate": 961200,
             "build_version": "R"
+        },
+        "hw_power": {
+            "device_id": "t965d454335832b90c1ff9",
+            "ipaddr": "10.18.19.225",
+            "serial_port": "/dev/ttyCH9344USB0",
+            "baudrate": 115200,
+            "test_item": "vmin"
+        },
+        "hw_general_dc": {
+            "device_id": "t965d454335832b90c1ff9",
+            "ipaddr": "10.18.19.225",
+            "serial_port": "/dev/ttyCH9344USB0",
+            "baudrate": 115200,
+            "test_item": "general_dc"
+        },
+        "hw_interface_module": {
+            "device_id": "t965d454335832b90c1ff9",
+            "ipaddr": "10.18.19.225",
+            "serial_port": "/dev/ttyCH9344USB0",
+            "baudrate": 921600,
+            "test_item": "interface_module"
+        },
+        "t5m": {
+            "device_id": "t963d41cdab80c6452af6a",
+            "ipaddr": "10.28.28.133",
+            "serial_port": "/dev/serial_for_t5m_sanity",
+            "power_symlink": "/dev/powerRelay_for_t5m_sanity",
+            "baudrate": 115200,
+            "build_version": "R"
+        },
+        "record_key": {
+            "device_id": "ohm56101904401708",
+            "ipaddr": "10.18.32.170",
+            "serial_port": "/dev/ttyUSB2",
+            "baudrate": 921600,
+            "build_version": "U"
+        },
+        "xiaomi_stress": {
+            "device_id": "t963d43c22b80c645256f0",
+            "ipaddr": "10.28.28.133",
+            "serial_port": "/dev/serial_for_debug",
+            "power_symlink": "/dev/powerRelay_for_t5m_sanity",
+            "baudrate": 115200,
+            "build_version": "R"
+        },
+        "tc8000_stress": {
+            "device_id": "t963d43c22b80c645256f0",
+            "ipaddr": "10.28.28.133",
+            "serial_port": "/dev/serial_for_tc8000",
+            "power_symlink": "/dev/powerRelay_for_tc8000",
+            "baudrate": 115200,
+            "build_version": "S"
         }
     }
-
-
 }

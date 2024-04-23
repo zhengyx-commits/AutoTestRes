@@ -1,0 +1,55 @@
+conf_common:
+  conf_wifi:
+    ssid: SE_AUT_5G
+    pwd: aut12345678
+    security: wpa2
+
+  conf_google:
+    account: yu.zeng@amlogic.com
+    pwd: Owen@200714
+
+
+conf_stress:
+  repeat_count: 1
+  repeat_time: 259200
+
+conf_sanity: 0
+
+oobe_page_info:
+  - page_info: text="Select your region or country"
+    button: "Australia"
+    wait_time: 2
+  - page_info: text="Pair Your Remote"
+    remote:
+      - keyevent: 22
+        number: 2
+    wait_time: 3
+  - page_info: text="Account"
+    remote:
+      - keyevent: 19
+        number: 5
+      - keyevent: 20
+        number: 5
+    wait_time: 3
+  - page_info: Sign in with the TCL Home
+    remote:
+      - keyevent: 19
+        number: 5
+      - keyevent: 20
+        number: 5
+    wait_time: 3
+  - page_info: Sign in with the TCL Home
+    button: "Not now"
+    wait_time: 3
+  - page_info: Please read our Terms and click
+    button: Select All
+    wait_time: 2
+#  - page_info: Please read our Terms and click
+#    button: Agree
+#    wait_time: 2
+  - page_info: text="Automatic Updates"
+    button: "Agree"
+    wait_time: 2
+  - page_info: text="Setup complete"
+    button: "Done"
+    wait_time: 30

@@ -1,29 +1,16 @@
-#!/usr/bin/env python
-# _*_ coding: utf-8 _*_
-# @Time    : 2021/9/7 13:36
-# @Author  : chao.li
-# @Site    :
-# @File    : DutCheckMointor.py
-# @Software: PyCharm
-
-
 import codecs
-import fcntl
 import logging
-import os
-import signal
-import subprocess
 import threading
 import time
-
-import _io
 import pytest
 import threadpool
-
+import datetime
 from lib.common.system.ADB import ADB
 from lib.common.system.CPU import CPU
 from lib.common.system.MemInfo import MemInfo
-from lib import get_device
+import paramiko
+import os
+import subprocess
 
 
 def _bytes_repr(c):
@@ -70,20 +57,22 @@ class DutCheckMointor():
     KERNEL_CRASH_KEY_LIST = ['sysrq: SysRq : Trigger a crash', 'Kernel panic - not syncing:',
                             'PC is at dump_throttled_rt_tasks', 'boot reason: kernel_panic,sysrq']
     LOGCAT_CRASH_KEY_LIST = ['ANR', 'NullPointerException', 'CRASH', 'Force Closed', 'Exception']
+    remote_dir = "/home/amlogic/FAE/AutoTest/OTT_BASIC"
+    remote_host = "10.18.11.98"
+    remote_username = "amlogic"
+    remote_password = "Linux2023"
 
     def __init__(self):
         self._init()
+        self._stop_event = threading.Event()
         self.kernel_result = {i: 0 for i in self.KERNEL_CRASH_KEY_LIST}
         self.logcat_result = {i: 0 for i in self.LOGCAT_CRASH_KEY_LIST}
         self.result_file = self.adb.logdir + '/log_analyze.txt'
+        self.run_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         pytest.pool = threadpool.ThreadPool(3)
-        status_func_list = ['self.cpu.catch()', 'self.meminfo.catch()', 'self.ping()']
+        status_func_list = ['self.cpu.get_cpu_temp()', 'self.cpu.get_cpu_info()', 'self.meminfo.get_free_info()', 'self.meminfo.get_mem_info()', 'self.ping()']
         pytest.requests = threadpool.makeRequests(self.status_check, status_func_list)
         [pytest.pool.putRequest(req) for req in pytest.requests]
-        self.catch_thread = threading.Thread(target=self.start_catch_logcat,
-                                             name='catch logcat -b all')
-        self.catch_thread.setDaemon(True)
-        self.catch_thread.start()
 
     def _init(self):
         self.adb = ADB()
@@ -100,35 +89,49 @@ class DutCheckMointor():
         @param func: check point
         @return: None
         '''
-        while True:
+        while not self._stop_event.is_set():
             if self.adb.live:
                 logging.debug('dut live , start catch')
                 eval(func)
             else:
                 logging.debug('dut not live , stop catch')
 
-    def start_catch_logcat(self):
+    def catch_logcat(self):
         '''
         start logcat and save to logcat_xxxx.log
         @return: None
         '''
-        for serialnumber in get_device():
-            self.logcat_file = open(os.path.join(self.adb.logdir, f'logcat_{serialnumber}.log'), 'w',
-                                    encoding='utf-8')
-            logging.info('start to catch logcat -b all')
-            self.log = subprocess.Popen(f'adb -s {serialnumber} logcat -b all'.split(),
-                                        stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-            fcntl.fcntl(self.log.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
-            while True:
-                if self.log:
-                    line = self.log.stdout.readline().decode('utf-8', 'backslashreplace_backport') \
-                        .encode('unicode_escape') \
-                        .decode('utf-8', errors='ignore') \
-                        .replace('\\r', '\r') \
-                        .replace('\\n', '\n') \
-                        .replace('\\t', '\t')
-                    self.check_logcat(line, self.logcat_file)
-                    if not self.logcat_file.closed: self.logcat_file.write(line)
+        if not pytest.device._log_file_obj:
+            return
+        with open(pytest.device._log_file_obj.name, 'r') as f:
+            lines = f.readlines()
+            for line in lines:
+                self.check_logcat(line, self.result_file)
+        if 'JENKINS_HOME' in os.environ or 'JENKINS_UPL' in os.environ or 'BUILD_ID' in os.environ:
+        # if 1==1:
+            self.capture_bug_report()
+            self.catch_edid_info()
+            if os.path.exists(self.result_file):
+                local_file_path = [self.adb.logdir+"/cpu_info.log", self.adb.logdir+'/freeInfo.log', self.adb.logdir+"/memInfo.log", self.adb.logdir+"/bugreport.zip", self.adb.logdir+"/edid_info.log", self.result_file]
+            else:
+                local_file_path = [self.adb.logdir+"/cpu_info.log", self.adb.logdir+'/freeInfo.log', self.adb.logdir+"/memInfo.log", self.adb.logdir+"/bugreport.zip", self.adb.logdir+"/edid_info.log"]
+            self.send_file_to_remote(local_file_path, self.remote_dir, self.remote_host, self.remote_username, self.remote_password)
+
+    def capture_bug_report(self):
+        try:
+            result = subprocess.run(['adb', 'bugreport', f'{self.adb.logdir}/bugreport.zip'], capture_output=True, text=True)
+            if result.returncode == 0:
+                print("Bug report captured successfully.")
+            else:
+                print("Error occurred while capturing bug report.")
+                print("Error message:", result.stderr)
+        except Exception as e:
+            print(f"Error occurred while capturing bug report: {e}")
+
+    def catch_edid_info(self):
+        edid_info = self.adb.run_shell_cmd("cat /sys/class/amhdmitx/amhdmitx0/hdmirx_info")[1]
+        with open(self.adb.logdir + "/edid_info.log", 'w') as f:
+            f.write(edid_info)
 
     def check_logcat(self, log, logcat_file):
         '''
@@ -149,7 +152,6 @@ class DutCheckMointor():
                 with open(self.result_file, 'a') as f:
                     f.write(str)
                     f.write(log)
-                if not logcat_file.closed: logcat_file.write(str)
         # check logcat crash
         for i in self.LOGCAT_CRASH_KEY_LIST:
             if i in log:
@@ -161,31 +163,31 @@ class DutCheckMointor():
                 with open(self.result_file, 'a') as f:
                     f.write(str)
                     f.write(log)
-                if not logcat_file.closed: logcat_file.write(str)
 
-    def stop_catch_logcat(self):
-        '''
-        stop logcat
-        kill popen
-        kill adb
-        stop file context
-        @return:
-        '''
-        os.system("killall logcat")
-        if not isinstance(self.log, subprocess.Popen):
-            logging.warning('pls pass in the popen object')
-            return 'pls pass in the popen object'
-        if not isinstance(self.logcat_file, _io.TextIOWrapper):
-            logging.warning('pls pass in the stream object')
-            return 'pls pass in the stream object'
-        os.kill(self.log.pid, signal.SIGTERM)
-        logging.info('stop to catch logcat -b all')
-        self.log.terminate()
-        self.log = None
-        self.logcat_file.close()
-        with open(self.result_file, 'a') as f:
-            f.write('\nLogcat Catch Summary\n')
-            for i in self.kernel_result:
-                f.write(f'{i} : {self.kernel_result[i]}\n')
-            for i in self.logcat_result:
-                f.write(f'{i} : {self.logcat_result[i]}\n')
+    def send_file_to_remote(self, local_file_path, remote_file_path, remote_host, remote_username, remote_password):
+        try:
+            # 建立 SSH 连接
+            ssh_client = paramiko.SSHClient()
+            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh_client.connect(remote_host, username=remote_username, password=remote_password)
+
+            scp_client = paramiko.SFTPClient.from_transport(ssh_client.get_transport())
+            run_time_dir = os.path.join(remote_file_path, self.run_time)
+            mkdir_command = f'mkdir -p {run_time_dir}'
+            ssh_client.exec_command(mkdir_command)
+            print("run_time_dir", run_time_dir)
+            # 通过 SFTP 将文件发送到远程 PC
+            for local_file in local_file_path:
+                remote_file = f"{run_time_dir}/{os.path.basename(local_file)}"
+                scp_client.put(local_file, remote_file)
+                _, stdout, _ = ssh_client.exec_command(f'mv {remote_file} {run_time_dir}/{pytest.result.get_name()}_{os.path.basename(local_file)}')
+            scp_client.close()
+            ssh_client.close()
+
+            print(f"File {local_file_path} sent to remote PC successfully.")
+        except Exception as e:
+            print(f"Error occurred while sending file to remote PC: {e}")
+
+
+
+

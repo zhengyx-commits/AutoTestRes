@@ -70,6 +70,8 @@ conf_seek_press_event:
 # for local_playback
 conf_local_playback:
   uuid: 46F5-7E75
+  sz_uuid: F69D-0041
+  sh_amplayer_uuid: 3F76-66F6
   video:
     h264:
       path: /h264/
@@ -77,6 +79,45 @@ conf_local_playback:
       path: /h265/
     vp9:
       path: /vp9/
+  amplayer_path:
+    TS_path: /amplayer/TS/
+    3G2_path: /amplayer/3G2/
+    3GP_path: /amplayer/3GP/
+    ASF_path: /amplayer/ASF/
+    AVI_path: /amplayer/AVI/
+    DAT_path: /amplayer/DAT/
+    DIVX_path: /amplayer/DIVX/
+    F4V_path: /amplayer/F4V/
+    FLV1_path: /amplayer/FLV1/
+    M2TS_path: /amplayer/M2TS/
+    M2V_path: /amplayer/M2V/
+    M4V_path: /amplayer/M4V/
+    MOV_path: /amplayer/MOV/
+    MP4_path: /amplayer/MP4/
+    MPG_path: /amplayer/MPG/
+    MTS_path: /amplayer/MTS/
+    OGM_path: /amplayer/OGM/
+    PMP_path: /amplayer/PMP/
+    RMVB_path: /amplayer/RMVB/
+    TP_path: /amplayer/TP/
+    VOB_path: /amplayer/VOB/
+    WMV_path: /amplayer/WMV/
+    4K2K_path: /amplayer/4K2K/
+    H265_path: /amplayer/H265/
+    VP6_path: /amplayer/VP6/
+    VP8_path: /amplayer/VP8/
+    VP9_path: /amplayer/VP9/
+    3D_path: /amplayer/3D/
+    MVC_path: /amplayer/MVC/
+    4KH264_path: /amplayer/4KH264/
+    4KH265_path: /amplayer/4KH265/
+    4KVP9_path: /amplayer/4KVP9/
+    ISO_path: /amplayer/ISO/
+    AMV_path: /amplayer/AMV/
+    MKV_path: /amplayer/MKV/
+    EVO_path: /amplayer/EVO/
+    FLV2_path: /amplayer/FLV2/
+
 
 # for multi playback
 conf_multi_playback:
@@ -146,3 +187,11 @@ conf_hdmi_display:
   smpte30hz: 'fps=30.00, width=4096, height=2160'
   smpte50hz: 'fps=50.00, width=4096, height=2160'
   smpte60hz: 'fps=60.00, width=4096, height=2160'
+
+# for boot up
+conf_boot_up:
+  boot_count: 3
+
+# for reboot
+conf_reboot:
+  reboot_count: 3

@@ -6,7 +6,7 @@
 # @File    : PlayerCheck_Base.py
 # @Email   : yongbo.shao@amlogic.com
 # @Software: PyCharm
-
+import atexit
 import logging
 import os
 import re
@@ -26,6 +26,7 @@ from lib.common.checkpoint.MediaCheck_Keywords import MediaCheckKeywords
 from lib.common.checkpoint.YoutubeCheck_Keywords import YoutubeCheckKeywords
 from lib.common.checkpoint.GooglePlayMoviesCheck_Keywords import GooglePlayMoviesCheckKeywords
 from lib.common.checkpoint.ExoplayerCheck_Keywords import ExoplayerCheckKeywords
+from lib.common.checkpoint.KT_Keywords import KTKeywords
 from lib.common.system.ADB import ADB
 from lib.common.tools.Seek import SeekFun
 from lib.common.tools.LoggingTxt import log
@@ -34,6 +35,7 @@ from util.Decorators import set_timeout, stop_thread
 from . import Check
 from lib import *
 from lib.common.tools.YUV import YUV
+from functools import partial
 
 
 class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
@@ -99,6 +101,7 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         ADB.__init__(self, "Player", unlock_code="", stayFocus=True)
         Check.__init__(self)
         CheckAndroidVersion.__init__(self)
+        self.kt_keywords = KTKeywords()
         self.mediacheck_keywords = MediaCheckKeywords()
         self.youtubecheck_keywords = YoutubeCheckKeywords()
         self.googleplaymoviescheck_keywords = GooglePlayMoviesCheckKeywords()
@@ -119,9 +122,16 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         self.hwc_logtime_pts_diff = 0
         self.count = 0
         self.checked_log_dict = {}
+        self.common_task_pool = threadpool.ThreadPool(6)
+        # 在构造函数中注册退出函数
+        atexit.register(self.exit_handler)
+
+    def exit_handler(self):
+        # 在这里关闭线程池
+        self.common_task_pool.dismissWorkers(6, do_join=True)
 
     def set_AndroidVersion_R_checkpoint(self):
-        if self.getprop(self.get_android_version()) >= "30" or self.videoType == "vp9" or (
+        if self.getprop(self.get_android_version()) >= "11" or self.videoType == "vp9" or (
                 self.sourceType == "tvpath"):
             logging.info("Android Version for this product is R or test type is tvpath")
             self.DISPLAYER_FRAME_COMMAND = "cat /sys/class/video_composer/receive_count"
@@ -224,31 +234,6 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
             logFilter = self.mediacheck_keywords.AMP_LOGCAT
         return self.get_check_api_result(keywords, logFilter, self.check_startPlay.__name__, getDuration, **kwargs)
 
-    def create_network_auxiliary(self):
-        # Get list of IP addresses for available network interfaces
-        iplist = getIfconfig()
-
-        # Check if the desired IP address exists in the list of available IP addresses
-        if "192.168.1.246" in iplist:
-            # If the desired IP address is found, use eth0 as the network interface
-            network_interface = "eth0"
-        else:
-            # If the desired IP address is not found, use eth0 as the network interface
-            network_interface = "eth0"
-
-        return network_interface
-
-    def offline_network(self, interface):
-        # Run the shell command to take the specified network interface offline
-        self.run_shell_cmd(f"ifconfig {interface} down")
-
-        # Return the name of the interface that was taken offline
-        return interface
-
-    def restore_network(self, interface):
-        # Run the shell command to bring the specified network interface back online
-        self.run_shell_cmd(f"ifconfig {interface} up")
-
     def check_disable_video(self):
         """
         Checks whether the video layer is covered by the OSD layer.
@@ -306,13 +291,11 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         :return: A tuple containing a boolean indicating whether the check was successful and a string with the logcat output
         """
         self.pause = True
-        self.pause_playerNum = pause_playerNum
         if keywords is None:
             keywords = self.mediacheck_keywords.PAUSE_KEYWORDS
         if logFilter is None:
             logFilter = self.mediacheck_keywords.PAUSE_RESUME_LOGCAT
-        return self.get_check_api_result(keywords, logFilter, self.check_pause.__name__,
-                                         pause_playerNum=pause_playerNum, **kwargs)
+        return self.get_check_api_result(keywords, logFilter, self.check_pause.__name__, pause_playerNum=pause_playerNum, **kwargs)
 
     @allure.step("Check Resume")
     def check_resume(self, keywords: str = "", logFilter: str = "", player_num: int = 0, **kwargs) -> Tuple[bool, dict]:
@@ -328,10 +311,40 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         name = "check_stuck_avsync_audio.txt"
         if os.path.exists(os.path.join(self.logdir, name)):
             os.remove(os.path.join(self.logdir, name))
-        self.resume_playerNum = player_num
+        # self.resume_playerNum = player_num
         keywords = keywords if keywords else self.mediacheck_keywords.RESUME_KEYWORDS
         logFilter = logFilter if logFilter else self.mediacheck_keywords.PAUSE_RESUME_LOGCAT
-        return self.get_check_api_result(keywords, logFilter, self.check_resume.__name__, **kwargs)
+        return self.get_check_api_result(keywords, logFilter, self.check_resume.__name__, resume_playerNum=player_num, **kwargs)
+
+    @allure.step("Check Seek")
+    def kt_check_seek(self, keywords: str = None, logFilter: str = None, **kwargs) -> bool:
+        if keywords is None:
+            keywords = self.kt_keywords.SEEK_KEYWORDS
+        if logFilter is None:
+            logFilter = self.kt_keywords.AMP_LOGCAT
+        return self.kt_check(keywords, logFilter, self.kt_check_seek.__name__, **kwargs)
+
+    @allure.step("Check Pause")
+    def kt_check_pause(self, keywords: str = None, logFilter: str = None, **kwargs) -> bool:
+        self.pause = True
+        if keywords is None:
+            keywords = self.kt_keywords.PAUSE_KEYWORDS
+        if logFilter is None:
+            logFilter = self.kt_keywords.TS_LOGCAT
+        return self.kt_check(keywords, logFilter, self.kt_check_pause.__name__, **kwargs)
+
+    @allure.step("Check Resume")
+    def kt_check_resume(self, keywords: str = "", logFilter: str = "", **kwargs) -> bool:
+        self.reset()
+        # self.resume_playerNum = player_num
+        keywords = keywords if keywords else self.kt_keywords.RESUME_KEYWORDS
+        logFilter = logFilter if logFilter else self.kt_keywords.TS_LOGCAT
+        return self.kt_check(keywords, logFilter, self.kt_check_resume.__name__, **kwargs)
+
+    def kt_check(self, keywords, logFilter, name, getDuration=False):
+        self.start_check_keywords_thread(keywords, logFilter, self.get_checktime(), name, getDuration)
+        self.reset()
+        return self.flag_check_logcat_output_keywords
 
     def get_check_api_result(self, keywords, logFilter, name, getDuration=False, **kwargs):
         # Initialize variables
@@ -346,7 +359,7 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
             if self.playerNum == 4:  # four way start play need wait
                 time.sleep(2)
             self.start_save_log_thread(time_out=timeout, **kwargs)
-            self.common_threadpool()
+            self.common_threadpool(**kwargs)
             start_time = time.time()
             while time.time() - start_time < timeout:
                 # If checking startPlay and display has not been checked yet, check if video is disabled
@@ -427,9 +440,6 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         # Set stop flag
         self.stop = True
 
-        # Set which player stopped
-        self.stop_playerNum = stop_playerNum
-
         # Use default keywords if none provided
         if not keywords:
             keywords = self.mediacheck_keywords.STOP_KEYWORDS
@@ -439,7 +449,7 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
             logFilter = self.mediacheck_keywords.STOP_LOGCAT
 
         # Call get_check_api_result method with specified parameters
-        return self.get_check_api_result(keywords, logFilter, self.check_stopPlay.__name__, **kwargs)
+        return self.get_check_api_result(keywords, logFilter, self.check_stopPlay.__name__, stop_playerNum=stop_playerNum, **kwargs)
 
     def check_display(self):
         # get display info from shell command
@@ -832,13 +842,46 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         requests = threadpool.makeRequests(self.check_abnormal_status, abnormal_func_list)
         [abnormal_task_pool.putRequest(req) for req in requests]
 
-    def common_threadpool(self):
-        # use a list of functions instead of a list of strings
-        common_func_list = ["self.check_v4lvideo_count()", "self.checkFrame()", "self.checkHWDecodePlayback()"]
-        common_task_pool = threadpool.ThreadPool(6)
-        requests = threadpool.makeRequests(self.check_common_status, common_func_list)
-        [common_task_pool.putRequest(req) for req in requests]
-        common_task_pool.wait()
+    # def common_threadpool(self):
+    #     # use a list of functions instead of a list of strings
+    #     common_func_list = ["self.check_v4lvideo_count()", "self.checkFrame()", "self.checkHWDecodePlayback()"]
+    #     common_task_pool = threadpool.ThreadPool(6)
+    #     requests = threadpool.makeRequests(self.check_common_status, common_func_list)
+    #     [common_task_pool.putRequest(req) for req in requests]
+    #     common_task_pool.wait()
+
+    def common_threadpool(self, **kwargs):
+        # 定义一个包含函数及其参数的元组列表
+        common_func_list = [
+            (self.checkHWDecodePlayback, []),
+            (self.check_v4lvideo_count, []),
+            (self.checkFrame, []),
+        ]
+
+        # self.common_task_pool = threadpool.ThreadPool(6)
+
+        # 使用 makeRequests 构造请求
+        requests = [
+            threadpool.WorkRequest(self.check_common_status, args=[func], kwds=kwargs)
+            for func, args in common_func_list
+        ]
+
+        # 将请求添加到线程池中
+        [self.common_task_pool.putRequest(req) for req in requests]
+
+        # 等待线程池执行完成
+        self.common_task_pool.wait()
+
+    def check_common_status(self, func, **kwargs):
+        start_time = time.time()
+        timeout = self.get_checkavsync_stuck_time()
+
+        while time.time() - start_time < timeout:
+            time.sleep(3)
+            func(**kwargs)
+
+            if self.get_abnormal_observer():
+                break
 
     def start_save_log_thread(self, time_out, **kwargs):
         """
@@ -876,14 +919,6 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         #         break
         return check_play
 
-    def check_common_status(self, func):
-        start_time = time.time()
-        timeout = self.get_checkavsync_stuck_time()
-        while time.time() - start_time < timeout:
-            time.sleep(3)
-            eval(func)
-            if self.get_abnormal_observer():
-                break
 
     def check_abnormal_status(self, func):
         start_time = time.time()
@@ -1259,127 +1294,6 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         if abs(float(re.findall(r"(.*) fps", actual_frame_rate)[0]) - float(stream_frame_rate)) < 1:
             stream_frame_rate = float(re.findall(r"(.*) fps", actual_frame_rate)[0])
 
-    def check_whichmodule_output_slowly(self, hwc_pts_list, diffC):
-        """
-        A: check which module frame output slowly
-        """
-        logging.info(f"diffC: {diffC}")
-        module_stuck_output_slowly = True
-        vsync_duration = self.getVsync()
-        count = 0
-        index = 0
-        # check checkin
-        for ele in self.tsplayer_checkin_pts:
-            if ele[1] == mediasync_pts_list[-1][1]:
-                index = tsplayer_checkin_pts.index(ele)
-                # print(index)
-        # logging.info(f"self.tsplayer_checkin_pts: {self.tsplayer_checkin_pts[0:index+1]}")
-        # logging.info(f"hwc_pts_list: {hwc_pts_list}")
-        for i, ele in enumerate(self.tsplayer_checkin_pts[0:index + 1]):
-            diff_A_checkin = self.tsplayer_checkin_pts[0:index + 1][i][0] - hwc_pts_list[0][0]
-            diff_B_checkin = (self.tsplayer_checkin_pts[0:index + 1][i][1] - hwc_pts_list[0][1]) / 1000
-            diff_C_checkin = diff_A_checkin - diff_B_checkin
-            logging.debug(
-                f"diff_A_checkin:{diff_A_checkin}, diff_B_checkin:{diff_B_checkin}, diffC - diff_C_checkin: {diffC - diff_C_checkin}, vsync_duration: {vsync_duration}")
-            # calculate
-            if diffC - diff_C_checkin < vsync_duration:
-                count += 1
-
-            if count > 1:
-                logging.info(f"checkin count: {count}")
-                logging.info("checked checkin module stuck: output slowly")
-                return module_stuck_output_slowly
-        # check decoder
-        decoder_pts = []
-        # if self.video_type == "h264":
-        #     decoder_offset = [(ele[0], ele[1][-8:].strip('0')) for ele in decoder_pts_list]
-        # else:
-        decoder_offset = [(ele[0], ele[1]) for ele in decoder_pts_list]
-        tsplayer_checkout_offset_pts = [(ele[0], int(ele[1], 16), ele[2]) for ele in tsplayer_checkout_offset_pts]
-        logging.debug(f"decoder_offset: {decoder_offset}")
-        logging.debug(f"tsplayer_checkout_offset_pts: {tsplayer_checkout_offset_pts}")
-        for checkout in tsplayer_checkout_offset_pts:
-            for offset in decoder_offset:
-                if offset[1] == checkout[1]:
-                    decoder_pts.append((offset[0], checkout[2]))
-        count = 0
-        logging.info(f"decoder_pts: {decoder_pts}")
-        logging.info(f"hwc_pts_list: {hwc_pts_list}")
-        for i, ele in enumerate(decoder_pts):
-            diff_A_decoder = decoder_pts[i][0] - hwc_pts_list[0][0]
-            diff_B_decoder = float(decoder_pts[i][1]) / 1000000 - float(hwc_pts_list[0][1]) / 1000
-            diff_C_decoder = diff_A_decoder - diff_B_decoder
-            logging.debug(
-                f"diff_A_decoder:{diff_A_decoder}, diff_B_decoder:{diff_B_decoder}, diffC - diff_C_decoder: {diffC - diff_C_decoder}, vsync_duration: {vsync_duration}")
-            # calculate
-            if diffC - diff_C_decoder < vsync_duration:
-                count += 1
-
-            if count > 1:
-                logging.info(f"decoder count: {count}")
-                logging.info("checked decoder module stuck: output slowly")
-                return module_stuck_output_slowly
-        # # check mediasync
-        # baseline = 0
-        # count = 0
-        # for i, ele in enumerate(mediasync_pts_list):
-        #     diff_A_mediasync = mediasync_pts_list[i][0] - hwc_pts_list[0][0]
-        #     diff_B_mediasync = mediasync_pts_list[i][1] - hwc_pts_list[0][1]
-        #     diff_C_mediasync = diff_A_mediasync - diff_B_mediasync
-        #     logging.debug(
-        #         f"diff_A_mediasync:{diff_A_mediasync}, diff_B_mediasync:{diff_B_mediasync}, baseline - diff_C_mediasync: {baseline - diff_C_mediasync}, vsync_duration: {vsync_duration}")
-        #     # calculate
-        #     if baseline - diff_C_mediasync > vsync_duration:
-        #         count += 1
-        #
-        #     if count > 2:
-        #         logging.info(f"mediasync count: {count}")
-        #         logging.info("checked mediasync module stuck: output slowly")
-        #         return module_stuck_output_slowly
-        logging.info("checked hwc module stuck: output slowly")
-        return module_stuck_output_slowly
-
-    def check_whichmodule_lost_frame(self, hwc_pts_list):
-        module_stuck_lost_frame = False
-        # check decoder
-        # checkin_pts = [(checkin_pts[1], checkin_pts[2]) for checkin_pts in self.tsplayer_checkin_pts]
-        # if self.video_type == "h264":
-        #     decoder_offset = [(ele[0], ele[1][-8:].strip('0')) for ele in decoder_pts_list]
-        # else:
-        decoder_offset = [(ele[0], ele[1]) for ele in decoder_pts_list]
-        # decoder_offset = [(ele[0], int(ele[1][-8:].strip('0'), 16)) for ele in decoder_pts_list]
-        mediasync_pts = [mediasync_pts[1] for mediasync_pts in mediasync_pts_list]
-        # logging.debug(f"checkin_pts: {checkin_pts}")
-        logging.debug(f"decoder_offset: {decoder_offset}")
-        tmp = []
-        checkin_pts_filter = []
-        decoder_pts_count = 0
-        first_pts_index = 0
-        for offset in decoder_offset:
-            for checkin in tsplayer_checkin_pts:
-                diff = float(offset[1]) - float(checkin[2])
-                if diff > 0:
-                    tmp.append((abs(diff), offset[1], checkin[0], checkin[1], checkin[2]))
-                else:
-                    if not first_pts_index:
-                        first_pts_index = tsplayer_checkin_pts.index(tmp[-1][2:])
-            if len(tmp) >= 1:
-                decoder_pts_count += 1
-            checkin_pts_filter = tmp
-            tmp.clear()
-        logging.debug(f"decoder_pts_count: {decoder_pts_count}")
-        logging.debug(f"first_pts_index: {first_pts_index}")
-        # logging.debug(f"decoder_pts: {decoder_pts}, len(decoder_pts): {len(decoder_pts)}, checkin_pts index: {checkin_pts.index(decoder_pts[-1])}")
-        if decoder_pts_count < (len(tsplayer_checkin_pts) - first_pts_index) * 0.93:
-            logging.info("checked decoder module stuck: lost frame")
-        # check mediasync
-        elif len(mediasync_pts_list) < decoder_pts_count * 0.93:
-            logging.info("checked mediasync module stuck: lost frame")
-        else:
-            logging.info("checked hwc module stuck: lost frame")
-        module_stuck_lost_frame = True
-        return module_stuck_lost_frame
-
     def audio_stuck_analysis(self, alsa_underrun_list, pts_pes_list, audio_output_pts):
         logging.debug(f"alsa_underrun_list:{alsa_underrun_list}")
         logging.debug(f"pts_pes_list:{pts_pes_list}")
@@ -1517,7 +1431,7 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         dq_count = self.run_shell_cmd(self.V4LVIDEO_DQ_COUNT)[1]
         return put_count, get_count, q_count, dq_count
 
-    def check_v4lvideo_count(self):
+    def check_v4lvideo_count(self, **kwargs):
         if (len(self.abnormal_observer_list) != 0):
             return False
         if self.speed or self.switchAudio or self.randomSeekEnable or self.stop:
@@ -1692,8 +1606,22 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         if ((self.check_disable_video() is False) and (pytest.target.get("prj") == "ott_sanity")) or (
                 "evo" in kwargs.values()):
             return True
+        # logging.info(f"kwargs: {kwargs}")  # {'pause_playerNum': 0, 'video_resolution': '4k_p60'}
+        pause_playerNum = ""
+        resume_playerNum = ""
+        stop_playerNum = ""
+        video_resolution = ""
+        if "pause_playerNum" in kwargs:
+            pause_playerNum = kwargs["pause_playerNum"]
+        if "resume_playerNum" in kwargs:
+            resume_playerNum = kwargs["resume_playerNum"]
+        if "stop_playerNum" in kwargs:
+            stop_playerNum = kwargs["stop_playerNum"]
+        if "video_resolution" in kwargs:
+            video_resolution = kwargs["video_resolution"]
+            logging.info(f"video_resolution: {video_resolution}")
+
         start_time = time.time()
-        # check frame count
         if (len(self.abnormal_observer_list) != 0):
             return False
         flag_frame = False
@@ -1702,13 +1630,15 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
             flag_frame = True
             return flag_frame
         logging.info("check frame count")
-        if self.getprop(self.get_android_version()) >= "30":
+        if self.getprop(self.get_android_version()) >= "11":
             # frame count only support at most 2 PIP way
-            if self.playerNum == 2 and (self.pause_playerNum == 1 or self.resume_playerNum == 1):
+            if self.playerNum == 2 and (pause_playerNum == 0 or resume_playerNum == 0 or stop_playerNum == 1) and (video_resolution != "4k_p60"):
                 self.DISPLAYER_FRAME_COMMAND = "cat /sys/class/video_composer/receive_count_pip"
+            elif self.getprop(self.get_android_version()) == "28":
+                self.DISPLAYER_FRAME_COMMAND = "cat /sys/module/amvideo/parameters/new_frame_count"
             else:
                 self.DISPLAYER_FRAME_COMMAND = "cat /sys/class/video_composer/receive_count"
-        elif self.getprop(self.get_android_version()) == "28":
+        elif self.getprop(self.get_android_version()) == "9":
             self.DISPLAYER_FRAME_COMMAND = "cat sys/module/amvideo/parameters/new_frame_count"
         else:
             self.DISPLAYER_FRAME_COMMAND = "cat /sys/module/amvideo/parameters/display_frame_count"
@@ -1721,15 +1651,7 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
             if int(frame) == int(self.frame_temp):
                 logging.debug(f"true frame:{frame}, frame_temp:{self.frame_temp}")
                 flag_frame = True
-            logging.info(f'frame_temp {self.frame_temp} - frame_current {frame}')
-            if self.pause or self.stop:
-                self.frame_temp = frame
-                frame = self.run_shell_cmd(self.DISPLAYER_FRAME_COMMAND)[1]
-                if int(frame) == int(self.frame_temp):
-                    logging.info(f"true frame:{frame}, frame_temp:{self.frame_temp}")
-                    flag_frame = True
-                else:
-                    logging.debug(f"false  frame:{frame}, frame_temp:{self.frame_temp}")
+                logging.info(f'frame_temp {self.frame_temp} - frame_current {frame}')
             else:
                 logging.debug(f"false  frame:{frame}, frame_temp:{self.frame_temp}")
         else:
@@ -1757,27 +1679,30 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         if (len(self.abnormal_observer_list) != 0):
             return False
         logging.info(f"check vfm map: {self.playerNum}")
+        stop_playerNum = ""
+        if "stop_playerNum" in kwargs:
+            stop_playerNum = kwargs["stop_playerNum"]
         flag_HWDecoder = False
         if not self.VFM_MAP_COMMAND:
             return False
         mapInfo_default = self.run_shell_cmd(f'{self.VFM_MAP_COMMAND}')[1]
         # logging.info(f"mapInfo_default:{mapInfo_default}")
-        if self.getprop(self.get_android_version()) >= "30":
+        if self.getprop(self.get_android_version()) >= "11":
             if not self.check_player_path():  # ott path
                 if "vcom-map-0 { video_composer.0(1) video_render.0}" in mapInfo_default:
                     flag_HWDecoder = True
                 return flag_HWDecoder
             if self.stop:
                 vdec_list = []
-                # PIP way (self.playerNum > 1), self.stop_playerNum start from 1 to 4, represent from 1 way to 4 way
-                if self.stop_playerNum in range(self.playerNum):
+                # PIP way (self.playerNum > 1), stop_playerNum start from 1 to 4, represent from 1 way to 4 way
+                if stop_playerNum in range(self.playerNum):
                     if (("vcom-map-0 { video_composer.0(1)" and "vcom-map-1 { video_composer.1(1)"
                          in mapInfo_default)):
                         for one in re.findall(r"vdec-map-.* \{ vdec.* v4lvideo.\d\}", mapInfo_default,
                                               re.S)[0].split("]  "):
                             if "vdec" in one:
                                 vdec_list.append(one)
-                        if len(vdec_list) == (self.playerNum - self.stop_playerNum):
+                        if len(vdec_list) == (self.playerNum - stop_playerNum):
                             logging.debug(f"len(vdec_list): {len(vdec_list)}")
                             flag_HWDecoder = True
                 # single way
@@ -1856,8 +1781,10 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
                 'echo 1 > /sys/module/amvdec_h265/parameters/debug;'
                 'echo 0x0800 > /sys/module/amvdec_mmpeg12/parameters/debug_enable')
             self.run_shell_cmd('setprop vendor.media.audiohal.aut 1')
+            if self.run_shell_cmd("cat /proc/sys/kernel/printk")[1][0] == "7":
+                 self.run_shell_cmd("echo 4 > /proc/sys/kernel/printk")
         else:
-            if self.getprop(self.get_android_version()) != "34":
+            if self.getprop(self.get_android_version()) != "14":
                 self.open_omx_info()
 
     def resetMediaSyncLevel(self):
@@ -1902,7 +1829,7 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         # IPTV/TV/OTT(<30): tsync, OTT(>=30) and vp9: mediasync, linux: msync
         # NU-AmNuPlayerRenderer: PTS: AV sync info:AV SYNCED
         if self.getprop(
-                self.get_android_version()) >= "30" or self.videoType == "vp9" or self.sourceType == "tvpath":
+                self.get_android_version()) >= "11" or self.videoType == "vp9" or self.sourceType == "tvpath":
             logging.debug("Android S: OTT path; Android R: MEDIASYNC TYPE; Analyze AmNuPlayer log")
             keywords = self.mediacheck_keywords.OTT_MEDIASYNC_KEYWORDS.copy()
             keywords = re.findall(r"(NU-AmNuPlayerRenderer: video late by) .* us \(.* secs\)", keywords[0])
@@ -2114,7 +2041,7 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
                     .replace('\\n', '\n') \
                     .replace('\\t', '\t') \
                     .replace('\\', '')
-                if line.startswith("0") and len(line) >= 11:
+                if re.match(r'\d{2}-\d{2}',line) and len(line) >= 11:
                     if line[8] == ':' and line[11] == ':' and line.count(line[:5]) == 1:
                         time = self.getTime(line)
                     else:
@@ -2146,8 +2073,8 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         logging.debug(f"U sanity ref drop_pts {drop_pts}")
 
         # determine if there is output
-        if not out_pts:
-            raise ValueError("out pts is empty")
+        # if not out_pts:
+        #     raise ValueError("out pts is empty")
 
         # judge drop, for android U ref
         drop_count = 0
@@ -2270,9 +2197,6 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         self.v4l_count_list = []
         self.audio_appl_ptr_list = []
         self.abnormal_observer_list = []
-        self.stop_playerNum = 0
-        self.pause_playerNum = 0
-        self.resume_playerNum = 0
         self.put_count_temp = ["0"]
         self.get_count_temp = ["0"]
         self.q_count_temp = ["0"]
@@ -2338,9 +2262,9 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
 
     def catch_avsync_logcat(self):
         self.clear_logcat()
-        if self.getprop(self.get_android_version()) > "30":
+        if self.getprop(self.get_android_version()) > "11":
             pass
-        elif self.getprop(self.get_android_version()) == "30" or self.videoType == "vp9":
+        elif self.getprop(self.get_android_version()) == "11" or self.videoType == "vp9":
             self.p = self.popen(self.AVSYNC_OTT_LOG)
         else:
             self.p = self.popen(self.AVSYNC_IPTV_LOG)
@@ -2545,7 +2469,7 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         if self.playerType == self.PLAYER_TYPE_LOCAL:
             self.logcat = self.popen('logcat -s %s' % self.TAG)
             self.logcatOpened = True
-        elif self.getprop(self.get_android_version()) == "30" or self.videoType == "vp9":
+        elif self.getprop(self.get_android_version()) == "11" or self.videoType == "vp9":
             self.logcat_avsync = self.popen(self.AVSYNC_OTT_LOG)
             self.logcatOpened = True
         else:

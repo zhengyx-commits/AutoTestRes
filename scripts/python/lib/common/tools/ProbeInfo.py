@@ -46,11 +46,8 @@ class ProbeInfo(ADB):
         for serialnumber in get_device():
             cmd = 'adb -s ' + serialnumber + ' shell logcat -s amlsource | grep ReportProbe'
             log = subprocess.Popen(cmd.split(), stdout=logcat_file)
-            time.sleep(3)
+            time.sleep(30)
             self.stop_save_logcat(log, logcat_file)
-        # with open(logcat_file.name, 'r') as f:
-        #     result = f.read()
-        # return result
 
     def check_probe_info(self):
         t = 0
@@ -109,16 +106,15 @@ class ProbeInfo(ADB):
         return self.video_info
 
     def logcat(self):
-        while True:
-            self.probe_info_logcat()
+        self.probe_info_logcat()
 
     def start_logcat_thread(self):
         if not hasattr(self, 's'):
             self.s = threading.Thread(target=self.logcat,
                                       name='logcat')
             logging.info('startLogcatThread')
-            self.s.setDaemon(True)
             self.s.start()
+            self.s.join()
 
     def stop_logcat_thread(self):
         if isinstance(self.s, threading.Thread):

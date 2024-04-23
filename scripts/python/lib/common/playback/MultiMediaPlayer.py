@@ -38,18 +38,9 @@ MANUFACTURER_PROP = 'ro.product.manufacturer'
 SIGNED_APK = 'MultiMediaPlayer_inside_1.0_signed.apk'
 CHECK_LOG = 'logcat -s AmlMultiPlayer'
 ERROR_KEYWORDS = ["newStatus=Error"]
-# MULTI_APK = 'MultiMediaPlayer_S_2023.03.10_410c40c.apk'
-adb = ADB()
-android_version = adb.getprop(key="ro.build.version.release")
-logging.debug(f"android version: {android_version}")
-if android_version == '14':
-    MULTI_APK = 'signed_app.apk'
-else:
-    MULTI_APK = 'MultiMediaPlayer_S_2023.03.10_410c40c.apk'
+
 
 # player_check = PlayerCheck
-
-
 class MultiPlayer(Environment_Detection, ADB, SignApk):
     def __init__(self):
         # self.sn = MULTI.get_note('Multiplayer')['device_id']
@@ -58,6 +49,8 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
         SignApk.__init__(self)
         # self.device = self.serialnumber
         self.resManager = ResManager()
+        self.MULTI_APK = self.choose_apk()
+        self.disable_sub()
         self._out_path = self.resManager.get_target(path="signed/", source_path="signed/")
         self._debug_apk_name = self.resManager.get_target(
             "debug/MultiMediaPlayer_inside_1.0_c1b1707_debug_202108021508.apk")
@@ -147,6 +140,15 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
             }
         return URL_DICT
 
+    def choose_apk(self):
+        android_version = self.getprop(key="ro.build.version.release")
+        logging.debug(f"android version: {android_version}")
+        if android_version == '14':
+            MULTI_APK = 'signed_app.apk'
+        else:
+            MULTI_APK = 'MultiMediaPlayer_S_2023.03.10_410c40c.apk'
+        return MULTI_APK
+
     def check_multi_exist(self):
         # if "hybrid_t" in pytest.target.get("prj"):
         if isinstance(pytest.device, list):
@@ -169,7 +171,7 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
                 logging.debug("apk has existed")
         else:
             if not self.check_multi_exist():
-                assert self.install_apk("apk/" + MULTI_APK)
+                assert self.install_apk("apk/" + self.MULTI_APK)
                 self.start_multiPlayer_apk()
                 time.sleep(5)
                 self.get_permission()
@@ -202,9 +204,9 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
     def get_permission(self):
         self.permission.permission_check()
 
-    def check_current_window(self):
-        current_window = self.run_shell_cmd(self.CURRENT_FOCUS)[1]
-        return current_window
+    # def check_current_window(self):
+    #     current_window = self.run_shell_cmd(self.CURRENT_FOCUS)[1]
+    #     return current_window
 
     def check_multiplayer_apk_exist(self):
         rc, out = self.run_shell_cmd('pm list packages', TIMEOUT)
@@ -226,11 +228,13 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
 
     @allure.step("Close multiPlayer APK")
     def stop_multiPlayer_apk(self):
+        # open subtitle server
+        self.enable_sub()
         self.shell("input keyevent 4")
         count = 0
         # if "hybrid_t" in pytest.target.get("prj"):
         while True:
-            if MULTIMEDIAPLAYER_T_TEST_APP_NAME not in self.check_current_window():
+            if MULTIMEDIAPLAYER_T_TEST_APP_NAME not in self.check_current_window(self.CURRENT_FOCUS):
                 logging.debug("apk has exited")
                 break
             else:
@@ -238,7 +242,7 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
                 count = count + 1
             if count >= 5:
                 self.shell("input keyevent 4")
-                if MULTIMEDIAPLAYER_T_TEST_APP_NAME not in self.check_current_window():
+                if MULTIMEDIAPLAYER_T_TEST_APP_NAME not in self.check_current_window(self.CURRENT_FOCUS):
                     logging.debug("apk has exited")
                     break
                 else:
@@ -247,6 +251,12 @@ class MultiPlayer(Environment_Detection, ADB, SignApk):
                 logging.debug("continue check")
         self.kill_logcat_pid()
         self.run_shell_cmd("logcat -c")
+
+    def disable_sub(self):
+        self.setprop("vendor.media.amplayer.disable_sub", "1")
+
+    def enable_sub(self):
+        self.setprop("vendor.media.amplayer.disable_sub", "0")
 
     # def startMultiPlayerTest(self, src_path=None):
     #     if src_path is None:

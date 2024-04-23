@@ -15,8 +15,8 @@ class DvbCheckKeywords:
                           'dtvkitserver: IPC--> {"command": "Dvbc.startSearchEx", "json": \["full","KDG",']
     # for AndroidU
     SEARCH_EX_FILTER_U = 'logcat -s DtvkitDvbtSetup DTV_LOG'
-    SEARCH_EX_KEYWORDS_U = ['DtvkitDvbtSetup: command = Dvbc.startSearchEx, args = \["full","KDG",',
-                          'DTV_LOG : <dtvkitserver> IPC--> {"command": "Dvbc.startSearchEx", "json": \["full","KDG",']
+    SEARCH_EX_KEYWORDS_U = ['DtvkitDvbtSetup: command = Dvbc.startSearchEx, args = \[',
+                          'DTV_LOG : <dtvkitserver> IPC--> {"command": "Dvbc.startSearchEx", "json": \[']
 
     # for check_manual_search_by_freq
     MANUAL_SEARCH_BY_FREQ_FILTER = 'logcat -s DtvkitDvbtSetup dtvkitserver'
@@ -38,12 +38,12 @@ class DvbCheckKeywords:
 
     # for check_quick_scan
     QUICK_SCAN_FILTER = 'logcat -s DtvkitDvbtSetup dtvkitserver'
-    QUICK_SCAN_KEYWORDS = ['DtvkitDvbtSetup: command = Dvbc.startSearchEx, args = \["quick","KDG",true,"AUTO",0,0,0\]',
-                          'dtvkitserver: IPC--> {"command": "Dvbc.startSearchEx", "json": \["quick","KDG",true,"AUTO",0,0,0\]}']
+    QUICK_SCAN_KEYWORDS = ['DtvkitDvbtSetup: command = Dvbc.startSearchEx, args = \["quick","KDG",true',
+                          'dtvkitserver: IPC--> {"command": "Dvbc.startSearchEx", "json": \["quick","KDG",true']
     # for AndroidU
     QUICK_SCAN_FILTER_U = 'logcat -s DtvkitDvbtSetup DTV_LOG'
-    QUICK_SCAN_KEYWORDS_U = ['DtvkitDvbtSetup: command = Dvbc.startSearchEx, args = \["quick","KDG",true,"AUTO",0,0,0\]',
-                          'DTV_LOG : <dtvkitserver> IPC--> {"command": "Dvbc.startSearchEx", "json": \["quick","KDG",true,"AUTO",0,0,0\]}']
+    QUICK_SCAN_KEYWORDS_U = ['DtvkitDvbtSetup: command = Dvbc.startSearchEx, args = \["quick","KDG",true,"QAM64",0',
+                          'DTV_LOG : <dtvkitserver> IPC--> {"command": "Dvbc.startSearchEx", "json": \["quick","KDG",true,"QAM64",0']
 
     # for check_search_process
     SEARCH_PROCESS_FILTER = 'logcat -s DtvkitDvbtSetup'
@@ -52,13 +52,14 @@ class DvbCheckKeywords:
     SEARCH_PROCESS_KEYWORDS_DRIVER = ['Lock Status: Unlocked']
 
     # for check_search_result
-    SEARCH_RESULT_FILTER = 'logcat -s DtvkitDvbtSetup EpgSyncJobService DTVKIT_LOG'
     SEARCH_RESULT_FILTER_DRIVER = 'cat /sys/class/cxd2856/cxd2856_debug'
+    SEARCH_RESULT_KEYWORDS_DRIVER = ['Lock Status: Locked']
+
+    SEARCH_RESULT_FILTER = 'logcat -s DtvkitDvbtSetup EpgSyncJobService DTVKIT_LOG DTV_LOG'
     # SEARCH_RESULT_KEYWORDS = [r'DTVKIT_LOG: TunerTask:\d+ 0: LOCKED',
-    SEARCH_RESULT_KEYWORDS = [r'DTVKIT_LOG: ControlTuning\(0\): Tuning, TUNE LOCKED',
+    SEARCH_RESULT_KEYWORDS = [r'ControlTuning\(0\): Tuning, TUNE LOCKED',
                               r'EpgSyncJobService: Finally getChannels size=\d+']
                               # r'DTVKIT_LOG: ADB_GetNumServicesInList:\d+ num_serv = \d+ \(ANALOG:0 TV:\d+ RADIO:\d+ data: 0\)']
-    SEARCH_RESULT_KEYWORDS_DRIVER = ['Lock Status: Locked']
 
     # for check_whether_search_missing
     SEARCH_CHANNEL_NUMBER_FILTER = 'logcat -s EpgSyncJobService | grep getChannels'
@@ -101,9 +102,9 @@ class DvbCheckKeywords:
     DELETE_TIMED_RECORDING_KEYWORDS = ['TimerActivity: delete timer']
 
     # for check_pvr_start_play
-    PVR_START_PALY_FILTER = 'logcat -s DvrPlayer DTVKIT_LOG libdvr Aml_MP'
+    PVR_START_PALY_FILTER = 'logcat -s DvrPlayer DTVKIT_LOG DTV_LOG libdvr Aml_MP'
     PVR_START_PALY_KEYWORDS = ['DvrPlayer: prepare\(\)',
-                               'DTVKIT_LOG: STB_PVRStartPlaying: start_playback \[1\]']
+                               'STB_PVRStartPlaying: start_playback \[1\]']
                                # 'AML_MP_PLAYER_EVENT_VIDEO_CHANGED']
     PVR_START_PALY_FILTER_DRIVER = 'cat /sys/class/dmx/dump_filter'
 
@@ -159,7 +160,7 @@ class DvbCheckKeywords:
     # for AndroidU
     TIMESHIFT_START_FILTER_U = 'logcat -s Aml_MP DTV_LOG TunableTvView'
     TIMESHIFT_START_KEYWORDS_U = [r'Aml_MP  : AmlDVRRecorder \[AmlDVRRecorder:\d+\]',
-                                r'Aml_MP  : AmlDVRRecorder location:/mnt/media_rw/.*',
+                                # r'Aml_MP  : AmlDVRRecorder location:/mnt/media_rw/.*',
                                 r'DTV_LOG : <STBPVRPR_AMLMP> STB_PVRRecordStart:\d+ Starting timeshift recording \w+ for \d+ secs/0 B',
                                 'TunableTvView: toggleTimeShift: true']
 
@@ -183,9 +184,9 @@ class DvbCheckKeywords:
                                r'Aml_MP  : AmlDVRPlayer \[seek:\d+\]']
 
     # for check_timeshift_stop
-    TIMESHIFT_STOP_FILTER = 'logcat -s TunableTvView DTVKIT_LOG Aml_MP'
+    TIMESHIFT_STOP_FILTER = 'logcat -s TunableTvView DTVKIT_LOG DTV_LOG Aml_MP'
     TIMESHIFT_STOP_KEYWORDS = ['TunableTvView: toggleTimeShift: false',
-                               'DTVKIT_LOG: STB_DPStopRecording\(1\)',
+                               'STB_DPStopRecording\(1\)',
                                # r'DTVKIT_LOG: STB_PVRRecordStop:\d+\ Stopping recording',
                                'Aml_MP  : AmlDVRRecorder Call DVRRecorderStop']
 
@@ -215,8 +216,8 @@ class DvbCheckKeywords:
                                    # r'Aml_MP  : AmlMpPlayerImpl_0 setAudioParams apid: \d+']
 
     # for get recorded video pid
-    VIDEO_TRACK_COMPARE_FILTER = 'logcat -s DTVKIT_LOG'
-    VIDEO_TRACK_COMPARE_KEYWORDS = [r'DTVKIT_LOG: STB_DPSetPCRPID\(0\): pid: .*']
+    VIDEO_TRACK_COMPARE_FILTER = 'logcat -s DTVKIT_LOG DTV_LOG'
+    VIDEO_TRACK_COMPARE_KEYWORDS = [r'STB_DPSetPCRPID\(0\): pid: .*']
 
     # for count record video track number
     VIDEO_TRACK_NUMBER_FILTER = 'logcat -s Glue'

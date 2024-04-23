@@ -1,0 +1,180 @@
+#Include all page info for Google TV/Basic TV/ATV
+home_launcher:
+  google_tv: home.HomeActivity
+  basic_tv: home.VanillaModeHomeActivity
+  ATV: tvlauncher.MainActivity
+
+wifi_settings:
+  wifi_sh:
+    ssid: AUT_XTS_5G-1
+    pwd: XTS12345678
+  wifi_sz:
+    ssid: NETGEAR16-5G-2
+    pwd: 88889999
+  wifi_xa:
+    ssid: ASUS_5G
+    pwd: Home1357
+  wifi_sanity:
+    ssid: sunshine
+    pwd: Home1357
+
+google_account:
+  account_sh:
+    account: yu.zeng@amlogic.com
+    pwd: Owen@200714
+  account_sh_kpi:  # for kpi common
+    account: netwang88@gmail.com
+    pwd: A-%-b-?-2024%
+  account_sz:
+    account: Amlaut24@gmail.com
+    pwd: Amlaut@2024
+  account_xa:
+    account: heng.liu@amlogic.com
+    pwd: Zll@1004
+
+pages_info:
+  - page_info: "Welcome"
+    button: English (United States)
+    wait_time: 3
+  - page_info: "Welcome"
+    button: English
+    wait_time: 3
+  - page_info: "Welcome"
+    button: United States
+    wait_time: 3
+  - page_info: text="Select your region or country"
+    button: Popular regions
+    wait_time: 3
+  - page_info: text="Select your region or country"
+    button: United States
+    wait_time: 3
+  - page_info: text="Select a region/country"
+    button: American Samoa
+    wait_time: 3
+  - page_info: text="The entertainment you love"
+    button: Set up Google TV
+    wait_time: 3
+  - page_info: text="Set up on TV instead"
+    button: Set up on TV instead
+    wait_time: 3
+  - page_info: Quickly set up your TV with your Android phone?
+    button: Skip
+    wait_time: 3
+  - page_info: "You're connected to"
+    button: "Continue"
+    wait_time: 30
+  - page_info: "You're connected using Ethernet"
+    button: "Continue"
+    wait_time: 30
+  - page_info: Select your Wi-Fi network
+    remote:
+      - keyevent: 20
+        number: 60
+    wait_time: 5
+  - page_info: Select your Wi-Fi network
+    button: "Other network…"
+    wait_time: 3
+  - page_info: Enter name of Wi-Fi
+    text: wifi_ssid
+    wait_time: 3
+  - page_info: Type of security
+    button: "WPA/WPA2-Personal"
+    wait_time: 3
+  - page_info: Enter password for
+    text: wifi_pwd
+    wait_time: 30
+  - page_info: Make the most of your TV
+    button: "Sign In"
+    wait_time: 3
+  - page_info: Sign in - Google Accounts
+    text: google_account
+    wait_time: 10
+  - page_info: Terms of Service
+    button: "View more"
+    wait_time: 3
+  - page_info: Terms of Service
+    button: "Accept"
+    wait_time: 3
+  - page_info: Stay in the know
+    button: "No thanks"
+    wait_time: 5
+  - page_info: text="Additional legal terms"
+    button: "I agree"
+    wait_time: 3
+  - page_info: Did you know?
+    button: "View more"
+    wait_time: 3
+  - page_info: Did you know?
+    button: "Got it"
+    wait_time: 3
+  - page_info: Get personal results
+    button: "Turn on"
+    wait_time: 3
+  - page_info: Google Services
+    button: "Accept"
+    wait_time: 10
+  - page_info: Get better voice control of your TV
+    button: "Continue"
+    wait_time: 3
+  - page_info: text="Google Assistant"
+    button: "Continue"
+    wait_time: 3
+  - page_info: text="Choose a home"
+    button: "Home"
+    wait_time: 3
+  - page_info: text="Choose a room"
+    button: "Living Room"
+    wait_time: 3
+  - page_info: text="Where is this device?"
+    button: "Living Room"
+    wait_time: 3
+  - page_info: text="Where is this device?"
+    button: "Bedroom"
+    wait_time: 3
+  - page_info: text="Where is this device?"
+    remote:
+      - keyevent: 22
+        number: 1
+      - keyevent: 23
+        number: 1
+    wait_time: 5
+  - page_info: Search across all your TV apps
+    button: "Allow"
+    wait_time: 3
+  - page_info: Activate Voice Match
+    button: "I agree"
+    wait_time: 3
+  - page_info: Get the most out of your Google Assistant
+    button: "Yes"
+    wait_time: 3
+  - page_info: Install additional apps
+    button: "Continue"
+    wait_time: 3
+  - page_info: powered by Android TV
+    remote:
+      - keyevent: 22
+        number: 4
+    wait_time: 5
+  - page_info: USB drive connected
+    remote:
+      - keyevent: 4
+        number: 1
+    wait_time: 3
+  - page_info: You're signed in with
+    button: "Continue"
+    wait_time: 3
+  - page_info: Get the full Assistant experience
+    button: "Turn on"
+    wait_time: 3
+  - page_info: Choose your subscriptions
+    button: "Confirm"
+    wait_time: 3
+  - page_info: Choose your services
+    button: "Confirm"
+    wait_time: 3
+  - page_info: Your Google TV experience is ready
+    button: "Start exploring"
+    wait_time: 3
+  - page_info: Your Chromecast with Google TV is ready
+    button: "Start exploring"
+    wait_time: 3

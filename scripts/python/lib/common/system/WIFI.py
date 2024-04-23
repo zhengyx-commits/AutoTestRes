@@ -440,7 +440,7 @@ class WifiTestApk(ADB):
         self.wifi_cmd = ('am instrument -w {} -e class com.amlogic.wifitest.Wifitests#test{} '
                          'com.amlogic.wifitest/android.support.test.runner.AndroidJUnitRunner')
         # self.get_wifiApk = self.res_manager.get_target('apk/WifiTests-debug.apk')
-        self.get_iperf = self.res_manager.get_target('wifi/iperf')
+        self.get_iperf = self.res_manager.get_target('wifi/iperf', source_path='wifi/iperf')
         # self.get_iperf = self.res_manager.get_target('apk/iperf3.apk')
         self.p_config_wifi = config_yaml.get_note('conf_wifi_and_bluetooth')
 

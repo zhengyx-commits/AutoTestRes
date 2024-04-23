@@ -31,12 +31,16 @@ class HdmiCheck(ADB, Check):
     '''
 
     _INSTANCE_LOCK = threading.Lock()
-
+    KERNEL_VERSION = 'uname -r'
     HDMI_DEBUG_COMMAND = 'echo state > /sys/class/hdmirx/hdmirx0/debug'
+    EDID_COMMAND = 'cat /sys/class/amhdmitx/amhdmitx0/rawedid'
+    ANALYZED_EDID_COMMAND = 'cat /sys/class/amhdmitx/amhdmitx0/edid'
+    EDID_PARSING_COMMAND = 'cat /sys/class/amhdmitx/amhdmitx0/edid_parsing'
 
     HDCP_TX_KEY_CHECK_COMMAND = 'cat /sys/class/amhdmitx/amhdmitx0/hdcp_lstore'
     HDCP_TX_MODE_CHECK_COMMAND = 'cat /sys/class/amhdmitx/amhdmitx0/hdcp_mode'
-    HDMI_TX_AUTHENTICATED_COMMAND = 'cat /sys/module/hdmitx20/parameters/hdmi_authenticated'
+    HDMI_TX_AUTHENTICATED_KERNEL4_COMMAND = 'cat /sys/module/hdmitx20/parameters/hdmi_authenticated'
+    HDMI_TX_AUTHENTICATED_KERNEL5_COMMAND = 'cat /sys/module/aml_media/parameters/hdmi_authenticated'
 
     HDMI_RX_KEY_CHECK_COMMAND = 'cat /sys/module/tvin_hdmirx/parameters/hdcp22_on'
     HDMI_RX_AUTHENTICATED_COMMAND = 'echo state2 > /sys/class/hdmirx/hdmirx0/debug'
@@ -55,6 +59,14 @@ class HdmiCheck(ADB, Check):
                 if not hasattr(HdmiCheck, "_insatnce"):
                     HdmiCheck._instance = object.__new__(cls)
         return HdmiCheck._instance
+
+    def get_raw_edid(self):
+        info = self.run_shell_cmd(self.EDID_COMMAND)[1]
+        return info
+
+    def get_edid_parsed(self):
+        info = self.run_shell_cmd(self.EDID_PARSING_COMMAND)[1]
+        return info
 
     def get_hdmi_debug(self):
         '''
@@ -126,12 +138,18 @@ class HdmiCheck(ADB, Check):
         command : cat /sys/module/hdmitx20/parameters/hdmi_authenticated
         @return: authenticated status : str
         '''
-        info = self.run_shell_cmd(self.HDMI_TX_AUTHENTICATED_COMMAND)[1]
+        version = self.run_shell_cmd(self.KERNEL_VERSION)[1]
+        if ("5.15" or "5.4") in version:
+            info = self.run_shell_cmd(self.HDMI_TX_AUTHENTICATED_KERNEL5_COMMAND)[1]
+        else:
+            info = self.run_shell_cmd(self.HDMI_TX_AUTHENTICATED_KERNEL4_COMMAND)[1]
         auth_info = {
             '1': 'authentication pass',
             '0': 'authentication fail'
         }
         logging.info(auth_info[info])
+        print("11111111", auth_info)
+        return info
 
     def get_rx_hdcp_key(self):
         '''
@@ -170,8 +188,8 @@ class HdmiCheck(ADB, Check):
         command : tee_provision -q -t 0x32
         @return: key : str
         """
-        # check_tx_22_key = str(self.subprocess_run('tee_provision -q -t 0x32'))
-        # logging.info(f'check_tx_22_key is {check_tx_22_key}')
+        check_tx_22_key = str(self.subprocess_run('tee_provision -q -t 0x32'))
+        logging.info(f'check_tx_22_key is {check_tx_22_key}')
         check_vendor_tx22 = str(self.subprocess_run('ls -la /vendor/bin/hdcp_tx22'))
         logging.info(f'check_vendor_tx22 is {check_vendor_tx22}')
         if 'returncode=1' in check_vendor_tx22:

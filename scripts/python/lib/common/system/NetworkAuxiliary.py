@@ -24,33 +24,13 @@ config_common_yaml = yamlTool(os.getcwd() + '/config/config.yaml')
 
 
 def differentiate_servers():
-    p_conf_device_ip = config_common_yaml.get_note("ip")
-    p_conf_device_ip_sz = p_conf_device_ip.get("device_ip_sz")
-    p_conf_device_ip_sz_ref = p_conf_device_ip.get("device_ip_sz_ref")
-    iplist = getIfconfig()
+    p_conf_ip = config_common_yaml.get_note("ip")
+    p_conf_device_ip = p_conf_ip.get("device_ip")
+    p_conf_stream_ip = p_conf_ip.get("stream_ip")
     p_conf_rtsp_path = config_common_yaml.get_note("rtsp_path")
-    # print(iplist)
-    DEVICE_IP = ""
-    STREAM_IP = ""
-    RTSP_PATH = ""
-    if p_conf_device_ip_sz in iplist:
-        stream_ip = p_conf_device_ip.get("stream_ip_sz")
-        DEVICE_IP = p_conf_device_ip_sz
-        STREAM_IP = stream_ip
-        RTSP_PATH = p_conf_rtsp_path.get("rtsp_other")
-    elif p_conf_device_ip_sz_ref in iplist:
-        stream_ip = p_conf_device_ip.get("stream_ip_sz_ref")
-        rtsp_path = p_conf_rtsp_path.get("rtsp_sz_ref")
-        DEVICE_IP = p_conf_device_ip_sz_ref
-        STREAM_IP = stream_ip
-        RTSP_PATH = rtsp_path
-    else:
-        device_ip_sh = p_conf_device_ip.get("device_ip_sh")
-        stream_ip = p_conf_device_ip.get("stream_ip_sh")
-        rtsp_path = p_conf_rtsp_path.get("rtsp_sh")
-        DEVICE_IP = device_ip_sh
-        STREAM_IP = stream_ip
-        RTSP_PATH = rtsp_path
+    DEVICE_IP = p_conf_device_ip
+    STREAM_IP = p_conf_stream_ip
+    RTSP_PATH = p_conf_rtsp_path
     return DEVICE_IP, STREAM_IP, RTSP_PATH
 
 

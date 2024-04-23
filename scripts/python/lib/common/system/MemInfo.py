@@ -19,7 +19,7 @@ import numpy as np
 from lib.common.system.ADB import ADB
 
 
-class MemInfo(ADB):
+class MemInfo():
     '''
     memmory count test lib
 
@@ -37,10 +37,11 @@ class MemInfo(ADB):
     FREE_COMMAND = 'free -h'
 
     def __init__(self):
-        super(MemInfo, self).__init__('Mem Info', unlock_code="", stayFocus=True)
-        self.mem_info = f'{self.logdir}/memInfo.log'
-        self.mem_info_res = f'{self.logdir}/memInfoRes.log'
-        self.free_info = f'{self.logdir}/freeInfo.log'
+        # super(MemInfo, self).__init__('Mem Info', unlock_code="", stayFocus=True)
+        self.adb = ADB()
+        self.mem_info = f'{self.adb.logdir}/memInfo.log'
+        self.mem_info_res = f'{self.adb.logdir}/memInfoRes.log'
+        self.free_info = f'{self.adb.logdir}/freeInfo.log'
         if os.path.exists(self.mem_info):
             os.remove(self.mem_info)
         if os.path.exists(self.free_info):
@@ -51,7 +52,15 @@ class MemInfo(ADB):
         start thread , catch info
         @return: None
         '''
-        t = threading.Thread(target=self.get_mem_info, name='MemInfo')
+        def run_all_methods():
+            '''
+            Runs multiple methods in a single thread
+            '''
+            self.get_free_info()
+            self.get_mem_info()
+
+
+        t = threading.Thread(target=run_all_methods, name='MemInfo')
         t.start()
         return t
 
@@ -60,22 +69,22 @@ class MemInfo(ADB):
         get memmory info, pagetrace info, write to memInfo.log
         @return: None
         '''
-        while True:
-            with open(self.mem_info, 'a') as f:
-                fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-                mem = self.run_shell_cmd(self.DUMP_MEMINFO_COMMAND)[1].strip()
-                if mem:
-                    f.write(f'Time : {time.asctime()} \n')
-                    f.write('Dump meminfo:\n')
-                    f.write(mem)
-                    f.write('\n')
-                    f.write('Cat meminfo:\n')
-                    f.write(self.run_shell_cmd(self.CAT_MEMINFO_COMMAND)[1].strip())
-                    f.write("\n")
-                    f.write('Cat pagetrace:\n')
-                    f.write(self.run_shell_cmd(self.CAT_PAGETRACE_COMMAND)[1].strip())
-                    f.write("\n")
-                    time.sleep(1)
+        # while True:
+        with open(self.mem_info, 'a') as f:
+            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+            mem = self.adb.run_shell_cmd(self.DUMP_MEMINFO_COMMAND)[1].strip()
+            if mem:
+                f.write(f'Time : {time.asctime()} \n')
+                f.write('Dump meminfo:\n')
+                f.write(mem)
+                f.write('\n')
+                f.write('Cat meminfo:\n')
+                f.write(self.adb.run_shell_cmd(self.CAT_MEMINFO_COMMAND)[1].strip())
+                f.write("\n")
+                f.write('Cat pagetrace:\n')
+                f.write(self.adb.run_shell_cmd(self.CAT_PAGETRACE_COMMAND)[1].strip())
+                f.write("\n")
+                time.sleep(1)
 
     def get_free_info(self):
         '''
@@ -84,13 +93,13 @@ class MemInfo(ADB):
         '''
         with open(self.free_info, 'a') as f:
             fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-            free = self.run_shell_cmd(self.FREE_COMMAND)[1].strip()
+            free = self.adb.run_shell_cmd(self.FREE_COMMAND)[1].strip()
             if free:
                 f.write('Free info:\n')
                 f.write(free)
                 f.write("\n")
                 time.sleep(1)
-                logging.info("freeinfo is:")
+                # logging.info("freeinfo is:")
                 return free
 
     def format_num(self, num):
@@ -328,3 +337,5 @@ class MemInfo(ADB):
             f.write(f"Back: Headroom(Foreground) :{HeadRoom_Fore} "
                     f"- Foreground :{foreground_temp} - Visible :{visible_temp} "
                     f"- Perceptible :{perceptible_temp} - A Services :{a_services_temp} = {HeadRoom_Back:.2f}")
+
+
