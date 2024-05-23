@@ -2023,7 +2023,7 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
         Returns:
 
         """
-
+        android_version = self.getprop(key="ro.build.version.release")
         if (len(self.abnormal_observer_list) != 0):
             return False
         if self.speed or self.randomSeekEnable or self.switchAudio or self.pause or self.stop or self.playerNum >= 2:
@@ -2057,15 +2057,16 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
                     else:
                         out_pts_info = re.findall(r"Out PTS: (.*?)\.\.", line)[0]
                         out_pts.append((time, out_pts_info))
-                elif (keywords["MediaCodec"][0] in line):
-                    out_pts_info = re.findall(r"render timeus:(\d+)", line)[0]
-                    out_pts.append((time, out_pts_info))
-                elif (keywords["MediaCodec"][1] in line):
-                    drop_pts_info = re.findall(r"drop pts:(\d+)", line)[0]
-                    drop_pts.append((time, drop_pts_info))
-                elif (keywords["VideoTunnelWraper"][0] in line and keywords["VideoTunnelWraper"][1] in line):
-                    out_pts_info = re.findall(r"queueBuffer \d+ (\d+)", line)[0]
-                    out_pts.append((time, out_pts_info))
+                elif android_version == '14':
+                    if (keywords["MediaCodec"][0] in line):
+                        out_pts_info = re.findall(r"render timeus:(\d+)", line)[0]
+                        out_pts.append((time, out_pts_info))
+                    elif (keywords["MediaCodec"][1] in line):
+                        drop_pts_info = re.findall(r"drop pts:(\d+)", line)[0]
+                        drop_pts.append((time, drop_pts_info))
+                    elif (keywords["VideoTunnelWraper"][0] in line and keywords["VideoTunnelWraper"][1] in line):
+                        out_pts_info = re.findall(r"queueBuffer \d+ (\d+)", line)[0]
+                        out_pts.append((time, out_pts_info))
                 else:
                     pass
 
@@ -2102,11 +2103,15 @@ class PlayerCheck_Base(ADB, Check, CheckAndroidVersion):
                         pass
                 else:
                     out_pts_temp.append(out_pts[i])
+        logging.info('out pts tmp:')
+        for idx, pts in enumerate(out_pts_temp):
+            logging.info(f'Index {idx}: {pts}')
         if len(out_pts_temp) >= 3:
             # check if stuck within 3s
             for i in range(len(out_pts_temp) - 1):
                 if (out_pts_temp[i + 1][0] - out_pts_temp[i][0]) >= 3:
                     logging.info("checked android s ott path stuck", out_pts_temp[i + 1][0] - out_pts_temp[i][0])
+                    logging.info(f"Index {i} and {i + 1} details: {out_pts_temp[i]} and {out_pts_temp[i + 1]}")
                     self.register_abnormal_observer(self.stuck_analysis_ott.__name__)
 
     def check_demux(self):
