@@ -1,5 +1,5 @@
 # config for Android S Certification test
-android_s_sh_ohm:
+android_s_sei_atv:
   wifi:
     cts_wifi_ssid: "HUAWEI-64-5G"
     cts_wifi_pwd: "sei2022123"
@@ -72,6 +72,87 @@ android_s_sh_ohm:
     port: 22
     username: "amlogic"
     password: "Linux2017"
+  test_suite_path:
+    cts: "/home/amlogic/Desktop/android-cts"
+    gts: "/home/amlogic/Desktop/android-gts"
+    vts: "/home/amlogic/Desktop/android-vts"
+    sts: "/home/amlogic/Desktop/android-sts"
+    tvts: "/home/amlogic/Desktop/android-tvts"
+
+# config for Android S Certification test
+android_s_sh_ohm:
+  wifi:
+    cts_wifi_ssid: "HUAWEI-64-5G"
+    cts_wifi_pwd: "sei2022123"
+    public_wifi_ssid: "Sei-public"
+    public_wifi_pwd: "Seirobotics8"
+  google_account:
+    cts_username: "seigtvs@gmail.com"
+    cts_password: "Sei26613121!"
+    public_username: "sei2018atv@gmail.com"
+    public_password: "abc26613121"
+  devices:
+    cts:
+      - device_id: "cts000000031"
+        powerRelay: "/dev/powerRelay31"
+      - device_id: "cts000000032"
+        powerRelay: "/dev/powerRelay32"
+      - device_id: "cts000000033"
+        powerRelay: "/dev/powerRelay33"
+      - device_id: "cts000000034"
+        powerRelay: "/dev/powerRelay34"
+      - device_id: "cts000000035"
+        powerRelay: "/dev/powerRelay35"
+      - device_id: "cts000000036"
+        powerRelay: "/dev/powerRelay36"
+    tvts:
+      - device_id: "tvts00000000"
+        powerRelay: "/dev/powerRelay_for_tvts"
+      - device_id: "tvts00000001"
+        powerRelay: "/dev/powerRelay_for_tvts1"
+      - device_id: "tvts00000002"
+        powerRelay: "/dev/powerRelay_for_tvts2"
+      - device_id: "tvts00000003"
+        powerRelay: "/dev/powerRelay_for_tvts3"
+    gts:
+      - device_id: "gts000000001"
+        powerRelay: "/dev/powerRelay_for_gts"
+    vts:
+      - device_id: "vts000000001"
+        powerRelay: "/dev/powerRelay_for_vts"
+    sts:
+      - device_id: "sts000000001"
+        powerRelay: "/dev/powerRelay_for_sts"
+    cts_single:
+      device_id: "cts000000036"
+      powerRelay: "/dev/powerRelay36"
+    tvts_single:
+      device_id: "tvts00000000"
+      powerRelay: "/dev/powerRelay_for_tvts"
+  chip: "S905X4"
+  bluetooth_powerRelay_two:
+    - "/dev/powerRelay_for_bluetooth1"
+    - "/dev/powerRelay_for_bluetooth2"
+  bluetooth_powerRelay_one: "/dev/powerRelay_for_bluetooth3"
+  retry_count:
+    cts:
+      first_loop: 3
+      second_loop: 4
+      third_loop: 4
+    gts:
+      first_loop: 3
+      second_loop: 4
+    tvts:
+      first_loop: 5
+    sts:
+      first_loop: 3
+    vts:
+      first_loop: 3
+  server:
+    ip: "127.0.0.1"
+    port: 8
+    username: "cts"
+    password: "123456"
   test_suite_path:
     cts: "/home/amlogic/Desktop/android-cts"
     gts: "/home/amlogic/Desktop/android-gts"
