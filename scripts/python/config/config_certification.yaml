@@ -1,15 +1,15 @@
 # config for Android S Certification test
 android_s_sh_ohm:
   wifi:
-    cts_wifi_ssid: "AUT_XTS_5G-1"
-    cts_wifi_pwd: "XTS12345678"
-    public_wifi_ssid: "AUT_XTS_5G-2"
-    public_wifi_pwd: "XTS12345678"
+    cts_wifi_ssid: "HUAWEI-64-5G"
+    cts_wifi_pwd: "sei2022123"
+    public_wifi_ssid: "Sei-public"
+    public_wifi_pwd: "Seirobotics8"
   google_account:
-    cts_username: "amltest9@amlogic.com"
-    cts_password: "Qatest123!"
-    public_username: "yu.zeng@amlogic.com"
-    public_password: "Owen@200714"
+    cts_username: "seigtvs@gmail.com"
+    cts_password: "Sei26613121!"
+    public_username: "sei2018atv@gmail.com"
+    public_password: "abc26613121"
   devices:
     cts:
       - device_id: "cts000000031"
