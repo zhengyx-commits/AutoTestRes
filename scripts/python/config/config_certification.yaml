@@ -11,44 +11,44 @@ android_s_sei_atv:
     public_username: "sei2018atv@gmail.com"
     public_password: "abc26613121"
   devices:
-    cts:
-      - device_id: "cts000000031"
-        powerRelay: "/dev/powerRelay31"
-      - device_id: "cts000000032"
-        powerRelay: "/dev/powerRelay32"
-      - device_id: "cts000000033"
-        powerRelay: "/dev/powerRelay33"
-      - device_id: "cts000000034"
-        powerRelay: "/dev/powerRelay34"
-      - device_id: "cts000000035"
-        powerRelay: "/dev/powerRelay35"
-      - device_id: "cts000000036"
-        powerRelay: "/dev/powerRelay36"
-    tvts:
-      - device_id: "tvts00000000"
-        powerRelay: "/dev/powerRelay_for_tvts"
-      - device_id: "tvts00000001"
-        powerRelay: "/dev/powerRelay_for_tvts1"
-      - device_id: "tvts00000002"
-        powerRelay: "/dev/powerRelay_for_tvts2"
-      - device_id: "tvts00000003"
-        powerRelay: "/dev/powerRelay_for_tvts3"
-    gts:
-      - device_id: "gts000000001"
-        powerRelay: "/dev/powerRelay_for_gts"
-    vts:
-      - device_id: "vts000000001"
-        powerRelay: "/dev/powerRelay_for_vts"
-    sts:
-      - device_id: "sts000000001"
-        powerRelay: "/dev/powerRelay_for_sts"
+#    cts:
+#      - device_id: "ap22280960d47301729"
+#        powerRelay: "/dev/powerRelay_for_bluetooth1"
+#      - device_id: "cts000000032"
+#        powerRelay: "/dev/powerRelay32"
+#      - device_id: "cts000000033"
+#        powerRelay: "/dev/powerRelay33"
+#      - device_id: "cts000000034"
+#        powerRelay: "/dev/powerRelay34"
+#      - device_id: "cts000000035"
+#        powerRelay: "/dev/powerRelay35"
+#      - device_id: "cts000000036"
+#        powerRelay: "/dev/powerRelay36"
+#    tvts:
+#      - device_id: "tvts00000000"
+#        powerRelay: "/dev/powerRelay_for_tvts"
+#      - device_id: "tvts00000001"
+#        powerRelay: "/dev/powerRelay_for_tvts1"
+#      - device_id: "tvts00000002"
+#        powerRelay: "/dev/powerRelay_for_tvts2"
+#      - device_id: "tvts00000003"
+#        powerRelay: "/dev/powerRelay_for_tvts3"
+#    gts:
+#      - device_id: "gts000000001"
+#        powerRelay: "/dev/powerRelay_for_gts"
+#    vts:
+#      - device_id: "vts000000001"
+#        powerRelay: "/dev/powerRelay_for_vts"
+#    sts:
+#      - device_id: "sts000000001"
+#        powerRelay: "/dev/powerRelay_for_sts"
     cts_single:
-      device_id: "cts000000036"
-      powerRelay: "/dev/powerRelay36"
-    tvts_single:
-      device_id: "tvts00000000"
-      powerRelay: "/dev/powerRelay_for_tvts"
-  chip: "S905X4"
+      device_id: "ap22280960d47301729"
+      powerRelay: "/dev/powerRelay_for_bluetooth1"
+#    tvts_single:
+#      device_id: "tvts00000000"
+#      powerRelay: "/dev/powerRelay_for_tvts"
+  chip: "S905Y4-B"
   bluetooth_powerRelay_two:
     - "/dev/powerRelay_for_bluetooth1"
     - "/dev/powerRelay_for_bluetooth2"
@@ -69,15 +69,15 @@ android_s_sei_atv:
       first_loop: 3
   server:
     ip: "127.0.0.1"
-    port: 22
-    username: "amlogic"
-    password: "Linux2017"
+    port: 8
+    username: "cts"
+    password: "123456"
   test_suite_path:
-    cts: "/home/amlogic/Desktop/android-cts"
-    gts: "/home/amlogic/Desktop/android-gts"
-    vts: "/home/amlogic/Desktop/android-vts"
-    sts: "/home/amlogic/Desktop/android-sts"
-    tvts: "/home/amlogic/Desktop/android-tvts"
+    cts: "/home/cts/android/CTS/s/cts-12_r13/android-cts-12_r13-linux_x86-arm/android-cts"
+#    gts: "/home/amlogic/Desktop/android-gts"
+#    vts: "/home/amlogic/Desktop/android-vts"
+#    sts: "/home/amlogic/Desktop/android-sts"
+#    tvts: "/home/amlogic/Desktop/android-tvts"
 
 # config for Android S Certification test
 android_s_sh_ohm:
